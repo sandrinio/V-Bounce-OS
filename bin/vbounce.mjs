@@ -13,6 +13,17 @@ const args = process.argv.slice(2);
 const command = args[0];
 const targetPlatform = args[1]?.toLowerCase();
 
+if (command === '-v' || command === '--version') {
+  const pkgPath = path.join(pkgRoot, 'package.json');
+  if (fs.existsSync(pkgPath)) {
+    const pkgInfo = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+    console.log(`v${pkgInfo.version}`);
+  } else {
+    console.log('Version information unavailable.');
+  }
+  process.exit(0);
+}
+
 // Utility for interactive prompt
 const rl = readline.createInterface({
   input: process.stdin,
@@ -122,7 +133,7 @@ console.log('');
 askQuestion('Proceed with installation? [y/N] ').then(answer => {
   rl.close();
   const confirmation = answer.trim().toLowerCase();
-  
+
   if (confirmation !== 'y' && confirmation !== 'yes') {
     console.log('\n❌ Installation cancelled.\n');
     process.exit(0);
