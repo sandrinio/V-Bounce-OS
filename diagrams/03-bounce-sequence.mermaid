@@ -1,0 +1,108 @@
+---
+title: "The Bounce — Agent Sequence (Phase 2)"
+---
+sequenceDiagram
+    autonumber
+
+    participant H as 👤 Human
+    participant TL as 🎯 Team Lead
+    participant DEV as 🔨 Developer
+    participant QA as 🧪 QA
+    participant ARCH as 🏛️ Architect
+    participant OPS as 🚀 DevOps
+    participant SC as 📖 Scribe
+
+    rect rgb(240, 248, 255)
+        Note over TL: Step 0 — Sprint Setup
+        TL->>TL: Cut sprint branch from main
+        TL->>TL: Read Risk Registry, Delivery Plan §5b,<br/>_manifest.json
+        TL->>H: Flag blocking risks / open questions
+    end
+
+    rect rgb(255, 255, 240)
+        Note over TL,DEV: Step 1 — Story Init
+        TL->>TL: Create worktree per story
+        TL->>TL: Read Story spec + LESSONS.md
+        TL->>TL: Create task file in .bounce/tasks/
+        TL->>TL: State → "Bouncing"
+    end
+
+    rect rgb(240, 255, 240)
+        Note over DEV,QA: Steps 2-4 — The Bounce Loop
+
+        TL->>DEV: Spawn in worktree with Story §1 + §3
+        DEV->>DEV: Read LESSONS.md, implement code
+        DEV-->>TL: Implementation Report
+
+        TL->>QA: Spawn with Dev Report + Story §2
+        QA->>QA: Quick Scan + PR Review
+
+        alt QA FAIL (bounce < 3)
+            QA-->>TL: Bug Report
+            TL->>DEV: Bounce back with Bug Report
+            DEV-->>TL: Fix Report
+            TL->>QA: Re-validate
+            Note over DEV,QA: Loop until QA passes or 3 bounces
+        else QA FAIL (bounce ≥ 3)
+            QA-->>TL: Bug Report
+            TL->>TL: State → "Escalated"
+            TL->>H: Escalation Report
+        else QA PASS
+            QA-->>TL: Validation Report
+            TL->>TL: State → "QA Passed"
+        end
+
+        TL->>ARCH: Spawn with all reports + ADRs
+        ARCH->>ARCH: Deep Audit + Trend Check
+
+        alt Architect FAIL (bounce < 3)
+            ARCH-->>TL: Audit Findings
+            TL->>DEV: Fix structural issues
+            Note over DEV,ARCH: Loop until Architect passes or 3 bounces
+        else Architect PASS
+            ARCH-->>TL: Audit Report (PASS)
+            TL->>TL: State → "Architect Passed"
+        end
+    end
+
+    rect rgb(255, 245, 238)
+        Note over OPS: Step 5 — Story Merge
+        TL->>OPS: Spawn with gate reports
+        OPS->>OPS: Archive reports to .bounce/archive/
+        OPS->>OPS: Merge story → sprint (--no-ff)
+        OPS->>OPS: Post-merge tests + build
+        OPS->>OPS: Remove worktree + branch
+        OPS-->>TL: Merge Report
+        TL->>TL: State → "Done"
+    end
+
+    rect rgb(248, 240, 255)
+        Note over ARCH: Step 6 — Sprint Integration Audit
+        TL->>ARCH: Audit combined sprint changes
+        ARCH-->>TL: Integration Report
+        Note over TL: If issues → create fix stories
+    end
+
+    rect rgb(255, 240, 245)
+        Note over TL,SC: Step 7 — Sprint Consolidation
+        TL->>TL: Generate Sprint Report
+        TL->>TL: State → "Sprint Review" (all stories)
+        TL->>H: Present Sprint Report
+        H-->>TL: Approval
+
+        TL->>OPS: Sprint Release (merge sprint → main)
+        OPS->>OPS: Tag release, run full suite
+        OPS-->>TL: Release Report
+
+        TL->>TL: Archive sprint report
+        TL->>H: Approve lessons?
+        H-->>TL: Lesson approvals
+        TL->>TL: Record LESSONS.md
+
+        opt New features delivered
+            TL->>SC: Spawn on main branch
+            SC->>SC: Explore → Plan → Generate → Manifest
+            SC-->>TL: Scribe Report
+            SC->>SC: Commit docs on main
+        end
+    end

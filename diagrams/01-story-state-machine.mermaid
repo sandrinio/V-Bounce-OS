@@ -1,0 +1,62 @@
+---
+title: "V-Bounce Story State Machine"
+---
+stateDiagram-v2
+    direction LR
+
+    [*] --> Draft
+    Draft --> Refinement: Template created
+
+    state refinement_fork <<fork>>
+    Refinement --> refinement_fork
+    refinement_fork --> ReadyToBounce: Ambiguity 🟢\nContext Pack complete
+    refinement_fork --> ProbingSpiking: L4 stories only
+
+    ProbingSpiking --> Refinement: Spike complete
+
+    ReadyToBounce --> Bouncing: Lead activates\nDev Agent
+
+    state bounce_fork <<fork>>
+    Bouncing --> bounce_fork
+    bounce_fork --> QAPassed: QA Validation\npasses
+    bounce_fork --> Escalated: QA bounces ≥ 3
+
+    state qa_fork <<fork>>
+    QAPassed --> qa_fork
+    qa_fork --> ArchitectPassed: Architect Audit\npasses
+    qa_fork --> Escalated: Architect bounces ≥ 3
+
+    ArchitectPassed --> SprintReview: DevOps merges\nall gates clear
+
+    SprintReview --> Done: Human review\naccepted
+
+    Bouncing --> ParkingLot: Deferred
+    Refinement --> ParkingLot: Deferred
+    QAPassed --> ParkingLot: Deferred
+
+    state Done {
+        direction LR
+        [*] --> Archived: Reports archived\nWorktree removed
+    }
+
+    state Escalated {
+        direction LR
+        [*] --> HumanDecision
+        HumanDecision --> Refinement: Rewrite spec
+        HumanDecision --> ParkingLot: Descope / Kill
+    }
+
+    note right of Bouncing
+        Dev → QA → Dev loop
+        (the "Bounce")
+    end note
+
+    note right of QAPassed
+        QA cleared gate 1
+        Waiting for Architect
+    end note
+
+    note right of ArchitectPassed
+        Both gates cleared
+        Ready for merge
+    end note

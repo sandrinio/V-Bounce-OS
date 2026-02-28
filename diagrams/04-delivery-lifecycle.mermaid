@@ -1,0 +1,73 @@
+---
+title: "Delivery Lifecycle & Folder Structure"
+---
+flowchart TB
+    subgraph planning["Phase 1 — Verification (Planning)"]
+        direction TB
+        C[["📋 Charter"]] --> R[["🗺️ Roadmap"]]
+        R --> E1[["📦 Epic 1"]]
+        R --> E2[["📦 Epic 2"]]
+        E1 --> S1[["📝 Story 1-01"]]
+        E1 --> S2[["📝 Story 1-02"]]
+        E2 --> S3[["📝 Story 2-01"]]
+        R --> DP[["📅 Delivery Plan"]]
+        C --> RR[["⚠️ Risk Registry"]]
+    end
+
+    subgraph folders["product_plans/ Folder Layout"]
+        direction TB
+        root["product_plans/"]
+        root --> charter["charter.md"]
+        root --> roadmap["roadmap.md"]
+        root --> risk["RISK_REGISTRY.md"]
+        root --> d1["D-01_foundation/"]
+        d1 --> dplan["DELIVERY_PLAN.md"]
+        d1 --> ep1["EPIC-001_auth/"]
+        ep1 --> epic1doc["EPIC-001.md"]
+        ep1 --> story1["STORY-001-01.md"]
+        ep1 --> story2["STORY-001-02.md"]
+        d1 --> ep2["EPIC-002_ui/"]
+        root --> archive["archive/"]
+        archive --> d_old["D-00_mvp/ (completed)"]
+    end
+
+    subgraph bounce["Phase 2 — The Bounce"]
+        direction TB
+        sprint["Sprint Branch\nsprint/S-01"]
+        sprint --> wt1[".worktrees/STORY-001-01/\n(isolated worktree)"]
+        sprint --> wt2[".worktrees/STORY-001-02/\n(isolated worktree)"]
+        sprint --> wt3[".worktrees/STORY-002-01/\n(isolated worktree)"]
+
+        wt1 --> reports1[".bounce/reports/\ndev · qa · arch"]
+        wt2 --> reports2[".bounce/reports/\ndev · qa · arch"]
+
+        reports1 --> merge1["Merge → sprint/S-01"]
+        reports2 --> merge2["Merge → sprint/S-01"]
+    end
+
+    subgraph review["Phase 3 — Review & Release"]
+        direction TB
+        sr["📊 Sprint Report\n.bounce/sprint-report.md"]
+        sr --> human{"👤 Human\nReview"}
+        human -->|Approved| release["🚀 Merge sprint → main\nTag v1.0.0"]
+        release --> docs["📖 Scribe generates\nproduct_documentation/"]
+        release --> archiveSprint["Archive to\n.bounce/archive/S-01/"]
+    end
+
+    subgraph delivery_complete["Delivery Complete"]
+        direction TB
+        verify["✅ All sprints done"]
+        verify --> move["mv D-01_foundation/\n→ archive/D-01_foundation/"]
+        move --> log["Add Delivery Log\nto Roadmap §7"]
+        log --> status["Update Release Plan\nstatus → Delivered"]
+    end
+
+    planning --> bounce
+    bounce --> review
+    review --> delivery_complete
+
+    classDef phase fill:#f0f8ff,stroke:#4A90D9,stroke-width:2px
+    classDef folder fill:#fff8dc,stroke:#DAA520,stroke-width:1px
+    classDef action fill:#e8f5e9,stroke:#27AE60,stroke-width:1px
+
+    class planning,bounce,review,delivery_complete phase

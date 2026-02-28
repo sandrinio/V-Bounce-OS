@@ -1,0 +1,45 @@
+---
+description: V-Bounce OS process rules — the core framework for AI-assisted software development
+globs:
+alwaysApply: true
+---
+
+# V-Bounce OS — Process Rules
+
+You are an AI coding agent operating within **V-Bounce OS** — a structured system for planning, implementing, and validating software using AI agents.
+
+## The V-Bounce Process
+
+### Phase 1: Verification (Planning)
+Documents are created in strict hierarchy — no level can be skipped:
+Charter (why) → Roadmap (strategic what/when) → Epic (detailed what) → Story (how) → Delivery Plan (execution) → Risk Registry (risks)
+
+### Pre-Bounce Checks
+Before sprints: Lead triages request (L1 Trivial → Hotfix Path. L2-L4 → Epic Path). Lead reads RISK_REGISTRY.md (flag blocking risks), DELIVERY_PLAN.md §5 Open Questions (resolve before bouncing), and product_documentation/_manifest.json (know what's documented).
+
+### Phase 2: The Bounce (Implementation)
+**Standard Path (L2-L4):**
+1. Team Lead sends Story context pack to Developer.
+2. Developer reads LESSONS.md, implements code, writes Implementation Report.
+3. QA validates against Story §2 The Truth. If fail → Bug Report to Dev.
+4. Dev fixes and resubmits. 3+ failures → Escalated.
+5. Architect validates Safe Zone compliance and ADR adherence.
+6. DevOps merges story into sprint branch, validates, handles releases.
+7. Team Lead consolidates into Sprint Report.
+
+**Hotfix Path (L1 Trivial Task):**
+1. Team Lead evaluates request and creates `HOTFIX-{Date}-{Name}.md`.
+2. Developer reads LESSONS.md and Hotfix spec, makes targeted change (max 1-2 files).
+3. Developer runs `./scripts/hotfix_manager.sh ledger "{Title}" "{Description}"`.
+4. Human/Team Lead manually verifies the fix. QA/Architect loops bypassed.
+5. Hotfix is merged directly into the active branch.
+6. DevOps (or Team Lead) runs `./scripts/hotfix_manager.sh sync` to update active worktrees.
+
+### Phase 3: Review
+Sprint Report → Human review → Delivery Plan updated → Lessons recorded. If new features delivered → spawn Scribe agent to generate/update product_documentation/.
+
+### Story States
+Draft → Refinement → Ready to Bounce → Bouncing → QA Passed → Architect Passed → Sprint Review → Done
+
+### Complexity Labels
+- L1: Trivial — Single file, <1hr. L2: Standard — 2-3 files, ~2-4hr (default). L3: Complex — cross-cutting. L4: Uncertain — needs spike.

@@ -1,0 +1,41 @@
+---
+description: V-Bounce OS document hierarchy — templates, locations, and report formats
+globs:
+alwaysApply: false
+---
+
+# V-Bounce OS — Document & Report Reference
+
+## Document Locations
+
+All in `product_plans/`. Deliveries get folders. Epics are subfolders. Stories live with Epic.
+
+| Document | Output |
+|----------|--------|
+| Charter | `product_plans/{project}_charter.md` |
+| Roadmap | `product_plans/{project}_roadmap.md` |
+| Risk Registry | `product_plans/RISK_REGISTRY.md` |
+| Delivery Plan | `product_plans/{delivery}/DELIVERY_PLAN.md` |
+| Epic | `product_plans/{delivery}/EPIC-{NNN}_{name}/EPIC-{NNN}.md` |
+| Story | `product_plans/{delivery}/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}.md` |
+| Product Docs | `product_documentation/*.md` + `_manifest.json` |
+
+## Skills Reference
+
+| Skill | Path | Used By |
+|-------|------|---------|
+| agent-team | `skills/agent-team/` | Team Lead |
+| doc-manager | `skills/doc-manager/` | Team Lead, all |
+| lesson | `skills/lesson/` | All (read), Lead (write) |
+| react-best-practices | `skills/react-best-practices/` | Developer |
+| vibe-code-review | `skills/vibe-code-review/` | QA, Architect |
+| write-skill | `skills/write-skill/` | Team Lead |
+
+## Report Formats
+
+**Dev Report**: Files modified, logic summary, Correction Tax, lessons flagged, product docs affected.
+**QA Report**: Pass/fail, bug descriptions, Gold-Plating audit, plain-language explanations.
+**Architect Report**: Compliance score, ADR check, AI-ism findings, regression assessment, refactors.
+**DevOps Report**: Merge status, conflict resolution, post-merge validation, environment changes, deployment status.
+**Scribe Report**: Mode (init/audit/create), docs created/updated/removed, coverage assessment, accuracy check.
+**Sprint Report**: What was delivered (user-facing vs internal), execution metrics (tokens, duration, cost, bounces), lessons, retrospective (what went well, what didn't, process improvements).

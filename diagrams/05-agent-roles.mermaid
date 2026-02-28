@@ -1,0 +1,64 @@
+---
+title: "Agent Roles, Tools & Communication"
+---
+flowchart TB
+    subgraph human["👤 Human (PM/BA)"]
+        direction LR
+        hActions["Owns: Charter, Roadmap, Epic, Story §1+§2\nReads: Everything\nDecides: Escalations, Lessons, Sprint approval"]
+    end
+
+    subgraph lead["🎯 Team Lead (Orchestrator)"]
+        direction LR
+        lActions["Plans · Delegates · Monitors · Consolidates\nOwns: Delivery Plan, Sprint Report\nNever writes implementation code"]
+    end
+
+    subgraph agents["Specialized Agents"]
+        direction LR
+
+        subgraph dev["🔨 Developer"]
+            dTools["Tools: Read, Edit, Write,\nBash, Glob, Grep\nSkills: react-best-practices, lesson"]
+        end
+
+        subgraph qa["🧪 QA"]
+            qTools["Tools: Read, Bash,\nGlob, Grep\nSkills: vibe-code-review, lesson\n(No Edit/Write — report only)"]
+        end
+
+        subgraph arch["🏛️ Architect"]
+            aTools["Tools: Read, Glob,\nGrep, Bash\nSkills: vibe-code-review, lesson\n(No Edit/Write — audit only)"]
+        end
+
+        subgraph ops["🚀 DevOps"]
+            oTools["Tools: Read, Edit, Write,\nBash, Glob, Grep\nSkills: lesson\n(Merges, deploys, infra)"]
+        end
+
+        subgraph scribe["📖 Scribe"]
+            sTools["Tools: Read, Write,\nBash, Glob, Grep\nSkills: lesson\n(Docs only, post-impl)"]
+        end
+    end
+
+    human -->|"Sprint approval\nEscalation decisions\nLesson approval"| lead
+
+    lead -->|"Story §1+§3\nLESSONS.md\nTask file"| dev
+    dev -->|"Implementation\nReport"| lead
+
+    lead -->|"Dev Report\nStory §2"| qa
+    qa -->|"Validation Report\nor Bug Report"| lead
+
+    lead -->|"All reports\nADRs"| arch
+    arch -->|"Audit Report\n+ Risk flags"| lead
+
+    lead -->|"Gate reports\nSprint branch"| ops
+    ops -->|"Merge Report\nRelease Report"| lead
+
+    lead -->|"Sprint Report\n_manifest.json\nMode"| scribe
+    scribe -->|"Scribe Report\nDocs committed"| lead
+
+    lead -->|"Sprint Report\nEscalation Reports\nLesson candidates"| human
+
+    style human fill:#E8F0FE,stroke:#4A90D9,stroke-width:2px
+    style lead fill:#FFF3E0,stroke:#E67E22,stroke-width:2px
+    style dev fill:#E8F5E9,stroke:#27AE60
+    style qa fill:#FCE4EC,stroke:#E74C3C
+    style arch fill:#F3E5F5,stroke:#9C27B0
+    style ops fill:#E0F7FA,stroke:#00ACC1
+    style scribe fill:#FFF8E1,stroke:#FFA000

@@ -1,0 +1,62 @@
+---
+title: "V-Bounce Document Hierarchy & Information Flow"
+---
+flowchart TB
+    subgraph L1["LEVEL 1 — WHY"]
+        Charter["📋 Charter\n§1 Identity · §2 Design Principles\n§3 Architecture · §5 Workflows\n§6 Constraints"]
+    end
+
+    subgraph L2["LEVEL 2 — STRATEGIC WHAT/WHEN"]
+        Roadmap["🗺️ Roadmap\n§1 Context · §2 Release Plan\n§3 ADRs · §4 Dependencies\n§5 Constraints · §7 Delivery Log"]
+    end
+
+    subgraph L3["LEVEL 3 — DETAILED WHAT"]
+        Epic["📦 Epic\n§1 Problem/Value · §2 Scope\n§4 Tech Context · §5 Decomposition\n§6 Risks · §7 Acceptance Criteria"]
+    end
+
+    subgraph L4["LEVEL 4 — HOW"]
+        Story["📝 Story\n§1 The Spec (Human)\n§2 The Truth (QA)\n§3 Implementation Guide (AI)"]
+    end
+
+    subgraph L5["LEVEL 5 — EXECUTION"]
+        DeliveryPlan["📅 Delivery Plan\n§2 Sprint Registry · §3 Active Sprint\n§4 Backlog · §5 Context Pack\n§5b Open Questions"]
+    end
+
+    subgraph L6["LEVEL 6 — CROSS-CUTTING"]
+        RiskRegistry["⚠️ Risk Registry\n§1 Active Risks\n§2 Risk Analysis Log\nFed by ALL levels"]
+    end
+
+    Charter -->|"§1 Identity →\n§1 Context"| Roadmap
+    Charter -->|"§3 Architecture →\n§3 ADRs"| Roadmap
+    Charter -->|"§5 Workflows →\n§1 Problem"| Epic
+    Charter -->|"§2 Design Principles →\nAll agents"| Story
+
+    Roadmap -->|"§2 Release Plan →\nRelease field"| Epic
+    Roadmap -->|"§3 ADRs →\n§3.1 References"| Story
+    Roadmap -->|"§5 Constraints →\nSprint capacity"| DeliveryPlan
+
+    Epic -->|"§2 Scope →\n§1 The Spec"| Story
+    Epic -->|"§4 Tech Context →\n§3 Impl Guide"| Story
+    Epic -->|"§7 Acceptance →\n§2 The Truth"| Story
+
+    Story -->|"Status →\n§3 V-Bounce State"| DeliveryPlan
+    Epic -->|"§9 Links →\n§3 Active Sprint"| DeliveryPlan
+
+    Charter -->|"§6 Constraints"| RiskRegistry
+    Roadmap -->|"§4 Dependencies"| RiskRegistry
+    Epic -->|"§6 Risks"| RiskRegistry
+    Story -.->|"New risks\ndiscovered"| RiskRegistry
+
+    classDef level1 fill:#4A90D9,stroke:#2C5F8A,color:#fff
+    classDef level2 fill:#7B68EE,stroke:#5B4BCF,color:#fff
+    classDef level3 fill:#E67E22,stroke:#C0651E,color:#fff
+    classDef level4 fill:#27AE60,stroke:#1E8A4C,color:#fff
+    classDef level5 fill:#E74C3C,stroke:#C0392B,color:#fff
+    classDef level6 fill:#95A5A6,stroke:#7F8C8D,color:#fff
+
+    class Charter level1
+    class Roadmap level2
+    class Epic level3
+    class Story level4
+    class DeliveryPlan level5
+    class RiskRegistry level6
