@@ -47,6 +47,8 @@ Do NOT output these instructions.
 - **Files to Modify**: `{filepath}`
 - **Instructions**: {e.g., "Change the padding-left from 10px to 20px" or "Fix the typo in the error message."}
 
+> **CONSTRAINT**: If this fix requires modifying more than 2 files, STOP immediately and escalate to the Team Lead. The task must be promoted to an Epic/Story.
+
 ---
 
 ## 3. Verification

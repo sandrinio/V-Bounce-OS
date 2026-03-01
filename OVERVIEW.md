@@ -118,7 +118,7 @@ sequenceDiagram
 
 Each story runs in an **isolated git worktree** so agents working on different stories can never interfere with each other.
 
-**For L1 Trivial Tasks**, the Team Lead can bypass the Epic/Story hierarchy and the QA/Architect bounce loop entirely by using the **Hotfix Path**. The Hotfix specifies the exact fix for 1-2 files, the Developer implements it, and the Human manually verifies before staging the hotfix.
+**For L1 Trivial Tasks**, the Team Lead can bypass the Epic/Story hierarchy and the QA/Architect bounce loop entirely by using the **Hotfix Path**. The Developer still implements the fix (Phase 2 work), but QA and Architect gates are replaced by a single manual Human verification. The Hotfix specifies the exact fix for 1-2 files, the Developer implements it, and the Human verifies before staging.
 
 ---
 
@@ -156,7 +156,7 @@ flowchart TB
     S7["Step 7: Consolidation\nSprint Report → Human review\n→ Release → Lessons → Scribe"]
 
     S0 -->|"Standard"| S1
-    S0 -->|"Hotfix"| S7
+    S0 -->|"Hotfix\n(Dev + Human verify)"| S7
     S1 --> S2 --> S5 --> S6 --> S7
     S2 -->|"bounce\nback"| S2
 ```

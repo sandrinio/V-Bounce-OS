@@ -234,8 +234,7 @@ Any → Parking Lot: Deferred by decision
 
 ***HOTFIX TRANSITIONS***
 Draft → Bouncing: Hotfix template created + Triage confirmed L1
-Bouncing → Done: Dev implements + Human manually verifies
-Done → Sync: `hotfix_manager.sh sync` run to update other worktrees
+Bouncing → Done: Dev implements + Human manually verifies + DevOps runs `hotfix_manager.sh sync`
 ```
 
 ## Agent Integration

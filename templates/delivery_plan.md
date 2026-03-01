@@ -10,6 +10,7 @@ FOLLOW THIS EXACT STRUCTURE. Output sections in order 1-7.
 6b. **§5b Open Questions**: Operational questions that may block active sprint stories
 7. **§6 Completed Sprints**: ONE-LINE summaries of finished sprints (full detail in version history)
 8. **§7 Change Log**: Auto-appended on updates
+9. **§8 Applied Hotfixes**: Ledger of L1 Trivial fixes that bypassed Epic/Story hierarchy (auto-appended by `hotfix_manager.sh ledger`)
 
 Sprint Lifecycle:
 - When a sprint completes: update Sprint Registry row to "Completed",
@@ -186,3 +187,13 @@ DO NOT manually edit the table rows - they are managed by the system.
 | Date | Change | By |
 |------|--------|-----|
 | {YYYY-MM-DD} | Initial creation from Roadmap | Architect |
+
+---
+
+## 8. Applied Hotfixes
+
+> L1 Trivial fixes that bypassed the Epic/Story hierarchy. Auto-appended by `hotfix_manager.sh ledger`.
+
+| Date | Title | Brief Description |
+|------|-------|-------------------|
+| — | — | No hotfixes applied yet |
