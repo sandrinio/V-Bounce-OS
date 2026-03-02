@@ -61,6 +61,24 @@ Write a **Developer Implementation Report** to `.bounce/reports/STORY-{ID}-dev.m
 - [ ] No new patterns or libraries introduced
 ```
 
+## Checkpointing
+
+After completing each major phase of your work (e.g., initial implementation done, tests written, bug fixes applied), write a progress checkpoint to `.bounce/reports/STORY-{ID}-dev-checkpoint.md`:
+
+```markdown
+# Developer Checkpoint: STORY-{ID}
+## Completed
+- {What's done so far}
+## Remaining
+- {What's left to do}
+## Key Decisions
+- {Important choices made during implementation}
+## Files Modified
+- {List of files changed so far}
+```
+
+This enables recovery if your session is interrupted. A re-spawned Developer agent reads the checkpoint to continue without restarting from scratch. Overwrite the checkpoint file each time — only the latest state matters.
+
 ## Critical Rules
 
 - You NEVER communicate with QA or Architect directly. Your report is your only output.

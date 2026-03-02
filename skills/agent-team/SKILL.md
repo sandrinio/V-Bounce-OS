@@ -201,7 +201,13 @@ Examples:
    e. DevOps runs `hotfix_manager.sh sync` to update any active story worktrees.
    f. Update Delivery Plan Status to "Done".
 
-6. Update DELIVERY_PLAN.md: Sprint Status → "Active"
+6. **Parallel Readiness Check** (before bouncing multiple stories simultaneously):
+   - Verify test runner config excludes `.worktrees/` (vitest, jest, pytest, etc.)
+   - Verify no shared mutable state between worktrees (e.g., shared temp files, singletons writing to same path)
+   - Verify `.gitignore` includes `.worktrees/`
+   If any check fails, fix before spawning parallel stories. Intermittent test failures from worktree cross-contamination erode trust in the test suite fast.
+
+7. Update DELIVERY_PLAN.md: Sprint Status → "Active"
 ```
 
 ### Step 1: Story Initialization
@@ -215,6 +221,7 @@ mkdir -p .worktrees/STORY-{ID}/.bounce/{tasks,reports}
 - Read LESSONS.md
 - Check RISK_REGISTRY.md for risks tagged to this story or its Epic
 - If `product_documentation/_manifest.json` exists, identify docs relevant to this story's scope (match against manifest descriptions/tags). Include relevant doc references in the task file so the Developer has product context.
+- **Adjacent implementation check:** For stories that modify or extend modules touched by earlier stories in this sprint, identify existing implementations the Developer should reuse. Add to the task file: `"Reuse these existing modules: {list with file paths and brief description of what each provides}"`. This prevents agents from independently re-implementing logic that already exists — a common source of duplication when stories run in parallel.
 - Create task file in `.worktrees/STORY-{ID}/.bounce/tasks/`
 - Update DELIVERY_PLAN.md: V-Bounce State → "Bouncing"
 
@@ -224,6 +231,7 @@ mkdir -p .worktrees/STORY-{ID}/.bounce/{tasks,reports}
    - Story §1 The Spec + §3 Implementation Guide
    - LESSONS.md
    - Relevant react-best-practices rules
+   - Adjacent module references (if any — "reuse src/core/X.ts for Y")
 2. Developer writes code and Implementation Report to .bounce/reports/
 3. Lead reads report, verifies completeness
 ```
@@ -295,7 +303,12 @@ After ALL stories are merged into `sprint/S-01`:
 2. Generate Sprint Report to .bounce/sprint-report.md
 3. V-Bounce State → "Sprint Review" for all stories
 4. Present Sprint Report to human
-5. After approval → Spawn devops subagent for Sprint Release:
+5. **BLOCKING STEP — Lesson Approval:**
+   Review and approve/reject ALL flagged lessons from §4 of the Sprint Report.
+   Do NOT proceed to Sprint Release until every lesson has a status of "Yes" or "No".
+   Stale lessons lose context — approve them while the sprint is fresh.
+   Present each lesson to the human and record approved ones to LESSONS.md immediately.
+6. After approval → Spawn devops subagent for Sprint Release:
    - Merge sprint/S-01 → main (--no-ff)
    - Tag release: v{VERSION}
    - Run full test suite + build + lint on main

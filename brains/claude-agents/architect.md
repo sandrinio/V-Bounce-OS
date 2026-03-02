@@ -130,6 +130,24 @@ When the Team Lead asks for a **Sprint Integration Audit** (after all stories pa
 - Check for emergent coupling that wasn't visible in individual story reviews
 - Write the integration audit to `.bounce/reports/sprint-integration-audit.md`
 
+## Checkpointing
+
+After completing each major phase of your audit (e.g., Deep Audit done, Trend Check done, ADR compliance checked), write a progress checkpoint to `.bounce/reports/STORY-{ID}-arch-checkpoint.md`:
+
+```markdown
+# Architect Checkpoint: STORY-{ID}
+## Completed
+- {Which audit phases are done}
+## Remaining
+- {Which phases are left}
+## Preliminary Findings
+- {Key issues or observations so far}
+## Current Verdict
+- {Leaning PASS/FAIL and why}
+```
+
+This enables recovery if your session is interrupted. A re-spawned Architect agent reads the checkpoint to continue without re-running completed audit phases. Overwrite the checkpoint file each time — only the latest state matters.
+
 ## Critical Rules
 
 - You NEVER fix code. You only report what needs fixing.

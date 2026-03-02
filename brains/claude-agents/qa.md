@@ -41,6 +41,14 @@ Run Story §2.1 Gherkin scenarios against the implementation:
 - Each scenario is a binary pass/fail
 - Document exact failure conditions (input, expected, actual)
 
+### Spec Fidelity Check
+After running scenarios, verify:
+- Test count matches the number of Gherkin scenarios in §2 (not fewer, not more)
+- Fixture data matches spec examples (if spec says "5 items", test uses 5 items)
+- API contracts match §3 exactly (methods, parameters, return types)
+
+If there's a mismatch, flag it — even if the tests pass. Passing tests with wrong fixture counts means the tests aren't validating what the spec intended.
+
 ### Gold-Plating Audit
 Check for unnecessary complexity the Developer added beyond the Story spec:
 - Features not in the requirements
@@ -74,6 +82,16 @@ Write a **QA Validation Report** to `.bounce/reports/STORY-{ID}-qa.md`:
 ## Gold-Plating Audit
 - {Findings or "No gold-plating detected"}
 
+## Scrutiny Log
+- **Hardest scenario tested**: {Which scenario was closest to failing and why}
+- **Boundary probed**: {What edge case did you push hardest on}
+- **Observation**: {Anything that passed but felt fragile — worth watching in future sprints}
+
+## Spec Fidelity
+- Test count matches Gherkin scenarios: {Yes/No — if No, list discrepancies}
+- Fixture data matches spec examples: {Yes/No}
+- API contracts match §3: {Yes/No}
+
 ## Recommendation
 PASS — Ready for Architect review.
 ```
@@ -102,6 +120,24 @@ Every finding must include a non-coder analogy. Examples:
 - "Empty catch blocks" → "Smoke detectors with dead batteries"
 - "High coupling" → "Pulling one wire takes down the whole electrical system"
 - "Duplication" → "Three departments each built their own payroll system"
+
+## Checkpointing
+
+After completing each major phase of your testing (e.g., Quick Scan done, PR Review done, scenarios validated), write a progress checkpoint to `.bounce/reports/STORY-{ID}-qa-checkpoint.md`:
+
+```markdown
+# QA Checkpoint: STORY-{ID}
+## Completed
+- {Which testing phases are done}
+## Remaining
+- {Which phases are left}
+## Preliminary Findings
+- {Issues found so far, scenarios passed/failed}
+## Current Verdict
+- {Leaning PASS/FAIL and why}
+```
+
+This enables recovery if your session is interrupted. A re-spawned QA agent reads the checkpoint to continue without re-running completed test phases. Overwrite the checkpoint file each time — only the latest state matters.
 
 ## Critical Rules
 

@@ -97,7 +97,7 @@ Do NOT output these instructions.
 | **Total QA Bounces** | {N} | across all stories |
 | **Total Architect Bounces** | {N} | across all stories |
 | **Bounce Ratio** | {X}% | (total bounces / total stories) |
-| **Average Correction Tax** | {X}% | (0% = autonomous, 100% = human rewrote everything) |
+| **Average Correction Tax** | {X}% | 🟢 0-5% · 🟡 6-15% · 🔴 16%+ requires process review |
 | **First-Pass Success Rate** | {X}% | stories that passed QA on first try |
 | **Merge Conflicts** | {N} simple, {N} complex | |
 
@@ -106,6 +106,12 @@ Do NOT output these instructions.
 | Story | Tokens | Duration | Agent Sessions | Bounces | Cost |
 |-------|--------|----------|----------------|---------|------|
 | STORY-{ID} | {N} | {Xh Ym} | {N} | {N} | ${X.XX} |
+
+### Threshold Alerts
+> Flag any metrics that crossed warning or critical thresholds. If none, write "No threshold alerts."
+
+- {e.g., "STORY-001-05: Correction Tax 10% (🟡) — root cause: test architecture rework due to ESM timer conflict"}
+- {e.g., "STORY-002-03: 2 QA bounces — spec ambiguity in edge case handling"}
 
 ---
 
