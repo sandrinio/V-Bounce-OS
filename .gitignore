@@ -1,1 +1,4 @@
 .DS_Store
+
+# AI/developer working artifacts (never commit)
+/temporary/
