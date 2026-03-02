@@ -24,6 +24,27 @@ The next time an agent writes code, it reads the `_manifest.json` and the `LESSO
 
 ---
 
+## 🛠️ The Tech Stack
+
+V-Bounce OS is built to be **local-first, privacy-conscious, and blazing fast**.
+
+- **Vector Database**: [LanceDB](https://lancedb.com/) — A serverless, local vector DB used to store and query project context.
+- **Embeddings**: [Xenova Transformers](https://github.com/xenova/transformers.js) — Local execution of `all-MiniLM-L6-v2`. **No private code is ever sent to external embedding APIs for RAG.**
+- **Runtime**: Node.js — Powering the validation pipeline and semantic search engine.
+- **Data Contract**: YAML Frontmatter + Markdown — Ensures human-readable agent handoffs that are also strictly machine-parsable.
+
+---
+
+## 🧠 Semantic Context (Local RAG)
+
+V-Bounce OS doesn't just dump your entire codebase into a prompt. It uses **Retrieval-Augmented Generation (RAG)** to find only the rules that matter right now.
+
+1. **Indexing**: The `pre_bounce_sync.sh` script crawls your `product_plans/`, `LESSONS.md`, and `Roadmap ADRs`, converting them into searchable vectors.
+2. **Querying**: Agents use the built-in `./scripts/vbounce_ask.mjs` tool to ask questions like *"What are the architectural constraints for auth?"* or *"What mistakes did we make with the last React component?"*.
+3. **Targeted Context**: The agent receives only the most relevant 3-5 snippets of project history, preventing context-window bloat and improving instruction following.
+
+---
+
 ## 🚀 Quick Start
 
 One command to install the entire methodology directly into your AI assistant.
