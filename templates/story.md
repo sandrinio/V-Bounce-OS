@@ -1,7 +1,7 @@
 <instructions>
 FOLLOW THIS EXACT STRUCTURE. Output sections in order 1-4.
 
-1. **Metadata Table**: Parent Epic, Status, Ambiguity, Actor, Complexity, Complexity Label
+1. **YAML Frontmatter**: Story ID, Parent Epic, Status, Ambiguity, Context Source, Actor, Complexity, Complexity Label
 2. **§1 The Spec**: User Story (As a... I want... So that...) + Detailed Requirements
 3. **§2 The Truth**: Gherkin acceptance criteria + manual verification steps
 4. **§3 Implementation Guide**: Files to modify, technical logic, API contract
@@ -38,19 +38,18 @@ Agent handoff sections:
 Do NOT output these instructions.
 </instructions>
 
+---
+story_id: "STORY-{EpicID}-{StoryID}"
+parent_epic_ref: "EPIC-{ID}"
+status: "Draft / Refinement / Probing/Spiking / Ready to Bounce / Bouncing / QA Passed / Architect Passed / Sprint Review / Done / Escalated / Parking Lot"
+ambiguity: "🔴 High / 🟡 Medium / 🟢 Low"
+context_source: "Epic §{section} / Codebase / User Input"
+actor: "{Persona Name}"
+complexity: "Small (1 file) / Medium (2-3 files) / Large (Refactor needed)"
+complexity_label: "L1 / L2 / L3 / L4 (default: L2)"
+---
+
 # STORY-{EpicID}-{StoryID}: {Story Name}
-
-## Metadata
-
-| Field | Value |
-|-------|-------|
-| **Parent Epic** | [EPIC-{ID}: {Name}](link) |
-| **Status** | Draft / Refinement / Probing/Spiking / Ready to Bounce / Bouncing / QA Passed / Architect Passed / Sprint Review / Done / Escalated / Parking Lot |
-| **Ambiguity** | 🔴 High / 🟡 Medium / 🟢 Low |
-| **Context Source** | Epic §{section} / Codebase / User Input |
-| **Actor** | {Persona Name} |
-| **Complexity** | Small (1 file) / Medium (2-3 files) / Large (Refactor needed) |
-| **Complexity Label** | L1 / L2 / L3 / L4 (default: L2) |
 
 ### Complexity Labels (Sprint Planning)
 

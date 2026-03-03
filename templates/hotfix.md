@@ -1,7 +1,7 @@
 <instructions>
 FOLLOW THIS EXACT STRUCTURE. This is a lightweight alternative to the Epic/Story hierarchy for L1 (Trivial) tasks.
 
-1. **Metadata Table**: Target Release, Status, Actor
+1. **YAML Frontmatter**: Hotfix ID, Status, Target Release, Actor, Complexity Label
 2. **§1 The Fix**: What is broken/changing and why
 3. **§2 Implementation Instructions**: Which file(s) to change and what to do
 4. **§3 Verification**: Simple manual test
@@ -20,18 +20,15 @@ Constraints:
 Do NOT output these instructions.
 </instructions>
 
-# HOTFIX: {Name}
-
-## Metadata
-
-| Field | Value |
-|-------|-------|
-| **Target Release** | `D-{NN}_{release_name}` |
-| **Status** | Draft / Bouncing / Done |
-| **Actor** | {Persona Name / User} |
-| **Complexity Label** | L1 (Trivial) |
-
 ---
+hotfix_id: "HOTFIX-{Date}-{Name}"
+status: "Draft / Bouncing / Done"
+target_release: "D-{NN}_{release_name}"
+actor: "{Persona Name / User}"
+complexity_label: "L1 (Trivial)"
+---
+
+# HOTFIX: {Name}
 
 ## 1. The Fix
 > What needs to be changed and why.
