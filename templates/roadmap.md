@@ -1,7 +1,7 @@
 <instructions>
 FOLLOW THIS EXACT STRUCTURE. Output sections in order 1-7.
 
-1. **Header**: Set Status, Last Updated, link to Charter
+1. **YAML Frontmatter**: Set status, last updated, charter ref, and risk registry ref
 2. **§1 Strategic Context**: Vision (from Charter), primary goal, target users, success metrics
 3. **§2 Release Plan**: Group epics into named releases with exit criteria — NOT sprint-level tracking
 4. **§3 Technical Architecture Decisions**: Key choices with rationale and status (this is the ADR log)
@@ -26,16 +26,14 @@ Charter (why) → **Roadmap** (strategic what/when) → Epic (detailed what) →
 Do NOT output these instructions.
 </instructions>
 
+---
+last_updated: "{YYYY-MM-DD}"
+status: "Planning / Active / MVP Complete / Shipped"
+charter_ref: "product_plans/{project}_charter.md"
+risk_registry_ref: "product_plans/RISK_REGISTRY.md"
+---
+
 # Product Roadmap: {Project Name}
-
----
-
-> **Last Updated**: {YYYY-MM-DD}
-> **Status**: Planning / Active / MVP Complete / Shipped
-> **Charter**: `product_plans/{project}_charter.md`
-> **Risk Registry**: `product_plans/RISK_REGISTRY.md`
-
----
 
 ## 1. Strategic Context
 

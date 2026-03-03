@@ -1,7 +1,7 @@
 <instructions>
 FOLLOW THIS EXACT STRUCTURE. Output sections in order 1-6.
 
-1. **Header**: Sprint ID, Goal, Dates, Status, Delivery
+1. **YAML Frontmatter**: Sprint ID, Goal, Dates, Status, Delivery Ref, Delivery Plan Ref
 2. **§1 What Was Delivered**: User-facing summary — what's accessible/usable vs what's internal/backend
 3. **§2 Story Results**: Table of all stories with final status and per-story metrics
 4. **§3 Execution Metrics**: AI performance metrics — tokens, duration, bounces, correction tax
@@ -20,17 +20,16 @@ versus what was built under the hood. Write it from the user's perspective, not 
 Do NOT output these instructions.
 </instructions>
 
+---
+sprint_id: "S-{XX}"
+sprint_goal: "{One-sentence North Star}"
+dates: "{MM/DD - MM/DD}"
+status: "Achieved / Partially Achieved / Failed"
+delivery_ref: "D-{NN}_{release_name}"
+delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
+---
+
 # Sprint Report: S-{XX}
-
----
-
-> **Sprint Goal**: {One-sentence North Star}
-> **Dates**: {MM/DD - MM/DD}
-> **Status**: Achieved / Partially Achieved / Failed
-> **Delivery**: D-{NN}_{release_name}
-> **Delivery Plan**: `product_plans/{delivery}/DELIVERY_PLAN.md`
-
----
 
 ## 1. What Was Delivered
 

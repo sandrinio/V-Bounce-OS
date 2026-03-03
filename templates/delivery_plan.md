@@ -1,7 +1,7 @@
 <instructions>
 FOLLOW THIS EXACT STRUCTURE. Output sections in order 1-7.
 
-1. **Header**: Set Status, link to Roadmap + Risk Registry, Sprint Cadence
+1. **YAML Frontmatter**: Set status, last updated, roadmap ref, risk registry ref, delivery ref, and sprint cadence
 2. **§1 Project Window**: Start/End dates, total sprints, team
 3. **§2 Sprint Registry**: Table of ALL sprints with goals and status (auto-populated between markers)
 4. **§3 Active Sprint**: CURRENT sprint only — goal + assigned stories with L1-L4 labels + V-Bounce state
@@ -59,18 +59,16 @@ Downstream consumers:
 Do NOT output these instructions.
 </instructions>
 
+---
+last_updated: "{YYYY-MM-DD}"
+status: "Planning / In Sprint / Delivered"
+roadmap_ref: "product_plans/{project}_roadmap.md"
+risk_registry_ref: "product_plans/RISK_REGISTRY.md"
+delivery_ref: "D-{NN}_{release_name}"
+sprint_cadence: "1-week sprints within 2-week project window"
+---
+
 # Delivery Plan: {Project Name}
-
----
-
-> **Last Updated**: {YYYY-MM-DD}
-> **Status**: Planning / In Sprint / Delivered
-> **Roadmap**: `product_plans/{project}_roadmap.md`
-> **Risk Registry**: `product_plans/RISK_REGISTRY.md`
-> **Delivery**: `D-{NN}_{release_name}`
-> **Sprint Cadence**: 1-week sprints within 2-week project window
-
----
 
 ## 1. Project Window
 

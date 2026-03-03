@@ -41,6 +41,12 @@ const EXPECTED_PROMPT_SIGNATURES = {
         'conflicts_detected:',
         'type: "sprint-release"',
         'version:'
+    ],
+    'scribe.md': [
+        'mode:',
+        'docs_created:',
+        'docs_updated:',
+        'docs_removed:'
     ]
 };
 

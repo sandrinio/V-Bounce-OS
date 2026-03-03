@@ -1,7 +1,7 @@
 <instructions>
 FOLLOW THIS EXACT STRUCTURE. Output sections in order 1-4.
 
-1. **Header**: Set Status, link to Roadmap and Delivery Plan
+1. **YAML Frontmatter**: Set status, last updated, and roadmap ref
 2. **§1 Active Risks**: Table of open risks with phase, source, likelihood, impact, mitigation
 3. **§2 Risk Analysis Log**: Phase-stamped entries appended on state transitions
 4. **§3 Closed Risks**: Resolved/mitigated risks moved here
@@ -31,15 +31,13 @@ The Risk Registry is reviewed by the Team Lead at sprint boundaries and by the A
 Do NOT output these instructions.
 </instructions>
 
+---
+last_updated: "{YYYY-MM-DD}"
+status: "Active / Archived"
+roadmap_ref: "product_plans/{project}_roadmap.md"
+---
+
 # Risk Registry: {Project Name}
-
----
-
-> **Last Updated**: {YYYY-MM-DD}
-> **Status**: Active / Archived
-> **Roadmap**: `product_plans/{project}_roadmap.md`
-
----
 
 ## 1. Active Risks
 

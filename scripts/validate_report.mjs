@@ -26,7 +26,8 @@ const SCHEMAS = {
     devops: {
         base: ['type', 'status'],
         conditional: { 'story-merge': ['conflicts_detected'], 'sprint-release': ['version'] }
-    }
+    },
+    scribe: ['mode', 'docs_created', 'docs_updated', 'docs_removed']
 };
 
 function extractFrontmatter(content) {
@@ -89,6 +90,7 @@ function main() {
     else if (filename.endsWith('-qa.md')) agentType = 'qa';
     else if (filename.endsWith('-arch.md')) agentType = 'arch';
     else if (filename.endsWith('-devops.md')) agentType = 'devops';
+    else if (filename.endsWith('-scribe.md')) agentType = 'scribe';
 
     if (agentType === 'unknown') {
         console.error(`WARNING: Unrecognized report type for ${filename}. Ensure filename ends in -dev.md, -qa.md, -arch.md, or -devops.md.`);
@@ -108,6 +110,10 @@ function main() {
         if (agentType === 'qa') validateQA(data);
         if (agentType === 'arch') validateArch(data);
         if (agentType === 'devops') validateDevops(data);
+        if (agentType === 'scribe') {
+            const missing = SCHEMAS.scribe.filter(k => !(k in data));
+            if (missing.length > 0) throw new Error(`SCRIBE_SCHEMA_ERROR: Missing required keys: ${missing.join(', ')}`);
+        }
 
         console.log(`VALID: ${filename} matches the ${agentType.toUpperCase()} schema.`);
         process.exit(0);

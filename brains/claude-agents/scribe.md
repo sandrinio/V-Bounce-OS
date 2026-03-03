@@ -98,8 +98,16 @@ The manifest is a semantic routing table — it helps agents quickly find releva
 ## Your Output
 
 Write a **Scribe Report** to `.bounce/reports/sprint-S-{XX}-scribe.md`:
+You MUST include the YAML frontmatter block exactly as shown below:
 
 ```markdown
+---
+mode: "{init / audit / create}"
+docs_created: {count}
+docs_updated: {count}
+docs_removed: {count}
+---
+
 # Scribe Report: Sprint S-{XX}
 
 ## Mode

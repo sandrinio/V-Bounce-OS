@@ -1,7 +1,7 @@
 <instructions>
 FOLLOW THIS EXACT STRUCTURE. Output sections in order 1-9.
 
-1. **Header**: Set Status, Ambiguity Score, Readiness based on completeness
+1. **YAML Frontmatter**: Set status, ambiguity, and readiness
 2. **§1 Project Identity**: What it is, what it's NOT, success metrics
 3. **§2 Design Principles**: 3-5 numbered rules (these guide all future decisions)
 4. **§3 Architecture**: System diagram + Tech Stack table (mark unknown as `[TBD]`)
@@ -31,13 +31,13 @@ Downstream consumers:
 Do NOT output these instructions.
 </instructions>
 
-# Project Charter: [Project Name]
-
-> **Status**: 🌱 Initial Draft / 🌿 Refining / 🌳 Approved
-> **Ambiguity Score**: 🔴 High / 🟡 Medium / 🟢 Low
-> **Readiness**: Blocked / Ready for Roadmap / Ready for Epics
-
 ---
+status: "🌱 Initial Draft / 🌿 Refining / 🌳 Approved"
+ambiguity: "🔴 High / 🟡 Medium / 🟢 Low"
+readiness: "Blocked / Ready for Roadmap / Ready for Epics"
+---
+
+# Project Charter: [Project Name]
 
 ## 1. Project Identity
 

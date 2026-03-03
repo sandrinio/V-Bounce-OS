@@ -1,7 +1,7 @@
 <instructions>
 FOLLOW THIS EXACT STRUCTURE. Output sections in order.
 
-1. **Metadata Table**: Status, Ambiguity, Priority, Owner, Tags, Target Date
+1. **YAML Frontmatter**: Epic ID, Status, Ambiguity, Context Source, Release, Owner, Priority, Tags, Target Date
 2. **§1 Problem & Value**: Why (problem), What (solution), Success Metrics
 3. **§2 Scope Boundaries**: IN-SCOPE checkboxes, OUT-OF-SCOPE list
 4. **§3 Context**: Personas, User Journey diagram, Constraints table
@@ -37,21 +37,19 @@ Downstream consumers:
 Do NOT output these instructions.
 </instructions>
 
-# EPIC-{ID}: {Epic Name}
-
-## Metadata
-| Field | Value |
-|-------|-------|
-| **Status** | Draft / Ready / In Progress / Done |
-| **Ambiguity** | 🔴 High / 🟡 Medium / 🟢 Low |
-| **Context Source** | Charter §{section} / Roadmap §{section} / User Input |
-| **Release** | {Release name from Roadmap §2} |
-| **Owner** | {PM/PO name} |
-| **Priority** | P0 - Critical / P1 - High / P2 - Medium |
-| **Tags** | #frontend, #api, #auth |
-| **Target Date** | {YYYY-MM-DD} |
-
 ---
+epic_id: "EPIC-{ID}"
+status: "Draft / Ready / In Progress / Done"
+ambiguity: "🔴 High / 🟡 Medium / 🟢 Low"
+context_source: "Charter §{section} / Roadmap §{section} / User Input"
+release: "{Release name from Roadmap §2}"
+owner: "{PM/PO name}"
+priority: "P0 - Critical / P1 - High / P2 - Medium"
+tags: ["frontend", "api", "auth"]
+target_date: "{YYYY-MM-DD}"
+---
+
+# EPIC-{ID}: {Epic Name}
 
 ## 1. Problem & Value
 > Target Audience: Stakeholders, Business Sponsors
