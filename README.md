@@ -24,6 +24,18 @@ The next time an agent writes code, it reads the `_manifest.json` and the `LESSO
 
 ---
 
+## 📂 State-Based Folder Structure
+
+V-Bounce OS organizes planning documents (`product_plans/`) through a strict state machine based on folder location:
+
+- **`strategy/`**: High-level context (Charter, Roadmap, Risk Registry, Release Plans). Frozen during active sprints.
+- **`backlog/`**: Where unassigned work lives. Epics and their child Stories are refined here until selected for a sprint.
+- **`sprints/`**: The active execution workspace. A physical `sprint-XX/` boundary is created and Stories are moved in. Only one sprint is "Active" at a time.
+- **`hotfixes/`**: Trivial, emergency tasks that bypass sprint cycles.
+- **`archive/`**: Immutable history. Finished sprint folders and fully completed Epics are permanently moved here.
+
+---
+
 ## 🛠️ The Tech Stack
 
 V-Bounce OS is built to be **local-first, privacy-conscious, and blazing fast**.

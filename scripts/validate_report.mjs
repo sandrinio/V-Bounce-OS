@@ -14,20 +14,20 @@ import yaml from 'js-yaml';
 
 // Defined schemas for each report type
 const SCHEMAS = {
-    dev: ['status', 'correction_tax', 'tests_written', 'files_modified', 'lessons_flagged'],
+    dev: ['status', 'correction_tax', 'tokens_used', 'tests_written', 'files_modified', 'lessons_flagged'],
     qa: {
-        base: ['status', 'bounce_count', 'bugs_found', 'gold_plating_detected'],
+        base: ['status', 'bounce_count', 'tokens_used', 'bugs_found', 'gold_plating_detected'],
         conditional: { 'FAIL': ['failed_scenarios'] }
     },
     arch: {
-        base: ['status'],
+        base: ['status', 'tokens_used'],
         conditional: { 'PASS': ['safe_zone_score', 'ai_isms_detected', 'regression_risk'], 'FAIL': ['bounce_count', 'critical_failures'] }
     },
     devops: {
-        base: ['type', 'status'],
+        base: ['type', 'status', 'tokens_used'],
         conditional: { 'story-merge': ['conflicts_detected'], 'sprint-release': ['version'] }
     },
-    scribe: ['mode', 'docs_created', 'docs_updated', 'docs_removed']
+    scribe: ['mode', 'tokens_used', 'docs_created', 'docs_updated', 'docs_removed']
 };
 
 function extractFrontmatter(content) {

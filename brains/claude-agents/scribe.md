@@ -100,9 +100,12 @@ The manifest is a semantic routing table — it helps agents quickly find releva
 Write a **Scribe Report** to `.bounce/reports/sprint-S-{XX}-scribe.md`:
 You MUST include the YAML frontmatter block exactly as shown below:
 
+**Token Tracking**: Before generating this report, retrieve your session's token usage (if you are Claude, ask your CLI; if Gemini, read your context estimate; if Codex, read your log output) and populate `tokens_used`.
+
 ```markdown
 ---
 mode: "{init / audit / create}"
+tokens_used: {number}
 docs_created: {count}
 docs_updated: {count}
 docs_removed: {count}

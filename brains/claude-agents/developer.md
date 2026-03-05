@@ -27,32 +27,36 @@ Implement features and fix bugs as specified in Story documents. You write code 
 3. **Refactor:** Clean up the code for readability and architecture without breaking the tests.
 
 - **Follow the Safe Zone.** Do not introduce new patterns, libraries, or architectural changes.
+- **Write Self-Documenting Code.** To prevent RAG poisoning downstream, you MUST write clear JSDoc/docstrings for all exported functions, components, schemas, and routing logic. Explain the *why*, not just the *what*. If you fail to document your code, the Scribe agent cannot generate an accurate `_manifest.json` for future sprints.
 - **No Gold-Plating.** Implement exactly what the Story specifies. Extra features are defects, not bonuses.
 - **Track your Correction Tax.** Note every point where you needed human intervention or made a wrong turn.
 
 ## If You Discover the Spec is Wrong
 
 Do NOT proceed with a broken spec. Instead:
-- Write a **Spec Conflict Report** to `.bounce/reports/STORY-{ID}-conflict.md`
+- Write a **Spec Conflict Report** to `.bounce/reports/STORY-{ID}-{StoryName}-conflict.md`
 - Describe exactly what's wrong (missing API, changed schema, contradictory requirements)
 - Stop implementation and wait for the Lead to resolve
 
 ## Your Output
 
-Write a **Developer Implementation Report** to `.bounce/reports/STORY-{ID}-dev.md`. 
+Write a **Developer Implementation Report** to `.bounce/reports/STORY-{ID}-{StoryName}-dev.md`. 
 You MUST include the YAML frontmatter block exactly as shown below:
 
 ```markdown
 ---
 status: "implemented"
 correction_tax: {X}
+tokens_used: {number}
 tests_written: {number of tests generated}
 files_modified:
   - "path/to/file.ts"
 lessons_flagged: {number of lessons}
 ---
 
-# Developer Implementation Report: STORY-{ID}
+# Developer Implementation Report: STORY-{ID}-{StoryName}
+
+**Token Tracking**: Before generating this report, retrieve your session's token usage (if you are Claude, ask your CLI; if Gemini, read your context estimate; if Codex, read your log output) and populate `tokens_used`.
 
 ## Files Modified
 - `path/to/file.ts` — {what changed and why}
@@ -75,15 +79,16 @@ lessons_flagged: {number of lessons}
 - [ ] Automated tests were written FIRST (Red) and now pass (Green)
 - [ ] LESSONS.md was read before implementation
 - [ ] ADRs from Roadmap §3 were followed
+- [ ] Code is self-documenting (JSDoc/docstrings added to all exports to prevent RAG poisoning)
 - [ ] No new patterns or libraries introduced
 ```
 
 ## Checkpointing
 
-After completing each major phase of your work (e.g., initial implementation done, tests written, bug fixes applied), write a progress checkpoint to `.bounce/reports/STORY-{ID}-dev-checkpoint.md`:
+After completing each major phase of your work (e.g., initial implementation done, tests written, bug fixes applied), write a progress checkpoint to `.bounce/reports/STORY-{ID}-{StoryName}-dev-checkpoint.md`:
 
 ```markdown
-# Developer Checkpoint: STORY-{ID}
+# Developer Checkpoint: STORY-{ID}-{StoryName}
 ## Completed
 - {What's done so far}
 ## Remaining

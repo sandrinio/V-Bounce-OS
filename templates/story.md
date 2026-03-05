@@ -12,8 +12,11 @@ Ambiguity Score:
 - 🟡 Medium: Logic clear, files TBD
 - 🟢 Low: Ready for coding
 
-Output location: `product_plans/{delivery}/EPIC-{NNN}_{epic_name}/STORY-{EpicID}-{StoryID}.md`
-(Stories live inside their parent Epic folder — a Story never exists without an Epic.)
+Output location (Draft/Refinement): `product_plans/backlog/EPIC-{NNN}_{epic_name}/STORY-{EpicID}-{StoryID}-{StoryName}.md`
+
+Sprint Lifecycle Rule:
+- When a sprint starts, this Story file is MOVED to `product_plans/sprints/sprint-{XX}/`.
+- When the sprint completes, this Story file is MOVED to `product_plans/archive/sprints/sprint-{XX}/`.
 
 Document Hierarchy Position: LEVEL 4 (Charter → Roadmap → Epic → **Story**)
 
@@ -39,7 +42,7 @@ Do NOT output these instructions.
 </instructions>
 
 ---
-story_id: "STORY-{EpicID}-{StoryID}"
+story_id: "STORY-{EpicID}-{StoryID}-{StoryName}"
 parent_epic_ref: "EPIC-{ID}"
 status: "Draft / Refinement / Probing/Spiking / Ready to Bounce / Bouncing / QA Passed / Architect Passed / Sprint Review / Done / Escalated / Parking Lot"
 ambiguity: "🔴 High / 🟡 Medium / 🟢 Low"

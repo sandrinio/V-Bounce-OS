@@ -13,7 +13,7 @@ Risk Levels:
 
 Risk Statuses: Open → Mitigating → Mitigated → Closed / Accepted
 
-Output location: `product_plans/RISK_REGISTRY.md`
+Output location: `product_plans/strategy/RISK_REGISTRY.md`
 
 Document Hierarchy Position: LEVEL 6 — CROSS-CUTTING
 Charter (why) → Roadmap (strategic what/when) → Epic (detailed what) → Story (how) → Delivery Plan (execution) → **Risk Registry** (risks)
@@ -43,7 +43,7 @@ roadmap_ref: "product_plans/{project}_roadmap.md"
 
 | ID | Risk | Phase | Source | Likelihood | Impact | Mitigation | Owner | Status |
 |----|------|-------|--------|------------|--------|------------|-------|--------|
-| R-001 | {Risk description} | {Verification/Bounce/Review} | {EPIC-XXX or STORY-XXX-YY} | Low/Medium/High | Low/Medium/High/Critical | {Mitigation strategy} | {Owner} | Open |
+| R-001 | {Risk description} | {Verification/Bounce/Review} | {EPIC-XXX or STORY-XXX-YY-{story_name}} | Low/Medium/High | Low/Medium/High/Critical | {Mitigation strategy} | {Owner} | Open |
 
 **Summary**: {X} Active | {Y} Mitigating | {Z} Accepted
 

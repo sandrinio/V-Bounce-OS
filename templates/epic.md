@@ -17,7 +17,7 @@ Ambiguity Score:
 - 🟡 Medium: Scope clear, tech TBD → Ready for decomposition
 - 🟢 Low: All filled → Ready for Stories
 
-Output location: `product_plans/{delivery}/EPIC-{NNN}_{epic_name}/EPIC-{NNN}.md`
+Output location: `product_plans/backlog/EPIC-{NNN}_{epic_name}/EPIC-{NNN}_{epic_name}.md`
 
 Document Hierarchy Position: LEVEL 3 (Charter → Roadmap → **Epic** → Story)
 
@@ -188,9 +188,11 @@ Feature: {Epic Name}
 ## 9. Artifact Links
 > Auto-populated as Epic is decomposed.
 
-**Stories:**
-- [ ] STORY-{ID}-01: {name}
-- [ ] STORY-{ID}-02: {name}
+**Stories (Status Tracking):**
+> Keep track of where stories live contextually.
+- [ ] STORY-{ID}-01-{story_name} -> Backlog
+- [ ] STORY-{ID}-02-{story_name} -> Active (Sprint XX)
+- [x] STORY-{ID}-03-{story_name} -> Archived (Sprint YY)
 
 **References:**
 - Charter: [PROJECT CHARTER](link)

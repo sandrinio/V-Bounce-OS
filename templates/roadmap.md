@@ -11,7 +11,7 @@ FOLLOW THIS EXACT STRUCTURE. Output sections in order 1-7.
 8. **§7 Delivery Log**: Release notes for completed deliveries (appended by Team Lead on delivery archive)
 9. **§8 Change Log**: Auto-appended on updates
 
-Output location: `product_plans/{project}_roadmap.md`
+Output location: `product_plans/strategy/{project}_roadmap.md`
 
 Role of this document:
 - This is the STRATEGIC layer between Charter (why) and Delivery Plan (operational execution).

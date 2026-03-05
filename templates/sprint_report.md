@@ -25,6 +25,7 @@ sprint_id: "S-{XX}"
 sprint_goal: "{One-sentence North Star}"
 dates: "{MM/DD - MM/DD}"
 status: "Achieved / Partially Achieved / Failed"
+total_tokens_used: {N}
 delivery_ref: "D-{NN}_{release_name}"
 delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 ---
@@ -50,7 +51,7 @@ delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 ### Not Completed
 > Stories that were planned but didn't make it (escalated, deferred, or partially done).
 
-- {e.g., "STORY-001-03: Email notifications — Escalated (template integration failed 3x)"}
+- {e.g., "STORY-001-03-email_notifications — Escalated (template integration failed 3x)"}
 
 ### Product Docs Affected
 > Any product documentation files modified, created, or identified for updates. Handed off to Scribe agent.
@@ -63,13 +64,13 @@ delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 
 | Story | Epic | Label | Final State | Bounces (QA) | Bounces (Arch) | Correction Tax |
 |-------|------|-------|-------------|--------------|----------------|----------------|
-| STORY-{ID}: {name} | EPIC-{ID} | L{N} | Done / Escalated / Parking Lot | {N} | {N} | {X}% |
+| STORY-{ID}-{story_name} | EPIC-{ID} | L{N} | Done / Escalated / Parking Lot | {N} | {N} | {X}% |
 
 ### Story Highlights
-- **{STORY-ID}**: {1-sentence summary of what was built and any notable decisions}
+- **STORY-{ID}-{story_name}**: {1-sentence summary of what was built and notable decisions}
 
 ### Escalated Stories (if any)
-- **{STORY-ID}**: Escalated after {N} bounces. Root cause: {why}. Recommendation: {rewrite spec / descope / kill}.
+- **STORY-{ID}-{story_name}**: Escalated after {N} bounces. Root cause: {why}. Recommendation: {rewrite spec / descope / kill}.
 
 ---
 
@@ -104,13 +105,13 @@ delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 
 | Story | Tokens | Duration | Agent Sessions | Bounces | Cost |
 |-------|--------|----------|----------------|---------|------|
-| STORY-{ID} | {N} | {Xh Ym} | {N} | {N} | ${X.XX} |
+| STORY-{ID}-{story_name} | {N} | {Xh Ym} | {N} | {N} | ${X.XX} |
 
 ### Threshold Alerts
 > Flag any metrics that crossed warning or critical thresholds. If none, write "No threshold alerts."
 
-- {e.g., "STORY-001-05: Correction Tax 10% (🟡) — root cause: test architecture rework due to ESM timer conflict"}
-- {e.g., "STORY-002-03: 2 QA bounces — spec ambiguity in edge case handling"}
+- {e.g., "STORY-001-05-test_arch: Correction Tax 10% (🟡) — root cause: test architecture rework due to ESM timer conflict"}
+- {e.g., "STORY-002-03-edge_cases: 2 QA bounces — spec ambiguity in edge case handling"}
 
 ---
 
@@ -120,7 +121,7 @@ delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 
 | Source | Lesson | Approved? |
 |--------|--------|-----------|
-| STORY-{ID} Dev Report | {What happened and proposed rule} | Pending / Yes / No |
+| STORY-{ID}-{story_name} Dev Report | {What happened and proposed rule} | Pending / Yes / No |
 
 ---
 
@@ -135,8 +136,8 @@ delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 ### What Didn't Go Well
 > Problems encountered, root causes, and impact on the sprint.
 
-- {e.g., "STORY-001-03 escalated because the spec was ambiguous — 3 QA bounces wasted"}
-- {e.g., "Merge conflict on STORY-002-01 required a fix story — cost an extra half-day"}
+- {e.g., "STORY-001-03-api_spec escalated because the spec was ambiguous — 3 QA bounces wasted"}
+- {e.g., "Merge conflict on STORY-002-01-database required a fix story — cost an extra half-day"}
 
 ### Process Improvements
 > Changes to the V-Bounce delivery process itself — not just this project, but how we work.
