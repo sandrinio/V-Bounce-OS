@@ -69,48 +69,57 @@ Risk Registry ←── ALL levels (cross-cutting input)
 
 | Document | Template Path | Output Location |
 |----------|---------------|-----------------|
-| Charter | `templates/charter.md` | `product_plans/{project}_charter.md` |
-| Roadmap | `templates/roadmap.md` | `product_plans/{project}_roadmap.md` |
-| Risk Registry | `templates/risk_registry.md` | `product_plans/RISK_REGISTRY.md` |
-| Delivery Plan | `templates/delivery_plan.md` | `product_plans/{delivery}/DELIVERY_PLAN.md` |
-| Epic | `templates/epic.md` | `product_plans/{delivery}/EPIC-{NNN}_{name}/EPIC-{NNN}.md` |
-| Story | `templates/story.md` | `product_plans/{delivery}/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}.md` |
-| Hotfix | `templates/hotfix.md` | `product_plans/{delivery}/HOTFIX-{Date}-{Name}.md` |
-| Sprint Report | `templates/sprint_report.md` | `.bounce/sprint-report.md` (archived after sprint) |
+| Charter | `templates/charter.md` | `product_plans/strategy/{project}_charter.md` |
+| Roadmap | `templates/roadmap.md` | `product_plans/strategy/{project}_roadmap.md` |
+| Risk Registry | `templates/risk_registry.md` | `product_plans/strategy/RISK_REGISTRY.md` |
+| Delivery Plan | `templates/delivery_plan.md` | `product_plans/strategy/{delivery}_delivery_plan.md` |
+| Sprint Plan | `templates/sprint.md` | `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` |
+| Epic | `templates/epic.md` | `product_plans/backlog/EPIC-{NNN}_{name}/EPIC-{NNN}_{name}.md` |
+| Story | `templates/story.md` | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{StoryName}.md` |
+| Hotfix | `templates/hotfix.md` | `product_plans/hotfixes/HOTFIX-{Date}-{Name}.md` |
+| Sprint Report | `templates/sprint_report.md` | `product_plans/sprints/sprint-{XX}/sprint-report.md` |
 
 ### Product Plans Folder Structure
 
+### Product Plans Folder Structure (State-Based)
+
 ```
 product_plans/
-├── {project}_charter.md                 ← project-level (root)
-├── {project}_roadmap.md                 ← project-level (root)
-├── RISK_REGISTRY.md                     ← project-level (root)
+├── strategy/                      ← high-level, frozen during sprints
+│   ├── charter.md
+│   ├── roadmap.md
+│   ├── delivery_plan.md           ← release timelines
+│   └── risk_registry.md
 │
-├── D-01_{release_name}/                 ← delivery folder (1 per release)
-│   ├── DELIVERY_PLAN.md                 ← at delivery root
-│   ├── EPIC-001_{epic_name}/            ← epic folder
-│   │   ├── EPIC-001.md                  ← epic document
-│   │   ├── STORY-001-01.md              ← stories live with their epic
-│   │   └── STORY-001-02.md
-│   └── EPIC-002_{epic_name}/
-│       ├── EPIC-002.md
-│       └── STORY-002-01.md
+├── backlog/                       ← planned but NOT active
+│   ├── EPIC-001_authentication/
+│   │   ├── EPIC-001_authentication.md
+│   │   ├── STORY-001-01-login_ui.md
+│   │   └── STORY-001-02-auth_api.md
 │
-├── D-02_{release_name}/                 ← next delivery
-│   ├── DELIVERY_PLAN.md
-│   └── ...
+├── sprints/                       ← active execution workspace
+│   ├── sprint-01/                 ← active sprint boundary
+│   │   ├── sprint-01.md           ← Sprint Plan
+│   │   └── STORY-001-01-login_ui.md       ← (moved here during sprint setup)
 │
-└── archive/                             ← completed deliveries
-    └── D-01_{release_name}/             ← whole folder moved here
+├── hotfixes/                      ← emergency tasks bypassing sprints
+│   └── HOTFIX-20260306-db_crash.md
+│
+└── archive/                       ← immutable history
+    ├── sprints/
+    │   └── sprint-01/             ← (whole sprint folder moved here when closed)
+    │       ├── sprint-01.md
+    │       ├── STORY-001-01-login_ui.md
+    │       └── sprint-report.md   
+    └── epics/
+        └── EPIC-001_authentication/       ← (moved here only when 100% complete)
 ```
 
 **Key rules:**
-- Charter, Roadmap, Risk Registry live at `product_plans/` root (project-level, shared across deliveries)
-- Each delivery (= Roadmap Release) gets a folder: `D-{NN}_{release_name}/`
-- Each Epic gets a subfolder named `EPIC-{NNN}_{epic_name}/`
-- Stories live inside their parent Epic's folder — a Story never exists without an Epic
-- Delivery Plan lives at the root of its delivery folder
-- When a delivery completes: Team Lead moves the entire delivery folder to `product_plans/archive/` and adds a Delivery Log entry to the Roadmap (§7)
+- `strategy/` documents are project-level and frozen while a sprint is active.
+- `backlog/` contains Epics and their unassigned child Stories.
+- `sprints/` contains active 1-week execution boundaries. A Story file physically moves here when a sprint begins.
+- `archive/` is where finished Sprints and finished Epics are moved for permanent record keeping.
 
 ### V-Bounce OS Framework Structure
 
@@ -170,7 +179,8 @@ Before creating any document, YOU MUST:
 
 When modifying a document:
 
-1. **Sprint Freeze Check:** Read `DELIVERY_PLAN.md`. If a sprint is currently Active, the Charter and Roadmap are **FROZEN**. DO NOT modify them directly. Instead, append the requested change to `CHANGE_QUEUE.md` at the project root.
+1. **Sprint Freeze Check:** Read `sprint-XX.md` (if one exists in `product_plans/sprints/`). If a sprint is currently Active, the Charter and Roadmap are **FROZEN**. DO NOT modify them directly. 
+   - ***Emergency Impact Analysis Protocol:*** If a human insists on modifying a frozen strategic document mid-sprint, you MUST pause active bouncing and write a Sprint Impact Analysis Report. Evaluate the active stories in `sprint-{XX}.md` against the new strategy to determine if they are: Unaffected, Require Scope Adjustment, or Invalidated. Only Invalidated stories are aborted. Update the documents only after the human approves the Impact Analysis.
 2. Read the document being modified
 3. Read upstream documents if the change affects inherited fields
 4. Make the change
@@ -203,7 +213,7 @@ When modifying a document:
    - Pull §3 Implementation Guide from Epic §4 Technical Context
    - Set Complexity Label (L1-L4) based on file count and pattern familiarity
 4. Link all created Stories back in Epic §9 Artifact Links
-5. Update Delivery Plan §4 Backlog with new stories
+5. Update Delivery Plan §3 High-Level Backlog with new stories
 
 ### TRANSITION — Moving Documents Between Phases
 
@@ -216,6 +226,12 @@ When modifying a document:
 | Epic → Ready for Stories | Ambiguity 🟡 or 🟢 (§2 Scope and §4 Tech Context filled) |
 | Story → Ready to Bounce | Ambiguity 🟢 + ALL Context Pack items checked (Delivery Plan §5) |
 | Hotfix → Bouncing | Complexity strictly L1 + Targets 1-2 files |
+
+**Physical Move Rules for State Transitions:**
+
+- **Sprint Setup Phase**: The Team Lead physically MOVES the `STORY-XXX.md` file from `product_plans/backlog/EPIC-XXX/` to `product_plans/sprints/sprint-{XX}/`. 
+- **Sprint Closure Phase**: The Team Lead physically MOVES the entire sprint folder (`sprints/sprint-{XX}/`) to `product_plans/archive/sprints/sprint-{XX}/`. 
+- **Epic Closure**: Once every story attached to an Epic has been archived, the Epic folder itself is moved from `backlog/` to `archive/epics/`.
 
 **V-Bounce State transitions for Stories:**
 
@@ -249,19 +265,19 @@ Bouncing → Done: Dev implements + Human manually verifies + DevOps runs `hotfi
 | **Scribe** | Product documentation, _manifest.json | Sprint Report, Dev Reports, codebase |
 | **PM/BA (Human)** | Charter, Roadmap, Epic, Story §1 + §2 | Everything |
 
-## Delivery Archiving
+## Sprint Archiving
 
-When a delivery (release) is complete:
+When a sprint is complete:
 
-1. Team Lead moves the entire delivery folder to `product_plans/archive/`:
+1. Team Lead moves the entire sprint folder to the archive:
    ```bash
-   mv product_plans/D-01_foundation/ product_plans/archive/D-01_foundation/
+   mv product_plans/sprints/sprint-{XX}/ product_plans/archive/sprints/sprint-{XX}/
    ```
-2. Team Lead adds a **Delivery Log** entry to Roadmap §7 with:
-   - Delivery ID, date, release tag
-   - Release Notes (summary of sprint reports from this delivery)
-   - Key metrics (stories delivered, bounce ratio, correction tax averages)
-3. Update Roadmap §2 Release Plan: set the release status to "Delivered"
+2. Team Lead checks the parent Epics of the completed stories. If an Epic is now 100% complete (all its stories are in the archive), the Team Lead moves the Epic folder:
+   ```bash
+   mv product_plans/backlog/EPIC-{NNN}_{name}/ product_plans/archive/epics/EPIC-{NNN}_{name}/
+   ```
+3. Team Lead updates the Epic tracking checklists to reflect the newly archived states.
 
 ## Critical Rules
 

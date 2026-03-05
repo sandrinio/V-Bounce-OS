@@ -35,9 +35,14 @@ Before starting any sprint, the Team Lead MUST:
 - **Triage the Request**: Is this an L1 Trivial change (1-2 files, cosmetic/minor)?
   - If YES → Use the **Hotfix Path** (create a Hotfix document, bypass Epic/Story).
   - If NO → Use the **Standard Path** (create/find Epic, Story).
+- **Determine Execution Mode**:
+  - Full Bounce (Default): dev → qa → arch → devops.
+  - Fast Track (L1/L2 Minor): dev → devops only (skip QA/Arch gates).
+- **Dependency Check**: Stories with `Depends On:` must execute sequentially. Wait for DevOps merge of Story A before starting Story B.
 - Read RISK_REGISTRY.md — flag high-severity risks that affect planned stories.
-- Read DELIVERY_PLAN.md §5 Open Questions — do not bounce stories with unresolved blocking questions.
-- If `product_documentation/_manifest.json` exists, read it — understand what's documented, pass relevant doc references to agents.
+- Read ACTIVE_SPRINT.md §3 Open Questions — do not bounce stories with unresolved blocking questions.
+- If `product_documentation/_manifest.json` exists, read it.
+- **Strategic Freeze**: Charter and Roadmap are frozen during sprints. If emergency changes are needed, run the **Impact Analysis Protocol**: Evaluate sprint stories against new strategy. Pause work until human approval.
 
 ### Phase 2: The Bounce (Implementation)
 **Standard Path (L2-L4 Stories):**
@@ -88,7 +93,8 @@ Draft → Refinement → Ready to Bounce → Bouncing → QA Passed → Architec
 ### During Implementation
 4. **Follow the Safe Zone**. No new patterns or libraries without Architect approval.
 5. **No Gold-Plating**. Implement exactly what the Story specifies.
-6. **Self-assess Correction Tax**. Track % human intervention.
+6. **Write Self-Documenting Code**. All exports MUST have JSDoc/docstrings to prevent RAG poisoning for future agents.
+7. **Self-assess Correction Tax**. Track % human intervention.
 
 ### After Implementation
 7. **Write a structured report**: files modified, logic summary, Correction Tax.
@@ -114,17 +120,18 @@ V-Bounce OS/
 
 ## Document Locations
 
-Planning docs live in `product_plans/`. Each delivery (= release) gets a folder. Epics are subfolders. Stories live with their Epic. Completed deliveries archived to `product_plans/archive/`.
+Planning docs live in `product_plans/`. It uses a state-based architecture (`strategy/`, `backlog/`, `sprints/`, `archive/`). Completed items are archived to `product_plans/archive/`.
 
 | Document | Output |
 |----------|--------|
-| Charter | `product_plans/{project}_charter.md` |
-| Roadmap | `product_plans/{project}_roadmap.md` |
-| Risk Registry | `product_plans/RISK_REGISTRY.md` |
-| Delivery Plan | `product_plans/{delivery}/DELIVERY_PLAN.md` |
-| Epic | `product_plans/{delivery}/EPIC-{NNN}_{name}/EPIC-{NNN}.md` |
-| Story | `product_plans/{delivery}/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}.md` |
-| Sprint Report | `.bounce/sprint-report.md` |
+| Charter | `product_plans/strategy/{project}_charter.md` |
+| Roadmap | `product_plans/strategy/{project}_roadmap.md` |
+| Risk Registry | `product_plans/strategy/RISK_REGISTRY.md` |
+| Delivery Plan | `product_plans/strategy/{delivery}_delivery_plan.md` |
+| Sprint Plan | `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` |
+| Epic | `product_plans/backlog/EPIC-{NNN}_{name}/EPIC-{NNN}.md` |
+| Story | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{StoryName}.md` |
+| Sprint Report | `product_plans/sprints/sprint-{XX}/sprint-report.md` |
 | Product Docs | `product_documentation/*.md` + `_manifest.json` |
 
 ## Report Formats

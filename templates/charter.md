@@ -16,7 +16,7 @@ Ambiguity Score:
 - 🟡 Medium: Tech TBD but logic clear → Ready for Roadmap
 - 🟢 Low: All filled → Ready for Epics
 
-Output location: `product_plans/{project}_charter.md`
+Output location: `product_plans/strategy/{project}_charter.md`
 
 Document Hierarchy Position: ROOT
 Charter is the source of truth for WHY. All downstream documents inherit from it:

@@ -8,16 +8,17 @@ alwaysApply: false
 
 ## Document Locations
 
-All in `product_plans/`. Deliveries get folders. Epics are subfolders. Stories live with Epic.
+All in `product_plans/`. Uses a state-based architecture (`strategy/`, `backlog/`, `sprints/`, `archive/`).
 
 | Document | Output |
 |----------|--------|
-| Charter | `product_plans/{project}_charter.md` |
-| Roadmap | `product_plans/{project}_roadmap.md` |
-| Risk Registry | `product_plans/RISK_REGISTRY.md` |
-| Delivery Plan | `product_plans/{delivery}/DELIVERY_PLAN.md` |
-| Epic | `product_plans/{delivery}/EPIC-{NNN}_{name}/EPIC-{NNN}.md` |
-| Story | `product_plans/{delivery}/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}.md` |
+| Charter | `product_plans/strategy/{project}_charter.md` |
+| Roadmap | `product_plans/strategy/{project}_roadmap.md` |
+| Risk Registry | `product_plans/strategy/RISK_REGISTRY.md` |
+| Delivery Plan | `product_plans/strategy/{delivery}_delivery_plan.md` |
+| Sprint Plan | `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` |
+| Epic | `product_plans/backlog/EPIC-{NNN}_{name}/EPIC-{NNN}.md` |
+| Story | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{StoryName}.md` |
 | Product Docs | `product_documentation/*.md` + `_manifest.json` |
 
 ## Skills Reference

@@ -28,30 +28,30 @@ When the Team Lead delegates a story merge (after Architect PASS):
 ### Pre-Merge Checks
 ```bash
 # Verify the story worktree exists and has no uncommitted changes
-cd .worktrees/STORY-{ID}
+cd .worktrees/STORY-{ID}-{StoryName}
 git status
 git log --oneline sprint/S-{XX}..HEAD  # review story commits
 
 # Verify QA and Architect reports exist and show PASS
-ls .bounce/reports/STORY-{ID}-qa*.md
-ls .bounce/reports/STORY-{ID}-arch.md
+ls .bounce/reports/STORY-{ID}-{StoryName}-qa*.md
+ls .bounce/reports/STORY-{ID}-{StoryName}-arch.md
 ```
 
 ### Merge Execution
 ```bash
 # Archive reports BEFORE removing worktree
-mkdir -p .bounce/archive/S-{XX}/STORY-{ID}
-cp .worktrees/STORY-{ID}/.bounce/reports/* .bounce/archive/S-{XX}/STORY-{ID}/
+mkdir -p .bounce/archive/S-{XX}/STORY-{ID}-{StoryName}
+cp .worktrees/STORY-{ID}-{StoryName}/.bounce/reports/* .bounce/archive/S-{XX}/STORY-{ID}-{StoryName}/
 
 # Switch to sprint branch and merge
 git checkout sprint/S-{XX}
-git merge story/STORY-{ID} --no-ff -m "Merge STORY-{ID}: {Story Name}"
+git merge story/STORY-{ID}-{StoryName} --no-ff -m "Merge STORY-{ID}: {Story Name}"
 ```
 
 ### Conflict Resolution
 If merge conflicts occur:
 - **Simple conflicts** (import ordering, adjacent edits, whitespace): Resolve directly.
-- **Complex conflicts** (logic changes, competing implementations): Write a **Merge Conflict Report** to `.bounce/reports/STORY-{ID}-merge-conflict.md` and notify the Lead. Do NOT guess at resolution.
+- **Complex conflicts** (logic changes, competing implementations): Write a **Merge Conflict Report** to `.bounce/reports/STORY-{ID}-{StoryName}-merge-conflict.md` and notify the Lead. Do NOT guess at resolution.
 
 When resolving conflicts:
 - Preserve the intent of BOTH story branches
@@ -73,8 +73,8 @@ git merge --abort  # or git reset --hard HEAD~1
 ### Worktree Cleanup
 ```bash
 # Remove worktree and story branch
-git worktree remove .worktrees/STORY-{ID}
-git branch -d story/STORY-{ID}
+git worktree remove .worktrees/STORY-{ID}-{StoryName}
+git branch -d story/STORY-{ID}-{StoryName}
 
 # Verify cleanup
 git worktree list
@@ -123,7 +123,7 @@ git push origin --delete sprint/S-{XX}  # if pushed to remote
 For stories or sprints that need preview environments:
 ```bash
 # Push story branch for preview deploy (if CI supports it)
-git push origin story/STORY-{ID}
+git push origin story/STORY-{ID}-{StoryName}
 
 # Verify preview URL is live and functional
 # Check deployment logs for errors
@@ -146,18 +146,21 @@ Before approving a deployment:
 
 ## Your Output
 
-Write a **DevOps Report** to `.bounce/reports/STORY-{ID}-devops.md` (for story merges) or `.bounce/reports/sprint-S-{XX}-devops.md` (for sprint releases).
+Write a **DevOps Report** to `.bounce/reports/STORY-{ID}-{StoryName}-devops.md` (for story merges) or `.bounce/reports/sprint-S-{XX}-devops.md` (for sprint releases).
 You MUST include the YAML frontmatter block exactly as shown below:
+
+**Token Tracking**: Before generating this report, retrieve your session's token usage (if you are Claude, ask your CLI; if Gemini, read your context estimate; if Codex, read your log output) and populate `tokens_used`.
 
 ### Story Merge Report
 ```markdown
 ---
 type: "story-merge"
 status: "{Clean / Conflicts Resolved / Failed}"
+tokens_used: {number}
 conflicts_detected: {true/false}
 ---
 
-# DevOps Report: STORY-{ID} Merge
+# DevOps Report: STORY-{ID}-{StoryName} Merge
 
 ## Pre-Merge Checks
 - [ ] Worktree clean (no uncommitted changes)
@@ -188,6 +191,7 @@ conflicts_detected: {true/false}
 ---
 type: "sprint-release"
 status: "{Deployed / Pending / Manual}"
+tokens_used: {number}
 version: "{VERSION}"
 ---
 

@@ -15,7 +15,7 @@ Audit the codebase for structural integrity, standards compliance, and long-term
 ## Before Auditing
 
 1. **Query Project Lessons**: Run `./scripts/vbounce_ask.mjs "architectural constraints and historical mistakes for <story summary>"` to retrieve relevant context from `LESSONS.md` and past reports.
-2. **Read all reports** for this story (`.bounce/reports/STORY-{ID}-*.md`) — Dev Report, QA Report.
+2. **Read all reports** for this story (`.bounce/reports/STORY-{ID}-{StoryName}-*.md`) — Dev Report, QA Report.
 3. **Read the full Story spec** — especially §3 Implementation Guide and §3.1 ADR References.
 4. **Read Roadmap §3 ADRs** — every architecture decision the implementation must comply with.
 
@@ -63,21 +63,30 @@ Check that the changes don't break existing functionality:
 - Check for modified shared utilities, types, or config
 - Verify imports and exports haven't broken dependency chains
 
+### Documentation Verification (RAG Hygiene)
+Check that the codebase remains self-documenting for downstream RAG consumption:
+- Does the implementation match the existing `product_documentation/_manifest.json` (if one exists)?
+- If it diverges entirely, you MUST fail the audit and instruct the Developer to update their report's Documentation Delta.
+- Are exported functions, components, and schemas adequately JSDoc commented? Code must explain the *why*.
+
 ## Your Output
 
-Write an **Architectural Audit Report** to `.bounce/reports/STORY-{ID}-arch.md`.
+Write an **Architectural Audit Report** to `.bounce/reports/STORY-{ID}-{StoryName}-arch.md`.
 You MUST include the YAML frontmatter block exactly as shown below:
+
+**Token Tracking**: Before generating this report, retrieve your session's token usage (if you are Claude, ask your CLI; if Gemini, read your context estimate; if Codex, read your log output) and populate `tokens_used`.
 
 ### If Audit PASSES:
 ```markdown
 ---
 status: "PASS"
 safe_zone_score: {SCORE}
+tokens_used: {number}
 ai_isms_detected: {count}
 regression_risk: "{Low/Medium/High}"
 ---
 
-# Architectural Audit Report: STORY-{ID} — PASS
+# Architectural Audit Report: STORY-{ID}-{StoryName} — PASS
 
 ## Safe Zone Compliance: {SCORE}/10
 
@@ -119,10 +128,11 @@ PASS — Ready for Sprint Review.
 ---
 status: "FAIL"
 bounce_count: {N}
+tokens_used: {number}
 critical_failures: {count}
 ---
 
-# Architectural Audit Report: STORY-{ID} — FAIL
+# Architectural Audit Report: STORY-{ID}-{StoryName} — FAIL
 
 ## Critical Failures
 ### Issue 1: {Short description}
@@ -146,10 +156,10 @@ When the Team Lead asks for a **Sprint Integration Audit** (after all stories pa
 
 ## Checkpointing
 
-After completing each major phase of your audit (e.g., Deep Audit done, Trend Check done, ADR compliance checked), write a progress checkpoint to `.bounce/reports/STORY-{ID}-arch-checkpoint.md`:
+After completing each major phase of your audit (e.g., Deep Audit done, Trend Check done, ADR compliance checked), write a progress checkpoint to `.bounce/reports/STORY-{ID}-{StoryName}-arch-checkpoint.md`:
 
 ```markdown
-# Architect Checkpoint: STORY-{ID}
+# Architect Checkpoint: STORY-{ID}-{StoryName}
 ## Completed
 - {Which audit phases are done}
 ## Remaining

@@ -20,30 +20,41 @@ const EXPECTED_PROMPT_SIGNATURES = {
     'developer.md': [
         'status:',
         'correction_tax:',
+        'tokens_used:',
+        'tests_written:',
         'files_modified:',
         'lessons_flagged:'
     ],
     'qa.md': [
         'status: "PASS"',
+        'bounce_count:',
         'bugs_found: 0',
+        'gold_plating_detected:',
         'status: "FAIL"',
+        'tokens_used:',
         'failed_scenarios:'
     ],
     'architect.md': [
         'status: "PASS"',
         'safe_zone_score:',
+        'ai_isms_detected:',
         'regression_risk:',
         'status: "FAIL"',
+        'bounce_count:',
+        'tokens_used:',
         'critical_failures:'
     ],
     'devops.md': [
         'type: "story-merge"',
+        'status:',
         'conflicts_detected:',
         'type: "sprint-release"',
+        'tokens_used:',
         'version:'
     ],
     'scribe.md': [
         'mode:',
+        'tokens_used:',
         'docs_created:',
         'docs_updated:',
         'docs_removed:'
