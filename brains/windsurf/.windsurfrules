@@ -1,0 +1,30 @@
+# V-Bounce OS — Windsurf Rules
+
+This project uses V-Bounce OS. You are operating in Tier 4 (Awareness) mode.
+
+## Before Writing Code
+
+1. Read `LESSONS.md` at the project root — treat as hard constraints
+2. Read the Story spec you're implementing (§1 + §3)
+3. Check `brains/CLAUDE.md` for full process context
+
+## Document Rules
+
+- Planning documents in `product_plans/` follow strict templates in `templates/`
+- Agent reports in `.bounce/reports/` MUST have YAML frontmatter
+- Never modify `brains/`, `skills/`, or `templates/` without recording in `brains/CHANGELOG.md`
+
+## State Management
+
+```bash
+vbounce state show            # where is the sprint right now?
+vbounce validate report <f>   # is this report valid?
+vbounce doctor                # is the framework healthy?
+```
+
+## Critical Rules
+
+- Read LESSONS.md before coding. No exceptions.
+- No gold-plating. Implement exactly what's specified.
+- Reports are the only agent handoff. No direct agent communication.
+- YAML frontmatter is mandatory on all agent reports.

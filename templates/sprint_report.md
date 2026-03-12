@@ -3,7 +3,7 @@ FOLLOW THIS EXACT STRUCTURE. Output sections in order 1-6.
 
 1. **YAML Frontmatter**: Sprint ID, Goal, Dates, Status, Delivery Ref, Delivery Plan Ref
 2. **§1 What Was Delivered**: User-facing summary — what's accessible/usable vs what's internal/backend
-3. **§2 Story Results**: Table of all stories with final status and per-story metrics
+3. **§2 Story Results**: Table of all stories with final status and per-story metrics. §2.1 Change Requests logs any mid-sprint user interventions (bugs, spec clarifications, scope/approach changes)
 4. **§3 Execution Metrics**: AI performance metrics — tokens, duration, bounces, correction tax
 5. **§4 Lessons Learned**: Flagged from agent reports, pending user approval to record
 6. **§5 Retrospective**: What went well, what didn't, and what to change — covers both project and delivery process
@@ -71,6 +71,13 @@ delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 
 ### Escalated Stories (if any)
 - **STORY-{ID}-{story_name}**: Escalated after {N} bounces. Root cause: {why}. Recommendation: {rewrite spec / descope / kill}.
+
+### 2.1 Change Requests
+> Mid-sprint user interventions — bugs found, spec clarifications, scope or approach changes. Tracked separately from agent-driven bounces so metrics aren't skewed. Omit this section if no CRs occurred.
+
+| Story | Category | Description | Impact |
+|-------|----------|-------------|--------|
+| STORY-{ID} | Bug / Spec Clarification / Scope Change / Approach Change | {One-line description} | {e.g., No bounce reset / Dev pass reset / +1 session} |
 
 ---
 

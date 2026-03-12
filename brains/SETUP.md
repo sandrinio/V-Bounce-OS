@@ -117,16 +117,22 @@ The agent will:
 4. Merge completed stories
 5. Generate a Sprint Report for your review
 
-## Step 7: Automated RAG Initialization
+## Step 7: Initialize Your First Sprint
 
-V-Bounce OS uses LanceDB to provide agents with targeted context. While the `npx @sandrinio/vbounce install` command handles this automatically, you can manually re-trigger a sync if you add new architectural rules or change your brains:
+Once installed, start your first sprint:
 
 ```bash
-# Re-build your local knowledge base
-./scripts/pre_bounce_sync.sh
+# Create state.json + sprint plan directory
+vbounce sprint init S-01 D-01
+
+# Verify everything is in order
+vbounce doctor
+
+# Generate a context pack for your sprint
+vbounce prep sprint S-01
 ```
 
-This updates your local embeddings in `.bounce/.lancedb/`. Agents use `./scripts/vbounce_ask.mjs` to fetch rules on demand, ensuring they are always aligned with your latest Roadmap and Lessons.
+Context packs are generated on-demand before each bounce. Agents read `LESSONS.md`, the sprint plan, and relevant story specs directly — no embedding or sync step required.
 
 ## Folder Structure After Setup
 

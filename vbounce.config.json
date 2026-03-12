@@ -1,0 +1,8 @@
+{
+  "maxDiffLines": 500,
+  "maxContextLines": 200,
+  "maxQaContextLines": 300,
+  "contextBudgetWarningTokens": 12000,
+  "lessonStaleDays": 90,
+  "tool": "claude"
+}

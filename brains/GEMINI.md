@@ -25,6 +25,42 @@ For Antigravity: copy skills to `.agents/skills/` for workspace-scoped discovery
 | `skills/write-skill/` | Creating and refining agent skills | Team Lead |
 | `skills/improve/` | Framework self-improvement from agent feedback | Team Lead |
 
+## CLI Commands
+
+V-Bounce OS ships a CLI. Use these commands for state management instead of editing files manually:
+
+```bash
+# Sprint management
+vbounce sprint init S-06 D-02 --stories STORY-001,STORY-002
+vbounce sprint close S-05
+
+# Story management
+vbounce story complete STORY-005-02 --qa-bounces 1 --arch-bounces 0 --correction-tax 5
+
+# State transitions
+vbounce state show                              # see current sprint state
+vbounce state update STORY-005-02 "QA Passed"  # transition story state
+vbounce state update STORY-005-02 --qa-bounce  # increment QA bounce counter
+
+# Validation
+vbounce validate report <file>    # validate agent report YAML
+vbounce validate state            # validate state.json
+vbounce validate sprint           # validate Sprint Plan
+vbounce validate ready STORY-ID   # pre-bounce gate check
+
+# Context packs
+vbounce prep qa STORY-005-02      # generate QA context pack
+vbounce prep arch STORY-005-02    # generate Architect context pack
+vbounce prep sprint S-06          # generate Sprint context pack
+
+# Self-improvement
+vbounce trends                    # cross-sprint trend analysis
+vbounce suggest S-06              # generate improvement suggestions
+
+# Health check
+vbounce doctor                    # validate all configs, templates, state files
+```
+
 ## The V-Bounce Process
 
 ### Phase 1: Verification (Planning)
@@ -47,9 +83,9 @@ Before starting any sprint, the Team Lead MUST:
 
 ### Phase 2: The Bounce (Implementation)
 **Standard Path (L2-L4 Stories):**
-0. Team Lead runs `./scripts/pre_bounce_sync.sh` to ensure LanceDB RAG context is fresh.
+0. **Orient via state**: Read `.bounce/state.json` if it exists (`vbounce state show`). Run `vbounce prep sprint S-{XX}` to generate a fresh context pack.
 1. Team Lead sends Story context pack to Developer.
-2. Developer queries LanceDB, implements code, writes Implementation Report. CLI Orchestrator must run `./scripts/validate_report.mjs` on the report to enforce YAML strictness.
+2. Developer reads LESSONS.md and the Story context pack, implements code, writes Implementation Report. CLI Orchestrator must run `./scripts/validate_report.mjs` on the report to enforce YAML strictness.
 3. **Pre-QA Gate Scan:** Team Lead runs `./scripts/pre_gate_runner.sh qa` to catch mechanical failures before spawning QA. If trivial issues → return to Dev.
 4. QA runs Quick Scan + PR Review (skipping pre-scanned checks), validates against Story §2 The Truth. If fail → Bug Report to Dev. CLI Orchestrator must run `./scripts/validate_report.mjs` on the QA report.
 5. Dev fixes and resubmits. 3+ failures → Escalated.
@@ -130,11 +166,11 @@ Planning docs live in `product_plans/`. It uses a state-based architecture (`str
 | Charter | `product_plans/strategy/{project}_charter.md` |
 | Roadmap | `product_plans/strategy/{project}_roadmap.md` |
 | Risk Registry | `product_plans/strategy/RISK_REGISTRY.md` |
-| Delivery Plan | `product_plans/strategy/{delivery}_delivery_plan.md` |
+| Delivery Plan | `product_plans/D-{NN}_{release_name}/D-{NN}_DELIVERY_PLAN.md` |
 | Sprint Plan | `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` |
 | Epic | `product_plans/backlog/EPIC-{NNN}_{name}/EPIC-{NNN}.md` |
 | Story | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{StoryName}.md` |
-| Sprint Report | `product_plans/sprints/sprint-{XX}/sprint-report.md` |
+| Sprint Report | `.bounce/sprint-report-S-{XX}.md` |
 | Product Docs | `vdocs/*.md` + `_manifest.json` |
 
 ## Report Formats
