@@ -19,9 +19,9 @@ Before sprints: Lead triages request (L1 Trivial → Hotfix Path. L2-L4 → Epic
 
 ### Phase 2: The Bounce (Implementation)
 **Standard Path (L2-L4):**
-0. Team Lead runs `./scripts/pre_bounce_sync.sh` to ensure LanceDB RAG context is fresh.
+0. Team Lead reads `.bounce/state.json` (`vbounce state show`) and runs `vbounce prep sprint S-{XX}` for a fresh context pack.
 1. Team Lead sends Story context pack to Developer.
-2. Developer reads LESSONS.md, implements code, writes Implementation Report. CLI Orchestrator must run `./scripts/validate_report.mjs` on the report to enforce YAML strictness.
+2. Developer reads LESSONS.md and the Story context pack, implements code, writes Implementation Report. CLI Orchestrator must run `./scripts/validate_report.mjs` on the report to enforce YAML strictness.
 3. Pre-QA Gate Scan: `./scripts/pre_gate_runner.sh qa` catches mechanical failures before spawning QA. Trivial issues → return to Dev.
 4. QA validates against Story §2 The Truth (skipping pre-scanned checks). If fail → Bug Report to Dev.
 5. Dev fixes and resubmits. 3+ failures → Escalated.

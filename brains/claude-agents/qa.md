@@ -12,7 +12,7 @@ Validate that the Developer's implementation meets the Story's acceptance criter
 
 ## Before Testing
 
-1. **Query Project Lessons**: Run `./scripts/vbounce_ask.mjs "<summarize the story spec here>"` to retrieve known failure patterns relevant to this story from `LESSONS.md` and past reports.
+1. **Read LESSONS.md**: Scan for failure patterns relevant to this story. Treat matching entries as known risk areas to probe first.
 2. **Read the Developer Implementation Report** (`.bounce/reports/STORY-{ID}-{StoryName}-dev.md`) to understand what was built.
 3. **Read Story §2 The Truth** — these are your pass/fail criteria. If the Gherkin scenarios don't pass, the bounce failed.
 
@@ -80,6 +80,7 @@ bounce_count: {N}
 tokens_used: {number}
 bugs_found: 0
 gold_plating_detected: false
+template_version: "2.0"
 ---
 
 # QA Validation Report: STORY-{ID}-{StoryName} — PASS
@@ -130,22 +131,30 @@ bounce_count: {N}
 tokens_used: {number}
 bugs_found: {number of bugs}
 gold_plating_detected: {true/false}
+template_version: "2.0"
 failed_scenarios:
   - "{scenario name}"
+root_cause: "{missing_tests|missing_validation|spec_ambiguity|gold_plating|logic_error|integration_gap|type_error|state_management|error_handling|coupling|duplication}"
+bugs:
+  - scenario: "{Which Gherkin scenario failed}"
+    expected: "{What should happen}"
+    actual: "{What actually happens}"
+    files: ["{src/path/to/file.ts}"]
+    severity: "High"
+gold_plating: []
 ---
 
 # QA Validation Report: STORY-{ID}-{StoryName} — FAIL (Bounce {N})
 
 ## Failures
+> Structured bug data is in the YAML frontmatter above (`bugs:` array). Expand on each finding here with plain-language context.
+
 ### Bug 1: {Short description}
-- **Scenario**: {Which Gherkin scenario failed}
-- **Expected**: {What should happen}
-- **Actual**: {What actually happens}
-- **Files**: {Which files are likely involved}
-- **Severity**: Critical / High / Medium / Low
+- **Plain language**: {Non-coder analogy}
+- **Context**: {Additional detail not captured in YAML — reproduction steps, environment notes, related code smell}
 
 ## Gold-Plating Findings
-- {Any unnecessary additions}
+- {Any unnecessary additions not captured in gold_plating[] array, or "None"}
 
 ## Process Feedback
 > Optional. Note friction with the V-Bounce framework itself — templates, handoffs, RAG quality, tooling.

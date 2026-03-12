@@ -38,22 +38,12 @@ V-Bounce OS organizes planning documents (`product_plans/`) through a strict sta
 
 ## 🛠️ The Tech Stack
 
-V-Bounce OS is built to be **local-first, privacy-conscious, and blazing fast**.
+V-Bounce OS is built to be **local-first, privacy-conscious, and dependency-light**.
 
-- **Vector Database**: [LanceDB](https://lancedb.com/) — A serverless, local vector DB used to store and query project context.
-- **Embeddings**: [Xenova Transformers](https://github.com/xenova/transformers.js) — Local execution of `all-MiniLM-L6-v2`. **No private code is ever sent to external embedding APIs for RAG.**
-- **Runtime**: Node.js — Powering the validation pipeline and semantic search engine.
-- **Data Contract**: YAML Frontmatter + Markdown — Ensures human-readable agent handoffs that are also strictly machine-parsable.
-
----
-
-## 🧠 Semantic Context (Local RAG)
-
-V-Bounce OS doesn't just dump your entire codebase into a prompt. It uses **Retrieval-Augmented Generation (RAG)** to find only the rules that matter right now.
-
-1. **Indexing**: The `pre_bounce_sync.sh` script crawls your `product_plans/`, `LESSONS.md`, and `Roadmap ADRs`, converting them into searchable vectors.
-2. **Querying**: Agents use the built-in `./scripts/vbounce_ask.mjs` tool to ask questions like *"What are the architectural constraints for auth?"* or *"What mistakes did we make with the last React component?"*.
-3. **Targeted Context**: The agent receives only the most relevant 3-5 snippets of project history, preventing context-window bloat and improving instruction following.
+- **Runtime**: Node.js — Powering the validation pipeline, context preparation, and CLI.
+- **Data Contract**: YAML Frontmatter + Markdown — Human-readable agent handoffs that are also strictly machine-parsable.
+- **State Management**: `.bounce/state.json` — Machine-readable sprint state for instant crash recovery without re-reading documents.
+- **Context Budget**: On-demand prep scripts (`vbounce prep sprint/qa/arch`) generate capped context packs — no embedding or vector DB required.
 
 ---
 
@@ -80,10 +70,110 @@ npx @sandrinio/vbounce install codex
 
 ### What gets installed?
 - **Agent Instructions:** The "Brain" file (e.g., `CLAUDE.md`, `.cursor/rules/`) that teaches your AI how to follow the V-Bounce process.
-- **Templates:** Markdown templates for your Charter, Roadmap, Epics, and Stories.
-- **Bundled Scripts:** Our validation pipeline (`validate_report.mjs`) and RAG synchronization engine (`pre_bounce_sync.sh`).
-- **Autonomous RAG Setup:** The installer automatically runs `npm install` for required libraries and initializes your local LanceDB knowledge base (`.bounce/.lancedb/`).
+- **Templates:** Markdown templates for your Charter, Roadmap, Epics, Stories, Sprint Plans, and Delivery Plans.
+- **Bundled Scripts:** 16+ automation scripts — validation pipeline, context preparation, state management, sprint lifecycle, and the self-improvement loop.
+- **Lightweight Dependencies:** The installer runs `npm install` for `js-yaml`, `marked`, and `commander` — nothing else. No vector DBs, no embedding models.
 - **vdoc Integration:** The installer offers to install [`@sandrinio/vdoc`](https://github.com/sandrinio/vdoc) for your platform — enabling automatic semantic product documentation generation via the Scribe agent.
+
+After installing, run `vbounce doctor` to verify your setup is complete.
+
+---
+
+## 🛠️ The `vbounce` CLI
+
+All V-Bounce OS operations route through a unified CLI. Every command is designed to be run by the Team Lead agent — not just humans.
+
+```bash
+# Sprint lifecycle
+vbounce sprint init S-01 D-01   # Initialize sprint state.json + plan dir
+vbounce sprint close S-01        # Validate terminal states, archive, close
+
+# Story lifecycle
+vbounce story complete STORY-001-01-login   # Update state.json + sprint plan §4
+
+# State management (crash recovery)
+vbounce state show                               # Print current state.json
+vbounce state update STORY-001-01-login "QA Passed"  # Update story state
+vbounce state update STORY-001-01-login "Bouncing" --qa-bounce  # Increment QA bounce
+
+# Context preparation (context budget management)
+vbounce prep sprint S-01          # Generate sprint-context-S-01.md (≤200 lines)
+vbounce prep qa STORY-001-01-login    # Generate qa-context-STORY-ID.md (≤300 lines)
+vbounce prep arch STORY-001-01-login  # Generate arch-context with truncated diff
+
+# Validation gates
+vbounce validate report .bounce/reports/STORY-001-01-login-qa.md
+vbounce validate state            # Validate state.json schema
+vbounce validate sprint S-01      # Validate sprint plan structure + cross-refs
+vbounce validate ready STORY-001-01-login  # Pre-bounce readiness gate
+
+# Self-improvement loop
+vbounce trends                    # Compute sprint metrics → .bounce/trends.md
+vbounce suggest S-01              # Generate improvement suggestions
+
+# Framework health
+vbounce doctor                    # Check all required files, scripts, templates
+```
+
+---
+
+## 🔄 State Management & Crash Recovery
+
+V-Bounce OS tracks sprint state in `.bounce/state.json` — a machine-readable snapshot that survives context resets and session interruptions.
+
+```json
+{
+  "sprint_id": "S-01",
+  "delivery_id": "D-01",
+  "current_phase": "bouncing",
+  "last_action": "QA failed STORY-001-01-login — bounce 1",
+  "stories": {
+    "STORY-001-01-login": {
+      "state": "Bouncing",
+      "qa_bounces": 1,
+      "arch_bounces": 0,
+      "worktree": ".worktrees/STORY-001-01-login",
+      "updated_at": "2026-03-12T10:00:00Z"
+    }
+  }
+}
+```
+
+When a new session starts, the Team Lead reads `state.json` in under 5 seconds to know exactly where the sprint left off — no re-reading 10 markdown files.
+
+---
+
+## 📊 Self-Improvement Loop
+
+V-Bounce OS tracks its own performance and suggests improvements automatically.
+
+1. **Root Cause Tagging**: Every QA and Architect FAIL report includes a `root_cause:` field (e.g., `missing_tests`, `adr_violation`, `spec_ambiguity`) that feeds into trend analysis.
+2. **Sprint Trends**: `vbounce trends` scans all archived reports to compute first-pass rate, average bounce count, correction tax, and root cause breakdown per sprint.
+3. **Improvement Suggestions**: `vbounce suggest S-{XX}` reads trends, LESSONS.md, and the improvement log to flag stale lessons, recurring failure patterns, and graduation candidates.
+4. **Improvement Log**: `.bounce/improvement-log.md` tracks every suggestion with Applied/Rejected/Deferred status — so nothing falls through the cracks.
+
+---
+
+## 🔧 Tool Tier Model
+
+V-Bounce OS supports four tiers of AI tools with dedicated brain files for each.
+
+| Tier | Tools | Brain File | Capabilities |
+|------|-------|------------|--------------|
+| **Tier 1** | Claude Code | `brains/CLAUDE.md` | Full orchestration — spawns subagents, manages state, runs all CLI commands |
+| **Tier 2** | Gemini CLI, OpenAI Codex | `brains/GEMINI.md`, `brains/codex/` | Single-agent — follows bounce loop, reads state.json, all CLI commands |
+| **Tier 3** | Cursor | `brains/cursor-rules/` | Role-specific context injection via `.cursor/rules/` MDC files |
+| **Tier 4** | GitHub Copilot, Windsurf | `brains/copilot/`, `brains/windsurf/` | Awareness mode — checklist-driven, reads state.json, CLI commands for safe operations |
+
+Install the appropriate brain for your tool:
+```bash
+npx @sandrinio/vbounce install claude   # Tier 1
+npx @sandrinio/vbounce install gemini   # Tier 2
+npx @sandrinio/vbounce install cursor   # Tier 3
+npx @sandrinio/vbounce install vscode   # Tier 4
+```
+
+---
 
 ### 🧰 The Bundled Skills
 V-Bounce OS installs a powerful suite of specialized markdown `skills/` directly into your workspace. These act as modular capabilities you can invoke dynamically or that the Team Lead agent will invoke automatically during the SDLC process:

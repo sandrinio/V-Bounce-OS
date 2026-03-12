@@ -42,9 +42,9 @@ Before starting any sprint, the Team Lead MUST:
 
 ### Phase 2: The Bounce (Implementation)
 **Standard Path (L2-L4 Stories):**
-0. Team Lead runs `./scripts/pre_bounce_sync.sh` to ensure LanceDB RAG context is fresh.
+0. **Orient via state**: Read `.bounce/state.json` (`vbounce state show`) for instant context. Run `vbounce prep sprint S-{XX}` to generate a fresh context pack.
 1. Team Lead sends Story context pack to Developer.
-2. Developer queries LanceDB, implements code, writes Implementation Report. CLI Orchestrator must run `./scripts/validate_report.mjs` on the report to enforce YAML strictness.
+2. Developer reads LESSONS.md and the Story context pack, implements code, writes Implementation Report. CLI Orchestrator must run `./scripts/validate_report.mjs` on the report to enforce YAML strictness.
 3. **Pre-QA Gate Scan:** Team Lead runs `./scripts/pre_gate_runner.sh qa` to catch mechanical failures before spawning QA. If trivial issues → return to Dev.
 4. QA runs Quick Scan + PR Review (skipping pre-scanned checks), validates against Story §2 The Truth. If fail → Bug Report to Dev. CLI Orchestrator must run `./scripts/validate_report.mjs` on the QA report.
 5. Dev fixes and resubmits. 3+ failures → Escalated.
@@ -101,7 +101,7 @@ Bouncing → Escalated (3+ failures)
 10. One source of truth. Reference upstream documents, don't duplicate.
 11. Change Logs are mandatory on every document modification.
 12. Agent Reports MUST use YAML Frontmatter. Every `.bounce/report/` generated must start with a strict `---` YAML block containing the core status and metrics before the Markdown body.
-13. Framework Integrity. Any modification to a `brains/` or `skills/` file MUST be recorded in `brains/CHANGELOG.md` and trigger `./scripts/pre_bounce_sync.sh`.
+13. Framework Integrity. Any modification to a `brains/` or `skills/` file MUST be recorded in `brains/CHANGELOG.md`.
 
 ## Framework Structure
 
@@ -123,11 +123,11 @@ Planning docs live in `product_plans/`. It uses a state-based architecture (`str
 | Charter | `product_plans/strategy/{project}_charter.md` |
 | Roadmap | `product_plans/strategy/{project}_roadmap.md` |
 | Risk Registry | `product_plans/strategy/RISK_REGISTRY.md` |
-| Delivery Plan | `product_plans/strategy/{delivery}_delivery_plan.md` |
+| Delivery Plan | `product_plans/D-{NN}_{release_name}/D-{NN}_DELIVERY_PLAN.md` |
 | Sprint Plan | `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` |
 | Epic | `product_plans/backlog/EPIC-{NNN}_{name}/EPIC-{NNN}.md` |
 | Story | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{StoryName}.md` |
-| Sprint Report | `product_plans/sprints/sprint-{XX}/sprint-report.md` |
+| Sprint Report | `.bounce/sprint-report-S-{XX}.md` |
 | Product Docs | `vdocs/*.md` + `_manifest.json` |
 
 ## Report Formats

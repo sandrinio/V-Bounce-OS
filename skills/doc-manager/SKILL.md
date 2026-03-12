@@ -52,15 +52,16 @@ Epic §4 (Technical Context) ──→ Story §3 (Implementation Guide)
 Epic §5 (Decomposition) ──→ Story creation sequence
 Epic §6 (Risks) ──→ Risk Registry §1 (Active Risks)
 Epic §7 (Acceptance Criteria) ──→ Story §2 (The Truth)
-Epic §9 (Artifact Links) ──→ Delivery Plan §3 (Active Sprint)
+Epic §9 (Artifact Links) ──→ Delivery Plan §3 (Backlog)
 
 Story §1 (The Spec) ──→ Developer Agent
 Story §2 (The Truth) ──→ QA Agent
 Story §3 (Implementation Guide) ──→ Developer Agent
-Story status ──→ Delivery Plan §3 (V-Bounce State)
+Story status ──→ Sprint Plan §1 (V-Bounce State) [NOT Delivery Plan — see delivery-sync.md]
 
-Delivery Plan §3 (Active Sprint) ──→ Team Lead Agent (initialization)
-Delivery Plan §5 (Context Pack) ──→ Ready to Bounce gate
+Sprint Plan §1 (Active Scope) ──→ Team Lead Agent (source of truth during sprint)
+Sprint Plan §1 (Context Pack Readiness) ──→ Ready to Bounce gate
+Delivery Plan ──→ Updated at sprint boundaries ONLY (never mid-sprint)
 
 Risk Registry ←── ALL levels (cross-cutting input)
 ```

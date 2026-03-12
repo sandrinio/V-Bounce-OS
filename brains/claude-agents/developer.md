@@ -12,8 +12,8 @@ Implement features and fix bugs as specified in Story documents. You write code 
 
 ## Before Writing ANY Code
 
-1. **Query Project Lessons**: Run `./scripts/vbounce_ask.mjs "<summarize your specific coding task here>"` to retrieve relevant constraints and gotchas from `LESSONS.md` and historical reports. Treat these as hard constraints. No exceptions.
-2. **Query Architectural Decisions**: If your task involves core systems (auth, db, state), run `./scripts/vbounce_ask.mjs "<system> decisions"` to get relevant ADRs from the Roadmap.
+1. **Read LESSONS.md** at the project root. Scan for entries relevant to your task — treat them as hard constraints. No exceptions.
+2. **Read ADR references**: If your task involves core systems (auth, db, state), read Roadmap §3 ADRs directly.
 3. **Read the Story spec** — §1 The Spec for requirements, §3 Implementation Guide for technical approach.
 3. **Check ADR references** in §3.1 — comply with all architecture decisions from the Roadmap.
 4. **Read relevant react-best-practices rules** — consult `skills/react-best-practices/` for patterns matching your task.

@@ -61,12 +61,12 @@ repo/                                   ← main working directory
 │
 └── .bounce/
     ├── reports/                        ← active working reports (GITIGNORED)
-    ├── sprint-report.md                ← current sprint report (GITIGNORED)
+    ├── sprint-report-S-{XX}.md          ← current sprint report (GITIGNORED)
     └── archive/                        ← completed sprint history (COMMITTED TO GIT)
         └── S-01/
             ├── STORY-001-01/           ← all agent reports for this story
-            ├── sprint-report.md        ← final sprint report
-            └── sprint-devops.md        ← release report
+            ├── sprint-report-S-{XX}.md  ← final sprint report
+            └── sprint-S-{XX}-devops.md  ← release report
 ```
 
 ### V-Bounce State → Git Operations
@@ -154,7 +154,7 @@ For tools without native subagent support (Cursor, Codex, Gemini, Antigravity):
 
 **After story completes:** Reports are archived to the shared `.bounce/archive/S-{XX}/STORY-{ID}-{StoryName}/` in the main repo before the worktree is removed.
 
-**Sprint Report:** Always written to `.bounce/sprint-report.md` in the main repo (not in any worktree).
+**Sprint Report:** Always written to `.bounce/sprint-report-S-{XX}.md` in the main repo (not in any worktree).
 
 ### Report File Naming
 
@@ -327,7 +327,7 @@ After ALL stories are merged into `sprint/S-01`:
 ```
 1. Read all archived reports in .bounce/archive/S-{XX}/
 2. **Sum the `tokens_used` field** from every agent report to calculate the sprint's total resource cost.
-3. Generate Sprint Report to .bounce/sprint-report.md:
+3. Generate Sprint Report to .bounce/sprint-report-S-{XX}.md:
    - Ensure the Sprint Report starts with a YAML frontmatter block containing:
      ```yaml
      ---
@@ -347,9 +347,9 @@ After ALL stories are merged into `sprint/S-01`:
    - Run full test suite + build + lint on main
    - Sprint branch cleanup
    - Environment verification (if applicable)
-   - DevOps writes Sprint Release Report to .bounce/archive/S-{XX}/sprint-devops.md
+   - DevOps writes Sprint Release Report to .bounce/archive/S-{XX}/sprint-S-{XX}-devops.md
 6. Lead finalizes:
-   - Move sprint-report.md to .bounce/archive/S-{XX}/
+   - Move sprint-report-S-{XX}.md to .bounce/archive/S-{XX}/
    - Record lessons (with user approval)
    - Update delivery_plan.md to reflect the completed sprint.
 7. **Framework Self-Assessment** (aggregated from agent reports):
@@ -420,15 +420,18 @@ When ALL sprints in a delivery (release) are done:
 
 The Team Lead MUST update the active `sprint-{XX}.md` at every state transition. This is the source of truth for execution.
 
-| Action | Sprint Plan Update |
-|--------|---------------------|
-| Worktree created | §1 Active Scope: V-Bounce State → "Bouncing" |
-| Dev report written | No update (still "Bouncing") |
-| QA passes | §1 Active Scope: V-Bounce State → "QA Passed" |
-| Architect passes | §1 Active Scope: V-Bounce State → "Architect Passed" |
-| DevOps merges story | §1 Active Scope: V-Bounce State → "Done" |
-| Escalated | §1 Escalated table |
-| DevOps merges sprint | Update `delivery_plan.md` to flag sprint delivered |
+| Action | Sprint Plan Update | Delivery Plan Update |
+|--------|-------------------|--------------------|
+| Worktree created | §1: V-Bounce State → "Bouncing" | **Nothing** — Sprint Plan is source of truth |
+| Dev report written | No update (still "Bouncing") | **Nothing** |
+| QA passes | §1: V-Bounce State → "QA Passed" | **Nothing** |
+| Architect passes | §1: V-Bounce State → "Architect Passed" | **Nothing** |
+| DevOps merges story | §1: V-Bounce State → "Done". §4: Add Execution Log row (via `vbounce story complete`) | **Nothing** |
+| Escalated | §1: Move story to Escalated section | **Nothing** |
+| Sprint CLOSES | Status → "Completed" in frontmatter | §2: sprint → Completed. §4: add summary. §3: remove delivered stories |
+
+> **Key rule**: The Delivery Plan is updated ONLY at sprint close, never during active bouncing.
+> See `skills/agent-team/references/delivery-sync.md` for full sync rules.
 
 ---
 
@@ -447,6 +450,21 @@ When QA bounce count >= 3 OR Architect bounce count >= 3:
 - Human decides: rewrite spec → Refinement, descope → split, kill → Parking Lot
 - **If returned to Refinement:** The spec has been rewritten. You MUST reset the QA and Architect bounce counters to 0 for this story.
 - If killed: `git worktree remove`, branch preserved unmerged
+
+### Mid-Sprint Change Requests
+When the user provides input mid-bounce that isn't a direct answer to an agent question (e.g., "this is broken", "change the approach", "I meant X not Y"), the Team Lead MUST triage it before acting.
+
+> See `skills/agent-team/references/mid-sprint-triage.md` for the full triage flow, routing rules, and logging requirements.
+
+**Quick reference — categories:**
+| Category | Route | Bounce Impact |
+|----------|-------|---------------|
+| **Bug** | Hotfix or bug-fix task in current story | No bounce increment |
+| **Spec Clarification** | Update Story spec, continue bounce | No impact |
+| **Scope Change** | Pause, update spec, confirm with user | Resets Dev pass |
+| **Approach Change** | Update §3 Implementation Guide, re-delegate | Resets Dev pass |
+
+Every change request is logged in `sprint-{XX}.md` §4 Execution Log with event type `CR` and reported in Sprint Report §2.1.
 
 ### Mid-Sprint Strategic Changes
 Charter and Roadmap are typically **frozen** during active sprints. However, if an emergency requires modifying them:
@@ -470,7 +488,7 @@ If merging story branch into sprint branch creates conflicts:
 - **Reports are the only handoff.** No agent communicates with another directly.
 - **One bounce = one report.** Every agent pass produces exactly one report file.
 - **Archive before remove.** Always copy reports to shared archive before removing a worktree.
-- **Sync the Delivery Plan.** Update V-Bounce state at EVERY transition. The Delivery Plan is the source of truth.
+- **Sync the Sprint Plan.** Update V-Bounce State in sprint-{XX}.md §1 at EVERY transition. The Sprint Plan is the source of truth DURING the sprint. The Delivery Plan is updated at sprint boundaries only — see `skills/agent-team/references/delivery-sync.md`.
 - **Track bounce counts.** QA and Architect bounces are tracked separately per story.
 - **Git tracking rules.** `.worktrees/`, `.bounce/reports/`, and `.bounce/sprint-report.md` are gitignored (ephemeral). `.bounce/archive/` is **committed to git** (permanent audit trail).
 - **Check risks before bouncing.** Read RISK_REGISTRY.md at sprint start. Flag high-severity risks that affect planned stories.

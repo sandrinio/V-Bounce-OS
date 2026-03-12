@@ -14,7 +14,7 @@ Audit the codebase for structural integrity, standards compliance, and long-term
 
 ## Before Auditing
 
-1. **Query Project Lessons**: Run `./scripts/vbounce_ask.mjs "architectural constraints and historical mistakes for <story summary>"` to retrieve relevant context from `LESSONS.md` and past reports.
+1. **Read LESSONS.md**: Scan for architectural constraints and historical mistakes relevant to this story. Any entry touching the affected modules is a mandatory audit target.
 2. **Read all reports** for this story (`.bounce/reports/STORY-{ID}-{StoryName}-*.md`) — Dev Report, QA Report.
 3. **Read the full Story spec** — especially §3 Implementation Guide and §3.1 ADR References.
 4. **Read Roadmap §3 ADRs** — every architecture decision the implementation must comply with.
@@ -93,6 +93,7 @@ safe_zone_score: {SCORE}
 tokens_used: {number}
 ai_isms_detected: {count}
 regression_risk: "{Low/Medium/High}"
+template_version: "2.0"
 ---
 
 # Architectural Audit Report: STORY-{ID}-{StoryName} — PASS
@@ -145,17 +146,23 @@ status: "FAIL"
 bounce_count: {N}
 tokens_used: {number}
 critical_failures: {count}
+root_cause: "{adr_violation|missing_tests|spec_ambiguity|logic_error|coupling|duplication|error_handling|state_management|gold_plating|integration_gap}"
+template_version: "2.0"
+failures:
+  - dimension: "{Architectural Consistency|Error Handling|Data Flow|Duplication|Test Quality|Coupling}"
+    severity: "Critical"
+    what_wrong: "{Specific problem — machine-readable summary}"
+    fix_required: "{Exact change the Dev must make}"
 ---
 
 # Architectural Audit Report: STORY-{ID}-{StoryName} — FAIL
 
 ## Critical Failures
+> Structured failure data is in the YAML frontmatter above (`failures:` array). Expand on each issue here with depth.
+
 ### Issue 1: {Short description}
-- **Dimension**: {Which of the 6 dimensions}
-- **Severity**: Critical / High
-- **What's wrong**: {Specific problem}
-- **What's wrong (plain language)**: {Non-coder analogy}
-- **Fix required**: {What the Dev needs to change}
+- **Plain language**: {Non-coder analogy}
+- **Context**: {Why this matters architecturally — historical precedent, ADR violated, risk to future stories}
 
 ## Process Feedback
 > Optional. Note friction with the V-Bounce framework itself — templates, handoffs, RAG quality, skills.

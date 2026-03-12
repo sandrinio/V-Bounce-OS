@@ -2,7 +2,6 @@
 node_modules/
 
 # V-Bounce local state
-.bounce/.lancedb/
 .worktrees/
 .claude/
 .gemini/

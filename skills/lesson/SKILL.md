@@ -88,3 +88,26 @@ Rules for formatting:
 - **Rules are imperatives.** Write rules as direct commands, not suggestions.
 - **No duplicates.** Before recording, check if a similar lesson already exists. If so, update it instead of creating a new one.
 - **Keep it flat.** No categories, no tags, no metadata beyond the entry format. Simplicity is the feature.
+
+## Lesson Graduation
+
+Lessons that have been proven effective across 3+ sprints become permanent agent config rules.
+
+### Graduation Criteria
+
+A lesson is a **graduation candidate** when:
+- It has been active for 3+ sprints
+- It has been triggered (prevented a recurrence) at least once
+- No bounce in the last 3 sprints matches its root cause
+
+### Graduation Process
+
+1. `scripts/suggest_improvements.mjs` flags graduation candidates in improvement suggestions
+2. Human approves graduation
+3. Lead adds the rule to the relevant agent config (`brains/claude-agents/developer.md`, etc.)
+4. Lead removes or archives the lesson from `LESSONS.md` with a note: `[Graduated to {agent} config on {date}]`
+5. Record in `.bounce/improvement-log.md` under "Applied"
+
+### Why Graduation Matters
+
+`LESSONS.md` is a staging area, not a permanent rule store. Lessons that graduate become enforced constraints in the agent's core instructions — they can't be forgotten or overlooked. Lessons that stay in `LESSONS.md` are read on every session but are softer guidance. Keep `LESSONS.md` lean — stale lessons dilute the signal.

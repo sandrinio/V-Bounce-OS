@@ -13,15 +13,21 @@ import path from 'path';
 import yaml from 'js-yaml';
 
 // Defined schemas for each report type
+const ROOT_CAUSE_ENUM = [
+    'missing_tests', 'missing_validation', 'spec_ambiguity', 'adr_violation',
+    'gold_plating', 'logic_error', 'integration_gap', 'type_error',
+    'state_management', 'error_handling', 'coupling', 'duplication'
+];
+
 const SCHEMAS = {
     dev: ['status', 'correction_tax', 'tokens_used', 'tests_written', 'files_modified', 'lessons_flagged'],
     qa: {
         base: ['status', 'bounce_count', 'tokens_used', 'bugs_found', 'gold_plating_detected'],
-        conditional: { 'FAIL': ['failed_scenarios'] }
+        conditional: { 'FAIL': ['failed_scenarios', 'root_cause'] }
     },
     arch: {
         base: ['status', 'tokens_used'],
-        conditional: { 'PASS': ['safe_zone_score', 'ai_isms_detected', 'regression_risk'], 'FAIL': ['bounce_count', 'critical_failures'] }
+        conditional: { 'PASS': ['safe_zone_score', 'ai_isms_detected', 'regression_risk'], 'FAIL': ['bounce_count', 'critical_failures', 'root_cause'] }
     },
     devops: {
         base: ['type', 'status', 'tokens_used'],
@@ -45,6 +51,29 @@ function validateDev(data) {
     if (!Array.isArray(data.files_modified)) throw new Error(`DEV_SCHEMA_ERROR: 'files_modified' must be an array.`);
 }
 
+function validateBugsArray(bugs, prefix) {
+    if (!Array.isArray(bugs)) throw new Error(`${prefix}: 'bugs' must be an array.`);
+    bugs.forEach((bug, i) => {
+        const bugRequired = ['scenario', 'expected', 'actual', 'files', 'severity'];
+        const bugMissing = bugRequired.filter(k => !(k in bug));
+        if (bugMissing.length > 0) throw new Error(`${prefix}: bugs[${i}] missing keys: ${bugMissing.join(', ')}`);
+        if (!Array.isArray(bug.files)) throw new Error(`${prefix}: bugs[${i}].files must be an array.`);
+        const validSeverities = ['Critical', 'High', 'Medium', 'Low'];
+        if (!validSeverities.includes(bug.severity)) throw new Error(`${prefix}: bugs[${i}].severity must be one of: ${validSeverities.join(', ')}`);
+    });
+}
+
+function validateFailuresArray(failures, prefix) {
+    if (!Array.isArray(failures)) throw new Error(`${prefix}: 'failures' must be an array.`);
+    const validDimensions = ['Architectural Consistency', 'Error Handling', 'Data Flow', 'Duplication', 'Test Quality', 'Coupling'];
+    failures.forEach((f, i) => {
+        const fRequired = ['dimension', 'severity', 'what_wrong', 'fix_required'];
+        const fMissing = fRequired.filter(k => !(k in f));
+        if (fMissing.length > 0) throw new Error(`${prefix}: failures[${i}] missing keys: ${fMissing.join(', ')}`);
+        if (!validDimensions.includes(f.dimension)) throw new Error(`${prefix}: failures[${i}].dimension must be one of: ${validDimensions.join(', ')}`);
+    });
+}
+
 function validateQA(data) {
     const missing = SCHEMAS.qa.base.filter(k => !(k in data));
     if (missing.length > 0) throw new Error(`QA_SCHEMA_ERROR: Missing required keys: ${missing.join(', ')}`);
@@ -52,6 +81,10 @@ function validateQA(data) {
     if (data.status === 'FAIL') {
         const conditionalMissing = SCHEMAS.qa.conditional.FAIL.filter(k => !(k in data));
         if (conditionalMissing.length > 0) throw new Error(`QA_SCHEMA_ERROR: 'FAIL' status requires keys: ${conditionalMissing.join(', ')}`);
+        if (data.root_cause && !ROOT_CAUSE_ENUM.includes(data.root_cause)) {
+            throw new Error(`QA_SCHEMA_ERROR: Invalid root_cause '${data.root_cause}'. Must be one of: ${ROOT_CAUSE_ENUM.join(', ')}`);
+        }
+        if ('bugs' in data) validateBugsArray(data.bugs, 'QA_SCHEMA_ERROR');
     }
 }
 
@@ -62,6 +95,10 @@ function validateArch(data) {
     const s = data.status === 'PASS' ? 'PASS' : 'FAIL';
     const conditionalMissing = SCHEMAS.arch.conditional[s].filter(k => !(k in data));
     if (conditionalMissing.length > 0) throw new Error(`ARCH_SCHEMA_ERROR: '${s}' status requires keys: ${conditionalMissing.join(', ')}`);
+    if (s === 'FAIL' && data.root_cause && !ROOT_CAUSE_ENUM.includes(data.root_cause)) {
+        throw new Error(`ARCH_SCHEMA_ERROR: Invalid root_cause '${data.root_cause}'. Must be one of: ${ROOT_CAUSE_ENUM.join(', ')}`);
+    }
+    if (s === 'FAIL' && 'failures' in data) validateFailuresArray(data.failures, 'ARCH_SCHEMA_ERROR');
 }
 
 function validateDevops(data) {

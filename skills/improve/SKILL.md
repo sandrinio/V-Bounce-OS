@@ -70,7 +70,7 @@ Group findings by framework area:
 |------|-----------------|----------------|
 | **Templates** | Missing fields, unused sections, ambiguous instructions | `templates/*.md` |
 | **Agent Handoffs** | Missing report fields, redundant data, unclear formats | `brains/claude-agents/*.md` |
-| **RAG Pipeline** | Irrelevant results, missing context, stale embeddings | `scripts/vbounce_index.mjs`, `scripts/vbounce_ask.mjs`, `scripts/pre_bounce_sync.sh` |
+| **Context Prep** | Missing context, stale prep packs, truncation issues | `scripts/prep_sprint_context.mjs`, `scripts/prep_qa_context.mjs`, `scripts/prep_arch_context.mjs` |
 | **Skills** | Unclear instructions, missing steps, outdated references | `skills/*/SKILL.md`, `skills/*/references/*` |
 | **Process Flow** | Unnecessary steps, wrong ordering, missing gates | `skills/agent-team/SKILL.md`, `skills/doc-manager/SKILL.md` |
 | **Tooling** | Script failures, validation gaps, missing automation | `scripts/*`, `bin/*` |

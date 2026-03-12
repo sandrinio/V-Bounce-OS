@@ -10,7 +10,7 @@ Delivery Lifecycle:
 - Active sprint work happens inside `sprints/sprint-{XX}/sprint-{XX}.md`, not here.
 - When the delivery is fully shipped, this entire document is archived.
 
-Output location: `product_plans/strategy/{delivery}_delivery_plan.md`
+Output location: `product_plans/D-{NN}_{release_name}/D-{NN}_DELIVERY_PLAN.md`
 Do NOT output these instructions.
 </instructions>
 # Delivery Plan: {Project Name}
