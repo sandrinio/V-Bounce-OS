@@ -2,6 +2,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import readline from 'readline';
 
@@ -227,6 +228,7 @@ if (command === 'install') {
   }
 
   const CWD = process.cwd();
+  const pkgVersion = JSON.parse(fs.readFileSync(path.join(pkgRoot, 'package.json'), 'utf8')).version;
 
   // Map vbounce platform names to vdoc platform names
   const vdocPlatformMap = {
@@ -287,34 +289,208 @@ if (command === 'install') {
     displayHelp();
   }
 
-  console.log(`\n🚀 Preparing to install V-Bounce Engine for \x1b[36m${targetPlatform}\x1b[0m...\n`);
+  // ---------------------------------------------------------------------------
+  // Upgrade-safe install helpers
+  // ---------------------------------------------------------------------------
 
-  const toCopy = [];
-  const toOverwrite = [];
+  const META_PATH = path.join(CWD, '.bounce', 'install-meta.json');
+  const BACKUPS_DIR = path.join(CWD, '.bounce', 'backups');
 
-  mapping.forEach(rule => {
-    const sourcePath = path.join(pkgRoot, rule.src);
-    const destPath = path.join(CWD, rule.dest);
-
-    if (!fs.existsSync(sourcePath)) {
-      return; // Source does not exist internally, skip
-    }
-
-    if (fs.existsSync(destPath)) {
-      toOverwrite.push(rule.dest);
-    } else {
-      toCopy.push(rule.dest);
-    }
-  });
-
-  if (toCopy.length > 0) {
-    console.log('The following will be \x1b[32mCREATED\x1b[0m:');
-    toCopy.forEach(f => console.log(`  + ${f}`));
+  /** Compute MD5 hash of a single file's contents. */
+  function computeFileHash(filePath) {
+    const content = fs.readFileSync(filePath);
+    return crypto.createHash('md5').update(content).digest('hex');
   }
 
-  if (toOverwrite.length > 0) {
-    console.log('\nThe following will be \x1b[33mOVERWRITTEN\x1b[0m:');
-    toOverwrite.forEach(f => console.log(`  ! ${f}`));
+  /** Compute a combined hash for a directory by hashing all files sorted by relative path. */
+  function computeDirHash(dirPath) {
+    const hash = crypto.createHash('md5');
+    const entries = [];
+
+    function walk(dir, rel) {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const fullPath = path.join(dir, entry.name);
+        const relPath = path.join(rel, entry.name);
+        if (entry.isDirectory()) {
+          walk(fullPath, relPath);
+        } else {
+          entries.push({ relPath, fullPath });
+        }
+      }
+    }
+
+    walk(dirPath, '');
+    entries.sort((a, b) => a.relPath.localeCompare(b.relPath));
+    for (const e of entries) {
+      hash.update(e.relPath);
+      hash.update(fs.readFileSync(e.fullPath));
+    }
+    return hash.digest('hex');
+  }
+
+  /** Compute hash for a path (file or directory). */
+  function computeHash(p) {
+    const stats = fs.statSync(p);
+    return stats.isDirectory() ? computeDirHash(p) : computeFileHash(p);
+  }
+
+  /** Count files in a path (1 for a file, recursive count for a directory). */
+  function countFiles(p) {
+    const stats = fs.statSync(p);
+    if (!stats.isDirectory()) return 1;
+    let count = 0;
+    function walk(dir) {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        if (entry.isDirectory()) walk(path.join(dir, entry.name));
+        else count++;
+      }
+    }
+    walk(p);
+    return count;
+  }
+
+  /** Read install-meta.json, returns null if missing. */
+  function readInstallMeta() {
+    if (!fs.existsSync(META_PATH)) return null;
+    try {
+      return JSON.parse(fs.readFileSync(META_PATH, 'utf8'));
+    } catch {
+      return null;
+    }
+  }
+
+  /** Write install-meta.json. */
+  function writeInstallMeta(version, platform, files, hashes) {
+    const meta = {
+      version,
+      platform,
+      installed_at: new Date().toISOString(),
+      files,
+      hashes
+    };
+    fs.mkdirSync(path.dirname(META_PATH), { recursive: true });
+    fs.writeFileSync(META_PATH, JSON.stringify(meta, null, 2) + '\n');
+  }
+
+  /** Backup files to .bounce/backups/<version>/. Removes previous backup first. */
+  function backupFiles(version, paths) {
+    // Remove previous backup (keep only one)
+    if (fs.existsSync(BACKUPS_DIR)) {
+      for (const entry of fs.readdirSync(BACKUPS_DIR, { withFileTypes: true })) {
+        if (entry.isDirectory()) {
+          fs.rmSync(path.join(BACKUPS_DIR, entry.name), { recursive: true, force: true });
+        }
+      }
+    }
+
+    const backupDir = path.join(BACKUPS_DIR, version);
+    fs.mkdirSync(backupDir, { recursive: true });
+
+    for (const relPath of paths) {
+      const src = path.join(CWD, relPath);
+      const dest = path.join(backupDir, relPath);
+
+      if (!fs.existsSync(src)) continue;
+
+      const stats = fs.statSync(src);
+      if (stats.isDirectory()) {
+        fs.mkdirSync(dest, { recursive: true });
+        fs.cpSync(src, dest, { recursive: true });
+      } else {
+        fs.mkdirSync(path.dirname(dest), { recursive: true });
+        fs.copyFileSync(src, dest);
+      }
+    }
+
+    return backupDir;
+  }
+
+  /**
+   * Classify files into unchanged, modified, and newFiles.
+   * - unchanged: dest exists and matches what was installed (safe to overwrite)
+   * - modified: dest exists but differs from what was installed (user changed it)
+   * - newFiles: dest does not exist
+   */
+  function classifyFiles(mappingRules, meta) {
+    const unchanged = [];
+    const modified = [];
+    const newFiles = [];
+
+    for (const rule of mappingRules) {
+      const sourcePath = path.join(pkgRoot, rule.src);
+      const destPath = path.join(CWD, rule.dest);
+
+      if (!fs.existsSync(sourcePath)) continue;
+
+      if (!fs.existsSync(destPath)) {
+        newFiles.push(rule);
+        continue;
+      }
+
+      // Dest exists — classify as unchanged or modified
+      if (!meta || !meta.hashes || !meta.hashes[rule.dest]) {
+        // No metadata (first upgrade) — treat as modified to be safe
+        modified.push(rule);
+        continue;
+      }
+
+      const currentHash = computeHash(destPath);
+      const installedHash = meta.hashes[rule.dest];
+
+      if (currentHash === installedHash) {
+        unchanged.push(rule);
+      } else {
+        modified.push(rule);
+      }
+    }
+
+    return { unchanged, modified, newFiles };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Begin install flow
+  // ---------------------------------------------------------------------------
+
+  const meta = readInstallMeta();
+  const isUpgrade = meta !== null;
+
+  if (isUpgrade) {
+    console.log(`\n🚀 V-Bounce Engine \x1b[36m${pkgVersion}\x1b[0m (upgrading from \x1b[33m${meta.version}\x1b[0m)\n`);
+  } else {
+    console.log(`\n🚀 Preparing to install V-Bounce Engine \x1b[36m${pkgVersion}\x1b[0m for \x1b[36m${targetPlatform}\x1b[0m...\n`);
+  }
+
+  const { unchanged, modified, newFiles } = classifyFiles(mapping, meta);
+
+  if (unchanged.length > 0) {
+    console.log('Will update (unchanged by you):');
+    for (const rule of unchanged) {
+      const destPath = path.join(CWD, rule.dest);
+      const n = countFiles(destPath);
+      const label = n > 1 ? `(${n} files)` : '';
+      console.log(`  \x1b[32m✓\x1b[0m ${rule.dest} ${label}`);
+    }
+  }
+
+  if (modified.length > 0) {
+    const backupLabel = isUpgrade ? `.bounce/backups/${meta.version}/` : '.bounce/backups/pre-install/';
+    console.log(`\nModified by you (backed up to ${backupLabel}):`);
+    for (const rule of modified) {
+      console.log(`  \x1b[33m⚠\x1b[0m ${rule.dest}`);
+    }
+  }
+
+  if (newFiles.length > 0) {
+    console.log('\nNew in this version:');
+    for (const rule of newFiles) {
+      console.log(`  \x1b[32m+\x1b[0m ${rule.dest}`);
+    }
+  }
+
+  if (unchanged.length === 0 && modified.length === 0 && newFiles.length === 0) {
+    rl.close();
+    console.log('Nothing to install — all source files are missing from the package.');
+    process.exit(0);
   }
 
   console.log('');
@@ -328,13 +504,23 @@ if (command === 'install') {
       process.exit(0);
     }
 
+    // Backup modified files before overwriting
+    if (modified.length > 0) {
+      const backupVersion = isUpgrade ? meta.version : 'pre-install';
+      const backupDir = backupFiles(backupVersion, modified.map(r => r.dest));
+      console.log(`\n📂 Backed up modified files to ${path.relative(CWD, backupDir)}/`);
+    }
+
     console.log('\n📦 Installing files...');
 
-    mapping.forEach(rule => {
+    const installedFiles = [];
+    const hashes = {};
+
+    for (const rule of [...unchanged, ...modified, ...newFiles]) {
       const sourcePath = path.join(pkgRoot, rule.src);
       const destPath = path.join(CWD, rule.dest);
 
-      if (!fs.existsSync(sourcePath)) return;
+      if (!fs.existsSync(sourcePath)) continue;
 
       const stats = fs.statSync(sourcePath);
       if (stats.isDirectory()) {
@@ -347,8 +533,16 @@ if (command === 'install') {
         }
         fs.copyFileSync(sourcePath, destPath);
       }
+
+      // Record hash of what we just installed (from source)
+      hashes[rule.dest] = computeHash(sourcePath);
+      installedFiles.push(rule.dest);
       console.log(`  \x1b[32m✓\x1b[0m ${rule.dest}`);
-    });
+    }
+
+    // Write install metadata
+    writeInstallMeta(pkgVersion, targetPlatform, installedFiles, hashes);
+    console.log(`  \x1b[32m✓\x1b[0m .bounce/install-meta.json`);
 
     console.log('\n⚙️  Installing dependencies...');
     try {
@@ -378,6 +572,21 @@ if (command === 'install') {
       } else {
         console.log(`\n  Skipped. You can install later: npx @sandrinio/vdoc install ${vdocPlatform}`);
       }
+    }
+
+    // Auto-run doctor to verify installation
+    console.log('\n🩺 Running doctor to verify installation...');
+    const doctorPath = path.join(CWD, 'scripts', 'doctor.mjs');
+    if (fs.existsSync(doctorPath)) {
+      const result = spawnSync(process.execPath, [doctorPath], {
+        stdio: 'inherit',
+        cwd: CWD
+      });
+      if (result.status !== 0) {
+        console.error('\n  \x1b[33m⚠\x1b[0m Doctor reported issues. Review the output above.');
+      }
+    } else {
+      console.log('  \x1b[33m⚠\x1b[0m Doctor script not found — skipping verification.');
     }
 
     console.log('\n✅ V-Bounce Engine successfully installed! Welcome to the team.\n');
