@@ -1,6 +1,6 @@
 {
   "name": "@sandrinio/vbounce",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "V-Bounce Engine: Turn your AI coding assistant into a full engineering team through structured SDLC skills.",
   "type": "module",
   "bin": {
