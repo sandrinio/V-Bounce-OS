@@ -64,6 +64,12 @@ Sprint Plan §1 (Context Pack Readiness) ──→ Ready to Bounce gate
 Delivery Plan ──→ Updated at sprint boundaries ONLY (never mid-sprint)
 
 Risk Registry ←── ALL levels (cross-cutting input)
+
+Epic §8 (Open Questions) ──→ Spike §1 (Question)
+Epic §4 (Technical Context) ──→ Spike §3 (Approach)
+Spike §4 (Findings) ──→ Epic §4 (Technical Context) [update]
+Spike §5 (Decision) ──→ Roadmap §3 (ADRs) [if architectural]
+Spike §6 (Residual Risk) ──→ Risk Registry §1 (Active Risks)
 ```
 
 ## Template Locations
@@ -77,6 +83,7 @@ Risk Registry ←── ALL levels (cross-cutting input)
 | Sprint Plan | `templates/sprint.md` | `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` |
 | Epic | `templates/epic.md` | `product_plans/backlog/EPIC-{NNN}_{name}/EPIC-{NNN}_{name}.md` |
 | Story | `templates/story.md` | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{StoryName}.md` |
+| Spike | `templates/spike.md` | `product_plans/backlog/EPIC-{NNN}_{name}/SPIKE-{EpicID}-{NNN}-{topic}.md` |
 | Hotfix | `templates/hotfix.md` | `product_plans/hotfixes/HOTFIX-{Date}-{Name}.md` |
 | Sprint Report | `templates/sprint_report.md` | `product_plans/sprints/sprint-{XX}/sprint-report.md` |
 
@@ -94,7 +101,8 @@ product_plans/
 │   ├── EPIC-001_authentication/
 │   │   ├── EPIC-001_authentication.md
 │   │   ├── STORY-001-01-login_ui.md
-│   │   └── STORY-001-02-auth_api.md
+│   │   ├── STORY-001-02-auth_api.md
+│   │   └── SPIKE-001-001-auth-provider.md
 │
 ├── sprints/                       ← active execution workspace
 │   ├── sprint-01/                 ← active sprint boundary
@@ -152,6 +160,36 @@ Brain files contain the V-Bounce process, critical rules, and skill references. 
 
 ## Document Operations
 
+### Ambiguity Assessment Rubric
+
+When creating or reviewing an Epic or Story, assess ambiguity using these signals:
+
+**🔴 High — Discovery Required (any ONE triggers 🔴):**
+- Epic §4 Technical Context has "TBD" or "unknown" in dependencies or affected areas
+- Epic §8 Open Questions has items marked blocking
+- Multiple competing approaches mentioned with no ADR deciding between them
+- Unknown external dependencies or integrations
+- No acceptance criteria defined (Epic §7 empty)
+- Vague scope language in §2 ("various", "possibly", "might", "somehow", "rethink")
+
+**🟡 Medium — Conditional Progress:**
+- Technical Context partially filled (some areas known, others TBD)
+- Open Questions exist but are non-blocking
+- Dependencies listed but unconfirmed
+
+**🟢 Low — Ready to Proceed:**
+- All sections filled with specific, concrete content
+- All Open Questions resolved or non-blocking
+- ADRs exist for every major technical choice
+- Acceptance criteria are concrete Gherkin scenarios
+
+**When 🔴 is detected:**
+1. Set `ambiguity: 🔴 High` in frontmatter
+2. Identify which signals triggered it
+3. For each signal, recommend a spike with a one-sentence question
+4. Create spike documents from `templates/spike.md`
+5. Block downstream transitions until spikes reach Validated or Closed
+
 ### CREATE — Making a New Document
 
 Before creating any document, YOU MUST:
@@ -171,6 +209,7 @@ Before creating any document, YOU MUST:
 | Roadmap | Charter (full document) |
 | Epic | Charter §1, §2, §5 + Roadmap §2, §3, §5 |
 | Story | Parent Epic (full document) + Roadmap §3 (ADRs) |
+| Spike | Parent Epic (full document) + Roadmap §3 (ADRs) + Risk Registry |
 | Delivery Plan | Roadmap §2 (Release Plan) + All Stories in scope |
 | Risk Registry | Charter §6 + Roadmap §4, §5 + All Epic §6 sections |
 
@@ -199,6 +238,8 @@ When modifying a document:
 | Epic §4 (Technical Context) | All child Stories §3 (Implementation Guide) |
 | Story status (V-Bounce State) | Delivery Plan §3 (Active Sprint table) |
 | Story — new risk discovered | Risk Registry §1 (new row) |
+| Spike §4/§5 (Findings/Decision) | Epic §4 Technical Context, Epic §8 Open Questions, Risk Registry §1 |
+| Spike §5 (Decision — architectural) | Roadmap §3 ADRs (new row) |
 
 ### DECOMPOSE — Breaking Down Documents
 
@@ -224,6 +265,9 @@ When modifying a document:
 | Roadmap → Ready for Epics | Charter Ambiguity 🟢 + Roadmap §2 and §3 filled |
 | Epic → Ready for Stories | Ambiguity 🟡 or 🟢 (§2 Scope and §4 Tech Context filled) |
 | Story → Ready to Bounce | Ambiguity 🟢 + ALL Context Pack items checked (Delivery Plan §5) |
+| Story (Probing/Spiking) → Refinement | All linked spikes are Validated or Closed |
+| Spike → Validated | Architect confirms findings against Safe Zone |
+| Spike → Closed | All items in §7 Affected Documents are checked off |
 | Hotfix → Bouncing | Complexity strictly L1 + Targets 1-2 files |
 
 **Physical Move Rules for State Transitions:**
@@ -257,9 +301,9 @@ Bouncing → Done: Dev implements + Human manually verifies + DevOps runs `hotfi
 | Agent | Documents Owned | Documents Read |
 |-------|----------------|----------------|
 | **Team Lead** | Delivery Plan, Sprint Report, Delivery archive | Charter, Roadmap, ALL Stories (for context packs) |
-| **Developer** | Story §3 updates (during implementation) | Story §1 + §3, LESSONS.md |
+| **Developer** | Story §3 updates (during implementation), Spike §4 Findings (during investigation) | Story §1 + §3, Spike §1 + §2 + §3, LESSONS.md |
 | **QA** | QA Validation Report | Story §2, Dev Implementation Report |
-| **Architect** | Architectural Audit Report, Risk flags (in report — Lead writes to Registry) | Full Story, Roadmap §3 ADRs, Risk Registry |
+| **Architect** | Architectural Audit Report, Risk flags (in report — Lead writes to Registry), Spike validation (Findings Ready → Validated) | Full Story, Spike §4 + §5, Roadmap §3 ADRs, Risk Registry |
 | **DevOps** | DevOps Reports (merge + release) | Delivery Plan, LESSONS.md, gate reports |
 | **Scribe** | Product documentation, _manifest.json | Sprint Report, Dev Reports, codebase |
 | **PM/BA (Human)** | Charter, Roadmap, Epic, Story §1 + §2 | Everything |

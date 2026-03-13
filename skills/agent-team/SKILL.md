@@ -221,6 +221,20 @@ Examples:
 9. Update sprint-{XX}.md: Status → "Active"
 ```
 
+### Step 0.5: Discovery Check (L4 / 🔴 Stories Only)
+
+Before moving any story to Ready to Bounce:
+
+1. For each story with `complexity_label: L4` or `ambiguity: 🔴 High`:
+   - Check for linked spikes in `product_plans/backlog/EPIC-{NNN}_{name}/SPIKE-*.md`
+   - If no spikes exist → create them (invoke doc-manager ambiguity rubric)
+   - If spikes exist but are not Validated/Closed → execute discovery sub-flow
+   - See `skills/agent-team/references/discovery.md`
+
+2. Once all spikes are Validated/Closed:
+   - Update story `ambiguity` frontmatter (should now be 🟡 or 🟢)
+   - Transition: Probing/Spiking → Refinement → Ready to Bounce
+
 ### Step 1: Story Initialization
 For each story with V-Bounce State "Ready to Bounce":
 ```bash
@@ -501,6 +515,7 @@ If merging story branch into sprint branch creates conflicts:
 - **Check risks before bouncing.** Read RISK_REGISTRY.md at sprint start. Flag high-severity risks that affect planned stories.
 - **Resolve open questions first.** Read the active `sprint-{XX}.md` §2 Sprint Open Questions at sprint start. Do not bounce stories with unresolved blocking questions.
 - **Know what's documented.** If `vdocs/_manifest.json` exists, read it at sprint start. Pass relevant doc references to agents. Offer documentation updates after sprints that deliver new features.
+- **Resolve discovery before bouncing.** L4 stories and 🔴 ambiguity stories MUST complete spikes before entering the bounce sequence. See `skills/agent-team/references/discovery.md`.
 
 ## Keywords
 

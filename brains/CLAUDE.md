@@ -54,6 +54,7 @@ Before starting any sprint, the Team Lead MUST:
   - Full Bounce (Default): dev → qa → arch → devops.
   - Fast Track (L1/L2 Minor): dev → devops only (skip QA/Arch gates).
 - **Dependency Check**: Stories with `Depends On:` must execute sequentially. Wait for DevOps merge of Story A before starting Story B.
+- **Discovery Check**: For stories labeled L4 or with 🔴 ambiguity, run the doc-manager ambiguity assessment rubric. If 🔴 signals detected → create spikes, execute discovery sub-flow before allowing Ready to Bounce. See `skills/agent-team/references/discovery.md`.
 - Read RISK_REGISTRY.md — flag high-severity risks that affect planned stories.
 - Read `sprint-{XX}.md` §2 Sprint Open Questions — do not bounce stories with unresolved blocking questions.
 - If `vdocs/_manifest.json` exists, read it.
@@ -88,7 +89,7 @@ If sprint delivered new features or Developer reports flagged stale product docs
 
 ```
 Draft → Refinement → Ready to Bounce → Bouncing → QA Passed → Architect Passed → Sprint Review → Done
-  ↳ Refinement → Probing/Spiking → Refinement (L4 spike loop)
+  ↳ Refinement → Probing/Spiking → [Dev investigates → Arch validates → docs updated] → Refinement
   ↳ Any → Parking Lot (deferred)
   ↳ Bouncing → Escalated (3+ failures)
 ```
@@ -98,7 +99,7 @@ Draft → Refinement → Ready to Bounce → Bouncing → QA Passed → Architec
 - **L1**: Trivial — Single file, <1hr, known pattern.
 - **L2**: Standard — 2-3 files, known pattern, ~2-4hr. *(default)*
 - **L3**: Complex — Cross-cutting, spike may be needed, ~1-2 days.
-- **L4**: Uncertain — Requires Probing/Spiking before Bounce, >2 days.
+- **L4**: Uncertain — Requires Probing/Spiking before Bounce, >2 days. Create spike(s) via `templates/spike.md`. Developer investigates, Architect validates. Story cannot enter Ready to Bounce until all spikes are Validated/Closed. See `skills/agent-team/references/discovery.md`.
 
 ## Critical Rules
 
