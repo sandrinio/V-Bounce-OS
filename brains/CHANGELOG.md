@@ -3,6 +3,28 @@
 This log tracks modifications to the core agentic framework (e.g., `brains/`, `skills/`). 
 Per **Rule 13: Framework Integrity**, anytime an entry is made here, all tool-specific brain files must be reviewed for consistency.
 
+## [2026-03-13] — Discovery Phase: Structured Spike System
+
+### Spike Template (New)
+- **Added**: `templates/spike.md` — spike document template with YAML frontmatter (spike_id, parent_epic_ref, status, ambiguity_before, time_box), 8 sections (Question, Constraints, Approach, Findings, Decision, Residual Risk, Affected Documents checklist, Change Log). Hierarchy Level 3.5 — child of Epic, sibling of Story. Output location: `product_plans/backlog/EPIC-{NNN}_{name}/SPIKE-{EpicID}-{NNN}-{topic}.md`.
+
+### Discovery Reference (New)
+- **Added**: `skills/agent-team/references/discovery.md` — spike execution protocol. Covers: when discovery triggers, spike lifecycle (Open → Investigating → Findings Ready → Validated → Closed), 4-step execution protocol (Create → Investigate → Validate → Close & Propagate), timing rules, integration with bounce sequence.
+
+### Doc-Manager Skill (Modified)
+- **Modified**: `skills/doc-manager/SKILL.md` — added Spike row to Template Locations table; added spike file to folder structure diagram; added spike information flows (Epic §8 → Spike §1, Spike §4 → Epic §4, Spike §5 → Roadmap §3, Spike §6 → Risk Registry); added Spike pre-read requirements; added spike cascade rules; added spike transition gates (Probing/Spiking → Refinement, Spike → Validated, Spike → Closed); updated Developer and Architect agent integration rows with spike ownership; added Ambiguity Assessment Rubric section with 🔴/🟡/🟢 signal definitions and spike creation trigger.
+
+### Agent-Team Skill (Modified)
+- **Modified**: `skills/agent-team/SKILL.md` — added Step 0.5: Discovery Check between Sprint Setup and Story Initialization; added critical rule "Resolve discovery before bouncing" requiring L4/🔴 stories to complete spikes before entering bounce sequence.
+
+### Claude Brain (Modified)
+- **Modified**: `brains/CLAUDE.md` — added Discovery Check to Pre-Bounce Checks; expanded L4 complexity label with spike creation and validation requirements; updated Story States diagram to show spike sub-flow (Dev investigates → Arch validates → docs updated).
+
+### Sync Notes
+- Other brain files (`GEMINI.md`, `AGENTS.md`, `cursor-rules/`) not yet updated — should be synced in a follow-up change.
+
+---
+
 ## [2026-03-12] — LanceDB Removal
 
 - **Removed**: `scripts/vbounce_ask.mjs` — LanceDB semantic query tool. Replaced by direct `LESSONS.md` reads.
