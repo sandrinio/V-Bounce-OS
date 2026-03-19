@@ -172,10 +172,59 @@ Plan  ──>  Build  ──>  Bounce  ──>  Document  ──>  Learn
 After each sprint:
 - **LESSONS.md** captures every mistake — agents read this before writing future code
 - **Trend analysis** spots recurring patterns (e.g., "auth-related stories bounce 3x more than average")
-- **Self-improvement skill** proposes changes to templates, skills, and brain files
+- **Self-improvement pipeline** analyzes friction and proposes concrete framework changes
 - **Scribe** keeps product documentation in sync with actual code
 
 Sprint 1 might have a 40% bounce rate. By Sprint 5, that number drops — because the agents have accumulated context about your codebase, your architecture decisions, and your team's standards.
+
+### The Self-Improvement Pipeline
+
+When a sprint closes (`vbounce sprint close`), an automated pipeline analyzes what went wrong and proposes how to fix the framework itself:
+
+```
+Sprint Close
+  │
+  ├── Trend Analysis         → Cross-sprint bounce patterns
+  │
+  ├── Retro Parser           → Reads §5 Framework Self-Assessment tables
+  │                            from the Sprint Report
+  │
+  ├── Lesson Analyzer        → Classifies LESSONS.md rules by what they
+  │                            can become: gate checks, scripts, template
+  │                            fields, or permanent agent rules
+  │
+  ├── Recurrence Detector    → Cross-references archived sprint reports
+  │                            to find findings that keep coming back
+  │
+  ├── Effectiveness Checker  → Did last sprint's improvements actually
+  │                            resolve their target findings?
+  │
+  └── Improvement Suggestions → Human-readable proposals with impact levels
+```
+
+Every proposal gets an **impact level** so you know what to fix first:
+
+| Level | Label | Meaning | When to fix |
+|-------|-------|---------|-------------|
+| **P0** | Critical | Blocks agent work or causes incorrect output | Before next sprint |
+| **P1** | High | Causes rework — bounces, wasted tokens, repeated manual steps | This improvement cycle |
+| **P2** | Medium | Friction that slows agents but doesn't block | Within 2 sprints |
+| **P3** | Low | Polish — nice-to-have | Batch when convenient |
+
+### Lessons Become Automation
+
+The pipeline doesn't just track lessons — it classifies each one by what it can become:
+
+| Lesson pattern | Becomes | Example |
+|---------------|---------|---------|
+| "Always check X", "Never use Y" | **Gate check** — automated grep/lint rule | "Never import from internal modules" → pre-gate grep pattern |
+| "Run X before Y" | **Script** — validation step | "Run type-check before QA" → added to pre_gate_runner.sh |
+| "Include X in the story" | **Template field** — required section | "Include rollback plan" → new field in story template |
+| General behavioral rules (3+ sprints old) | **Agent config** — permanent brain rule | "Always check for N+1 queries" → graduated to Architect config |
+
+This means your framework evolves organically: agents report friction, the pipeline classifies it, you approve the fix, and the next sprint runs smoother. No manual analysis required.
+
+Run `vbounce improve S-XX` anytime to trigger the pipeline on demand.
 
 ---
 
@@ -402,6 +451,7 @@ vbounce validate ready STORY-ID       # Pre-bounce readiness gate
 # Self-improvement
 vbounce trends                        # Cross-sprint trend analysis
 vbounce suggest S-01                  # Generate improvement suggestions
+vbounce improve S-01                  # Full self-improvement pipeline
 
 # Health check
 vbounce doctor                        # Verify setup
@@ -424,7 +474,9 @@ product_plans/                   # Created when you start planning
 .bounce/                         # Created on first sprint init
   state.json                     #   Machine-readable sprint state (crash recovery)
   reports/                       #   QA and Architect bounce reports
-  improvement-log.md             #   Tracked improvement suggestions
+  improvement-manifest.json      #   Machine-readable improvement proposals (auto-generated)
+  improvement-suggestions.md     #   Human-readable suggestions with impact levels (auto-generated)
+  improvement-log.md             #   Applied/rejected/deferred improvement tracking
 
 .worktrees/                      # Git worktrees for isolated story branches
 
