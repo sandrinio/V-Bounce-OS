@@ -23,7 +23,12 @@ vbounce state show            # current sprint state
 vbounce validate report <f>   # validate a report file
 vbounce doctor                # project health check
 vbounce prep qa STORY-ID      # generate QA context
+vbounce improve S-XX          # run self-improvement pipeline
 ```
+
+## Self-Improvement
+
+After sprint close, V-Bounce automatically analyzes retro findings, LESSONS.md, and cross-sprint patterns to generate improvement suggestions with impact levels (P0 Critical → P3 Low). See `.bounce/improvement-suggestions.md` after running `vbounce sprint close` or `vbounce improve S-XX`.
 
 ## Document Hierarchy
 

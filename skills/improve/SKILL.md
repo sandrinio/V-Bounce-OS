@@ -1,19 +1,47 @@
 ---
 name: improve
-description: "Use when the V-Bounce Engine framework needs to evolve based on accumulated agent feedback. Activates after sprint retros, when recurring friction patterns emerge, or when the user explicitly asks to improve the framework. Reads Process Feedback from sprint reports, identifies patterns, proposes specific changes to templates, skills, brain files, scripts, and agent configs, and applies approved changes. This is the system's self-improvement loop."
+description: "Use when the V-Bounce Engine framework needs to evolve based on accumulated agent feedback. Activates after sprint retros, when recurring friction patterns emerge, or when the user explicitly asks to improve the framework. Reads Process Feedback from sprint reports, analyzes LESSONS.md for automation candidates, identifies patterns, proposes specific changes to templates, skills, brain files, scripts, and agent configs with impact levels, and applies approved changes. This is the system's self-improvement loop."
 ---
 
 # Framework Self-Improvement
 
 ## Purpose
 
-V-Bounce Engine is not static. Every sprint generates friction signals from agents who work within the framework daily. This skill closes the feedback loop: it reads what agents struggled with, identifies patterns, and proposes targeted improvements to the framework itself.
+V-Bounce Engine is not static. Every sprint generates friction signals from agents who work within the framework daily. This skill closes the feedback loop: it reads what agents struggled with, analyzes which lessons can be automated, identifies patterns, and proposes targeted improvements to the framework itself.
 
 **Core principle:** No framework change happens without human approval. The system suggests — the human decides.
 
+## Impact Levels
+
+Every improvement proposal is classified by impact to help the human prioritize:
+
+| Level | Label | Meaning | Timeline |
+|-------|-------|---------|----------|
+| **P0** | Critical | Blocks agent work or causes incorrect output | Fix before next sprint |
+| **P1** | High | Causes rework — bounces, wasted tokens, repeated manual steps | Fix this improvement cycle |
+| **P2** | Medium | Friction that slows agents but does not block | Fix within 2 sprints |
+| **P3** | Low | Polish — nice-to-have, batch with other improvements | Batch when convenient |
+
+### How Impact Is Determined
+
+| Signal | Impact |
+|--------|--------|
+| Blocker finding + recurring across 2+ sprints | **P0** |
+| Blocker finding (single sprint) | **P1** |
+| Friction finding recurring across 2+ sprints | **P1** |
+| Lesson with mechanical rule (can be a gate check or script) | **P1** |
+| Previous improvement that didn't resolve its finding | **P1** |
+| Friction finding (single sprint) | **P2** |
+| Lesson graduation candidate (3+ sprints old) | **P2** |
+| Low first-pass rate or high correction tax | **P1** |
+| High bounce rate | **P2** |
+| Framework health checks | **P3** |
+
 ## When to Use
 
-- After every 2-3 sprints (recommended cadence)
+- **Automatically** — `vbounce sprint close S-XX` runs the improvement pipeline and generates `.bounce/improvement-suggestions.md`
+- **On demand** — `vbounce improve S-XX` runs the full pipeline (trends + analyzer + suggestions)
+- After every 2-3 sprints (recommended cadence for applying approved changes)
 - When the same Process Feedback appears across multiple sprint reports
 - When the user explicitly asks to improve templates, skills, or process
 - When a sprint's Framework Self-Assessment reveals Blocker-severity findings
@@ -21,70 +49,102 @@ V-Bounce Engine is not static. Every sprint generates friction signals from agen
 
 ## Trigger
 
-`/improve` OR when the Team Lead identifies recurring framework friction during Sprint Consolidation.
+`/improve` OR `vbounce improve S-XX` OR when the Team Lead identifies recurring framework friction during Sprint Consolidation.
 
 ## Announcement
 
 When using this skill, state: "Using improve skill to evaluate and propose framework changes."
 
+## The Automated Pipeline
+
+The self-improvement pipeline runs automatically on `vbounce sprint close` and can be triggered manually via `vbounce improve S-XX`:
+
+```
+vbounce sprint close S-XX
+  │
+  ├── scripts/sprint_trends.mjs          → .bounce/trends.md
+  │
+  ├── scripts/post_sprint_improve.mjs    → .bounce/improvement-manifest.json
+  │   ├── Parse Sprint Report §5 Framework Self-Assessment tables
+  │   ├── Parse LESSONS.md for automation candidates
+  │   ├── Cross-reference archived sprint reports for recurring patterns
+  │   └── Check if previous improvements resolved their findings
+  │
+  └── scripts/suggest_improvements.mjs   → .bounce/improvement-suggestions.md
+      ├── Consume improvement-manifest.json
+      ├── Add metric-driven suggestions (bounce rate, correction tax, first-pass rate)
+      ├── Add lesson graduation candidates
+      └── Format with impact levels for human review
+```
+
+### Output Files
+
+| File | Purpose |
+|------|---------|
+| `.bounce/improvement-manifest.json` | Machine-readable proposals with metadata (consumed by this skill) |
+| `.bounce/improvement-suggestions.md` | Human-readable improvement suggestions with impact levels |
+| `.bounce/trends.md` | Cross-sprint trend data |
+
 ## Input Sources
 
 The improve skill reads from multiple signals, in priority order:
 
-### 1. Sprint Report §5 — Framework Self-Assessment (Primary)
-The structured retro tables are the richest source. Each row has:
+### 1. Improvement Manifest (Primary — Machine-Generated)
+Read `.bounce/improvement-manifest.json` first. It contains pre-analyzed proposals with impact levels, automation classifications, recurrence data, and effectiveness checks. This is the richest, most structured input.
+
+### 2. Sprint Report §5 — Framework Self-Assessment
+The structured retro tables are the richest human-authored source. Each row has:
 - Finding (what went wrong)
 - Source Agent (who experienced it)
 - Severity (Friction vs Blocker)
 - Suggested Fix (agent's proposal)
 
-### 2. LESSONS.md — Recurring Patterns
-Lessons that point to *process* problems rather than *code* problems:
-- "Always check X before Y" → the template should enforce this ordering
-- "Agent kept missing Z" → the handoff report is missing a field
-- Lessons that keep getting re-flagged sprint after sprint
+### 3. LESSONS.md — Automation Candidates
+Lessons are classified by automation potential:
 
-### 3. Sprint Execution Metrics
+| Automation Type | What to Look For | Target |
+|----------------|-----------------|--------|
+| **gate_check** | Rules with "Always check...", "Never use...", "Must have..." | `.bounce/gate-checks.json` or `pre_gate_runner.sh` |
+| **script** | Rules with "Run X before Y", "Use X instead of Y" | `scripts/` |
+| **template_field** | Rules with "Include X in...", "Add X to the story/epic/template" | `templates/*.md` |
+| **agent_config** | General behavioral rules proven over 3+ sprints | `brains/claude-agents/*.md` |
+
+**Key insight:** Lessons tell you WHAT to enforce. Sprint retro tells you WHERE the framework is weak. Together they drive targeted improvements.
+
+### 4. Sprint Execution Metrics
 Quantitative signals from Sprint Report §3:
 - High bounce ratios → story templates may need better acceptance criteria guidance
 - High correction tax → handoffs may be losing critical context
 - Escalation patterns → complexity labels may need recalibration
 
-### 4. Agent Process Feedback (Raw)
+### 5. Improvement Effectiveness
+The pipeline checks whether previously applied improvements resolved their target findings. Unresolved improvements are re-escalated at P1 priority.
+
+### 6. Agent Process Feedback (Raw)
 If sprint reports aren't available, read individual agent reports from `.bounce/archive/` and extract `## Process Feedback` sections directly.
 
 ## The Improvement Process
 
-### Step 1: Gather Signals
+### Step 1: Read the Manifest
 ```
-1. Read the last 2-3 Sprint Reports (§5 Framework Self-Assessment)
-2. Read LESSONS.md — filter for process-related entries
-3. Read Sprint Execution Metrics — flag anomalies
-4. If no sprint reports exist yet, read raw agent reports from .bounce/archive/
+1. Read .bounce/improvement-manifest.json (if it exists)
+2. Read .bounce/improvement-suggestions.md for human-readable context
+3. If no manifest exists, run: vbounce improve S-XX to generate one
 ```
 
-### Step 2: Pattern Detection
-Group findings by framework area:
+### Step 2: Supplement with Manual Analysis
+The manifest handles mechanical detection. The /improve skill adds judgment:
+- Are there patterns the scripts can't detect? (e.g., misaligned mental models between agents)
+- Do the metric anomalies have root causes not captured in §5?
+- Are there skill instructions that agents consistently misinterpret?
 
-| Area | What to Look For | Files Affected |
-|------|-----------------|----------------|
-| **Templates** | Missing fields, unused sections, ambiguous instructions | `templates/*.md` |
-| **Agent Handoffs** | Missing report fields, redundant data, unclear formats | `brains/claude-agents/*.md` |
-| **Context Prep** | Missing context, stale prep packs, truncation issues | `scripts/prep_sprint_context.mjs`, `scripts/prep_qa_context.mjs`, `scripts/prep_arch_context.mjs` |
-| **Skills** | Unclear instructions, missing steps, outdated references | `skills/*/SKILL.md`, `skills/*/references/*` |
-| **Process Flow** | Unnecessary steps, wrong ordering, missing gates | `skills/agent-team/SKILL.md`, `skills/doc-manager/SKILL.md` |
-| **Tooling** | Script failures, validation gaps, missing automation | `scripts/*`, `bin/*` |
-| **Brain Files** | Stale rules, missing rules, inconsistencies across brains | `brains/CLAUDE.md`, `brains/GEMINI.md`, `brains/AGENTS.md`, `brains/cursor-rules/*.mdc` |
+### Step 3: Prioritize Using Impact Levels
+Rank all proposals (manifest + manual) by impact:
 
-Deduplicate: if 3 agents report the same issue, that's 1 finding with 3 votes — not 3 findings.
-
-### Step 3: Prioritize
-Rank findings by impact:
-
-1. **Blockers reported by 2+ agents** — fix immediately
-2. **Friction reported by 2+ agents** — fix in this improvement pass
-3. **Blockers reported once** — fix if the root cause is clear
-4. **Friction reported once** — note for next improvement pass (may be a one-off)
+1. **P0 Critical** — Fix before next sprint. Non-negotiable.
+2. **P1 High** — Fix in this improvement pass.
+3. **P2 Medium** — Fix if bandwidth allows, otherwise defer.
+4. **P3 Low** — Batch with other improvements when convenient.
 
 ### Step 4: Propose Changes
 For each finding, write a concrete proposal:
@@ -92,7 +152,8 @@ For each finding, write a concrete proposal:
 ```markdown
 ### Proposal {N}: {Short title}
 
-**Finding:** {What went wrong — from the retro}
+**Impact:** {P0/P1/P2/P3} — {reason}
+**Finding:** {What went wrong — from the retro or lesson}
 **Pattern:** {How many times / sprints this appeared}
 **Root Cause:** {Why the framework allowed this to happen}
 **Affected Files:**
@@ -107,15 +168,16 @@ For script changes, describe the new behavior.}
 **Reversibility:** {Easy — revert the edit / Medium — downstream docs may need updating}
 ```
 
-#### Special Case: Gate Check Proposals
+#### Special Case: Lesson → Gate Check Proposals
 
-When agent feedback reveals a mechanical check that was repeated manually across multiple stories (e.g., "QA checked for inline styles 4 times"), propose adding it as a pre-gate check instead of a skill/template change:
+When a lesson contains a mechanical rule (classified as `gate_check` in the manifest):
 
 ```markdown
 ### Proposal {N}: Add pre-gate check — {check name}
 
-**Finding:** {Agent} manually performed {check description} in {N} stories this sprint.
-**Tokens saved:** ~{estimate} per story (based on agent token usage for this check type)
+**Impact:** P1 — mechanical check currently performed manually by agents
+**Lesson:** "{lesson title}" (active since {date})
+**Rule:** {the lesson's rule}
 **Gate:** qa / arch
 **Check config to add to `.bounce/gate-checks.json`:**
 ```json
@@ -131,10 +193,35 @@ When agent feedback reveals a mechanical check that was repeated manually across
 ```
 ```
 
-This is the primary mechanism for the gate system to grow organically — the `improve` skill reads what agents repeatedly checked by hand and proposes automating those checks via `gate-checks.json`.
+#### Special Case: Lesson → Script Proposals
+
+When a lesson describes a procedural check:
+
+```markdown
+### Proposal {N}: Automate — {check name}
+
+**Impact:** P1 — repeated manual procedure
+**Lesson:** "{lesson title}" (active since {date})
+**Rule:** {the lesson's rule}
+**Proposed script/enhancement:** {describe the new script or addition to existing script}
+```
+
+#### Special Case: Lesson Graduation
+
+When a lesson has been active 3+ sprints and is classified as `agent_config`:
+
+```markdown
+### Proposal {N}: Graduate lesson — "{title}"
+
+**Impact:** P2 — proven rule ready for permanent enforcement
+**Active since:** {date} ({N} sprints)
+**Rule:** {the lesson's rule}
+**Target agent config:** `brains/claude-agents/{agent}.md`
+**Action:** Add rule to agent's Critical Rules section. Archive lesson from LESSONS.md.
+```
 
 ### Step 5: Present to Human
-Present ALL proposals as a numbered list. The human can:
+Present ALL proposals as a numbered list, grouped by impact level. The human can:
 - **Approve** — apply the change
 - **Reject** — skip it (optionally explain why)
 - **Modify** — adjust the proposal before applying
@@ -148,26 +235,27 @@ For each approved proposal:
 2. If brain files are affected, ensure ALL brain surfaces stay in sync (CLAUDE.md, GEMINI.md, AGENTS.md, cursor-rules/)
 3. Log the change in `brains/CHANGELOG.md`
 4. If skills were modified, update skill descriptions in all brain files that reference them
+5. Record in `.bounce/improvement-log.md` under "Applied" with the impact level
 
 ### Step 7: Validate
 After all changes are applied:
 1. Run `./scripts/pre_bounce_sync.sh` to update RAG embeddings with the new framework content
 2. Verify no cross-references are broken (template paths, skill names, report field names)
-3. Confirm brain file consistency — all 4 surfaces should describe the same process
+3. Confirm brain file consistency — all surfaces should describe the same process
 
 ## Improvement Scope
 
 ### What CAN Be Improved
 
-| Target | Examples |
-|--------|---------|
-| **Templates** | Add/remove/rename sections, improve instructions, add examples, fix ambiguity |
-| **Agent Report Formats** | Add/remove YAML fields, add report sections, improve handoff clarity |
-| **Skills** | Update instructions, add/remove steps, improve reference docs, add new skills |
-| **Brain Files** | Update rules, add missing rules, improve consistency, update skill references |
-| **Scripts** | Fix bugs, add validation checks, improve error messages, add new automation |
-| **Process Flow** | Reorder steps, add/remove gates, adjust thresholds (bounce limits, complexity labels) |
-| **RAG Pipeline** | Adjust indexing scope, improve chunking, add new document types to index |
+| Target | Examples | Typical Impact |
+|--------|---------|----------------|
+| **Gate Checks** | New grep/lint rules from lessons | P1 |
+| **Scripts** | New validation, automate manual steps | P1-P2 |
+| **Templates** | Add/remove/rename sections, improve instructions | P2 |
+| **Agent Report Formats** | Add/remove YAML fields, improve handoff clarity | P1-P2 |
+| **Skills** | Update instructions, add/remove steps, add new skills | P1-P2 |
+| **Brain Files** | Graduate lessons to permanent rules, update skill refs | P2 |
+| **Process Flow** | Reorder steps, add/remove gates, adjust thresholds | P1 |
 
 ### What CANNOT Be Changed Without Escalation
 - **Adding a new agent role** — requires human design decision + new brain config
@@ -177,14 +265,15 @@ After all changes are applied:
 
 ## Output
 
-The improve skill does not produce a standalone report file. Its output is:
+The improve skill produces:
 1. The list of proposals presented to the human (inline during the conversation)
 2. The applied changes to framework files
 3. The `brains/CHANGELOG.md` entries documenting what changed and why
+4. Updates to `.bounce/improvement-log.md` tracking approved/rejected/deferred items
 
 ## Tracking Improvement Velocity
 
-Over time, the Sprint Report §5 Framework Self-Assessment tables should shrink. If the same findings keep appearing after improvement passes, the fix didn't work — re-examine the root cause.
+Over time, the Sprint Report §5 Framework Self-Assessment tables should shrink. If the same findings keep appearing after improvement passes, the fix didn't work — the pipeline will automatically detect this and re-escalate at P1 priority.
 
 The Team Lead should note in the Sprint Report whether the previous improvement pass resolved the issues it targeted:
 - "Improvement pass from S-03 resolved the Dev→QA handoff gap (0 handoff complaints this sprint)"
@@ -199,7 +288,9 @@ The Team Lead should note in the Sprint Report whether the previous improvement 
 - **Don't over-engineer.** Fix the actual problem reported by agents. Don't add speculative improvements.
 - **Respect the hierarchy.** Template changes are low-risk. Process flow changes are high-risk. Scope accordingly.
 - **Skills are living documents.** If a skill's instructions consistently confuse agents, rewrite the confusing section — don't add workarounds elsewhere.
+- **Impact levels drive priority.** P0 and P1 items are addressed first. P3 items are batched.
+- **Lessons are fuel.** Every lesson is a potential automation — classify and act on them.
 
 ## Keywords
 
-improve, self-improvement, framework evolution, retro, retrospective, process feedback, friction, template improvement, skill improvement, brain sync, meta-process, self-aware
+improve, self-improvement, framework evolution, retro, retrospective, process feedback, friction, template improvement, skill improvement, brain sync, meta-process, self-aware, impact levels, lesson graduation, gate check, automation
