@@ -82,8 +82,19 @@ Before starting any sprint, the Team Lead MUST:
 6. DevOps (or Team Lead) runs `./scripts/hotfix_manager.sh sync` to update active worktrees.
 
 ### Phase 3: Review
-Sprint Report → Human review → Delivery Plan updated (at boundary only) → Lessons recorded → Run `vbounce trends` + `vbounce suggest S-{XX}` for improvement recommendations → Next sprint.
+Sprint Report → Human review → Delivery Plan updated (at boundary only) → Lessons recorded → Next sprint.
 If sprint delivered new features or Developer reports flagged stale product docs → spawn Scribe agent to generate/update vdocs/ via vdoc.
+
+**Self-Improvement Pipeline** (auto-runs on `vbounce sprint close`):
+1. `sprint_trends.mjs` → cross-sprint trend analysis → `.bounce/trends.md`
+2. `post_sprint_improve.mjs` → parses §5 retro tables + LESSONS.md automation candidates + recurring patterns + effectiveness checks → `.bounce/improvement-manifest.json`
+3. `suggest_improvements.mjs` → generates human-readable suggestions with impact levels → `.bounce/improvement-suggestions.md`
+4. Human reviews suggestions → approve/reject/defer each item
+5. Run `/improve` to apply approved changes with brain-file sync
+
+**Impact Levels:** P0 Critical (blocks agents), P1 High (causes rework), P2 Medium (friction), P3 Low (polish). See `/improve` skill for details.
+
+On-demand: `vbounce improve S-{XX}` runs the full pipeline.
 
 ## Story States
 
@@ -163,3 +174,5 @@ Completed deliveries are archived to `product_plans/archive/` and logged in Road
 **DevOps Report**: Merge status, conflict resolution, post-merge validation, environment changes, deployment status.
 **Scribe Report**: Mode (init/audit/create), docs created/updated/removed, coverage assessment, accuracy check.
 **Sprint Report**: What was delivered (user-facing vs internal), story results, execution metrics (tokens, duration, cost, bounce ratio, correction tax, first-pass rate), lessons, retrospective (what went well, what didn't, process improvements).
+**Improvement Manifest**: Machine-readable proposals from `post_sprint_improve.mjs` — retro findings, lesson automation candidates, recurring patterns, effectiveness checks. Impact levels: P0-P3.
+**Improvement Suggestions**: Human-readable improvement suggestions from `suggest_improvements.mjs` — prioritized by impact level, grouped by source (retro, lesson, metrics, effectiveness).

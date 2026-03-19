@@ -56,6 +56,7 @@ vbounce prep sprint S-06          # generate Sprint context pack
 # Self-improvement
 vbounce trends                    # cross-sprint trend analysis
 vbounce suggest S-06              # generate improvement suggestions
+vbounce improve S-06              # full self-improvement pipeline (trends + analyze + suggest)
 
 # Health check
 vbounce doctor                    # validate all configs, templates, state files
@@ -105,6 +106,17 @@ Before starting any sprint, the Team Lead MUST:
 ### Phase 3: Review
 Sprint Report → Human review → Delivery Plan updated → Lessons recorded → Next sprint.
 If sprint delivered new features or Dev reports flagged stale product docs → spawn Scribe agent to generate/update vdocs/ via vdoc.
+
+**Self-Improvement Pipeline** (auto-runs on `vbounce sprint close`):
+1. `sprint_trends.mjs` → cross-sprint trend analysis → `.bounce/trends.md`
+2. `post_sprint_improve.mjs` → parses §5 retro tables + LESSONS.md automation candidates + recurring patterns + effectiveness checks → `.bounce/improvement-manifest.json`
+3. `suggest_improvements.mjs` → generates human-readable suggestions with impact levels → `.bounce/improvement-suggestions.md`
+4. Human reviews suggestions → approve/reject/defer each item
+5. Run `/improve` to apply approved changes with brain-file sync
+
+**Impact Levels:** P0 Critical (blocks agents), P1 High (causes rework), P2 Medium (friction), P3 Low (polish). See `/improve` skill for details.
+
+On-demand: `vbounce improve S-{XX}` runs the full pipeline.
 
 ## Story States
 

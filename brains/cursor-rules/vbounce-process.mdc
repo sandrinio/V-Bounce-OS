@@ -41,6 +41,9 @@ Before sprints: Lead triages request (L1 Trivial → Hotfix Path. L2-L4 → Epic
 ### Phase 3: Review
 Sprint Report → Human review → Delivery Plan updated → Lessons recorded. If new features delivered → spawn Scribe agent to generate/update vdocs/.
 
+**Self-Improvement Pipeline** (auto-runs on `vbounce sprint close`):
+Analyzes §5 retro tables + LESSONS.md automation candidates + recurring patterns → generates `.bounce/improvement-suggestions.md` with impact levels (P0 Critical → P3 Low). Human approves/rejects/defers. Run `/improve` skill to apply. On-demand: `vbounce improve S-{XX}`.
+
 ### Story States
 Draft → Refinement → Ready to Bounce → Bouncing → QA Passed → Architect Passed → Sprint Review → Done
 

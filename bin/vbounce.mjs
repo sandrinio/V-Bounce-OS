@@ -86,6 +86,7 @@ Usage:
   vbounce docs check <sprintId>        Detect stale vdocs and generate Scribe task
   vbounce trends                       Cross-sprint trend analysis
   vbounce suggest <sprintId>           Generate improvement suggestions
+  vbounce improve <sprintId>           Run full self-improvement pipeline
   vbounce doctor                       Validate all configs and state files
 
 Install Platforms:
@@ -193,6 +194,26 @@ if (command === 'trends') {
 if (command === 'suggest') {
   rl.close();
   runScript('suggest_improvements.mjs', args.slice(1));
+}
+
+// -- improve --
+if (command === 'improve') {
+  rl.close();
+  // Full pipeline: analyze → trends → suggest
+  const sprintArg = args[1];
+  if (!sprintArg) {
+    console.error('Usage: vbounce improve S-XX');
+    process.exit(1);
+  }
+  // Run trends first
+  const trendsPath = path.join(pkgRoot, 'scripts', 'sprint_trends.mjs');
+  if (fs.existsSync(trendsPath)) {
+    console.log('Step 1/2: Running cross-sprint trend analysis...');
+    spawnSync(process.execPath, [trendsPath], { stdio: 'inherit', cwd: process.cwd() });
+  }
+  // Run suggest (which internally runs post_sprint_improve.mjs)
+  console.log('\nStep 2/2: Running improvement analyzer + suggestions...');
+  runScript('suggest_improvements.mjs', [sprintArg]);
 }
 
 // -- docs --

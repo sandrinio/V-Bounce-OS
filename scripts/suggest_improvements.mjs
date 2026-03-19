@@ -2,7 +2,11 @@
 
 /**
  * suggest_improvements.mjs
- * Generates improvement suggestions from sprint trends + lessons.
+ * Generates human-readable improvement suggestions from:
+ *   1. Improvement manifest (post_sprint_improve.mjs output)
+ *   2. Sprint trends
+ *   3. LESSONS.md
+ *
  * Overwrites (not appends) to prevent stale suggestion accumulation.
  *
  * Usage:
@@ -14,6 +18,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { spawnSync } from 'child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -26,41 +31,76 @@ if (!sprintId) {
 
 const today = new Date().toISOString().split('T')[0];
 
-// 1. Read trends if available
+// ---------------------------------------------------------------------------
+// 0. Run post_sprint_improve.mjs to generate fresh manifest
+// ---------------------------------------------------------------------------
+
+const analyzerScript = path.join(__dirname, 'post_sprint_improve.mjs');
+if (fs.existsSync(analyzerScript)) {
+  console.log('Running post-sprint improvement analyzer...');
+  const result = spawnSync(process.execPath, [analyzerScript, sprintId], {
+    stdio: 'inherit',
+    cwd: process.cwd(),
+  });
+  if (result.status !== 0) {
+    console.warn('⚠ Analyzer returned non-zero — continuing with available data.');
+  }
+  console.log('');
+}
+
+// ---------------------------------------------------------------------------
+// 1. Read improvement manifest (from post_sprint_improve.mjs)
+// ---------------------------------------------------------------------------
+
+const manifestPath = path.join(ROOT, '.bounce', 'improvement-manifest.json');
+let manifest = null;
+if (fs.existsSync(manifestPath)) {
+  try {
+    manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  } catch {
+    console.warn('⚠ Could not parse improvement-manifest.json');
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 2. Read trends if available
+// ---------------------------------------------------------------------------
+
 const trendsFile = path.join(ROOT, '.bounce', 'trends.md');
 let trendsContent = null;
 if (fs.existsSync(trendsFile)) {
   trendsContent = fs.readFileSync(trendsFile, 'utf8');
 }
 
-// 2. Read LESSONS.md
+// ---------------------------------------------------------------------------
+// 3. Read LESSONS.md
+// ---------------------------------------------------------------------------
+
 const lessonsFile = path.join(ROOT, 'LESSONS.md');
 let lessonCount = 0;
 let oldLessons = [];
 if (fs.existsSync(lessonsFile)) {
   const lines = fs.readFileSync(lessonsFile, 'utf8').split('\n');
-  // Count lessons by counting ### entries
   const lessonEntries = lines.filter(l => /^###\s+\[\d{4}-\d{2}-\d{2}\]/.test(l));
   lessonCount = lessonEntries.length;
 
-  // Flag lessons older than 90 days
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - 90);
   oldLessons = lessonEntries.filter(entry => {
     const dateMatch = entry.match(/\[(\d{4}-\d{2}-\d{2})\]/);
-    if (dateMatch) {
-      return new Date(dateMatch[1]) < cutoff;
-    }
+    if (dateMatch) return new Date(dateMatch[1]) < cutoff;
     return false;
   });
 }
 
-// 3. Read improvement-log for rejected items (to avoid re-suggesting)
+// ---------------------------------------------------------------------------
+// 4. Read improvement-log for rejected items
+// ---------------------------------------------------------------------------
+
 const improvementLog = path.join(ROOT, '.bounce', 'improvement-log.md');
 let rejectedItems = [];
 if (fs.existsSync(improvementLog)) {
   const logContent = fs.readFileSync(improvementLog, 'utf8');
-  // Simple extraction: look for table rows in "Rejected" section
   const rejectedMatch = logContent.match(/## Rejected\n[\s\S]*?(?=\n## |$)/);
   if (rejectedMatch) {
     rejectedItems = rejectedMatch[0].split('\n')
@@ -70,7 +110,10 @@ if (fs.existsSync(improvementLog)) {
   }
 }
 
-// 4. Parse sprint stats from trends
+// ---------------------------------------------------------------------------
+// 5. Parse sprint stats from trends
+// ---------------------------------------------------------------------------
+
 let lastSprintStats = null;
 if (trendsContent) {
   const rows = trendsContent.split('\n').filter(l => l.match(/^\| S-\d{2} \|/));
@@ -86,18 +129,90 @@ if (trendsContent) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// 6. Build suggestions
+// ---------------------------------------------------------------------------
+
 const suggestions = [];
 let itemNum = 1;
 
-// 5. Generate suggestions based on data
+// Impact level badge
+function badge(impact) {
+  const badges = {
+    P0: '🔴 P0 Critical',
+    P1: '🟠 P1 High',
+    P2: '🟡 P2 Medium',
+    P3: '⚪ P3 Low',
+  };
+  return badges[impact?.level] || '⚪ Unrated';
+}
+
+// --- Manifest-driven suggestions (retro + lessons + effectiveness) ---
+if (manifest && manifest.proposals) {
+  for (const proposal of manifest.proposals) {
+    // Skip previously rejected
+    if (rejectedItems.some(r => proposal.title.includes(r))) continue;
+
+    if (proposal.source === 'retro') {
+      suggestions.push({
+        num: itemNum++,
+        category: 'Retro',
+        impact: proposal.impact,
+        title: proposal.title,
+        detail: [
+          `**Area:** ${proposal.area}`,
+          `**Source Agent:** ${proposal.sourceAgent}`,
+          `**Severity:** ${proposal.severity}`,
+          proposal.recurring ? `**Recurring:** Yes — found in ${proposal.recurrenceSprints.join(', ')} (${proposal.recurrenceCount}x)` : null,
+          `**Suggested Fix:** ${proposal.suggestedFix}`,
+        ].filter(Boolean).join('\n'),
+        target: mapAreaToTarget(proposal.area),
+        effort: proposal.severity === 'Blocker' ? 'Medium' : 'Low',
+      });
+    } else if (proposal.source === 'lesson') {
+      suggestions.push({
+        num: itemNum++,
+        category: 'Lesson → Automation',
+        impact: proposal.impact,
+        title: proposal.title,
+        detail: [
+          `**Rule:** ${proposal.rule}`,
+          `**What happened:** ${proposal.whatHappened}`,
+          `**Active for:** ${proposal.ageSprints} sprint(s) (since ${proposal.lessonDate})`,
+          `**Automation type:** ${proposal.automationType}`,
+          `**Action:** ${proposal.automationDetail?.action}`,
+          `**Rationale:** ${proposal.automationDetail?.rationale}`,
+        ].filter(Boolean).join('\n'),
+        target: mapAutomationTypeToTarget(proposal.automationType),
+        effort: proposal.automationDetail?.effort || 'Low',
+      });
+    } else if (proposal.source === 'effectiveness_check') {
+      suggestions.push({
+        num: itemNum++,
+        category: 'Effectiveness',
+        impact: proposal.impact,
+        title: proposal.title,
+        detail: [
+          `**Status:** ${proposal.detail}`,
+          `**Originally applied in:** ${proposal.appliedInSprint}`,
+          '**Action:** Re-examine the original fix — it did not resolve the underlying issue.',
+        ].join('\n'),
+        target: 'Review original improvement in .bounce/improvement-log.md',
+        effort: 'Medium',
+      });
+    }
+  }
+}
+
+// --- Metric-driven suggestions (from trends) ---
 if (lastSprintStats) {
   if (lastSprintStats.firstPassRate < 80) {
     suggestions.push({
       num: itemNum++,
-      category: 'Process',
+      category: 'Metrics',
+      impact: { level: 'P1', label: 'High' },
       title: `Low first-pass rate (${lastSprintStats.firstPassRate}%)`,
       detail: `First-pass rate was below 80% in ${lastSprintStats.sprintId}. This suggests spec ambiguity or insufficient context packs.`,
-      recommendation: 'Add spec quality gate to `validate_bounce_readiness.mjs`: check Story §1 word count > 50 and §2 has ≥ 2 Gherkin scenarios.',
       target: 'scripts/validate_bounce_readiness.mjs',
       effort: 'Low',
     });
@@ -106,10 +221,10 @@ if (lastSprintStats) {
   if (lastSprintStats.avgTax > 10) {
     suggestions.push({
       num: itemNum++,
-      category: 'Process',
+      category: 'Metrics',
+      impact: { level: 'P1', label: 'High' },
       title: `High correction tax (${lastSprintStats.avgTax}% average)`,
-      detail: 'Average correction tax exceeded 10%, indicating significant human intervention was needed.',
-      recommendation: 'Auto-flag stories with more than 3 files expected in Sprint Plan §2 Risk Flags. Consider splitting before bouncing.',
+      detail: 'Average correction tax exceeded 10%, indicating significant human intervention.',
       target: 'skills/agent-team/SKILL.md Step 1',
       effort: 'Low',
     });
@@ -118,69 +233,116 @@ if (lastSprintStats) {
   if (lastSprintStats.avgBounces > 0.5) {
     suggestions.push({
       num: itemNum++,
-      category: 'Process',
+      category: 'Metrics',
+      impact: { level: 'P2', label: 'Medium' },
       title: `High bounce rate (${lastSprintStats.avgBounces} avg per story)`,
-      detail: 'Run `vbounce trends` to see root cause breakdown and identify recurring patterns.',
-      recommendation: 'Review root_cause field in archived QA/Arch FAIL reports to identify systemic issues.',
+      detail: 'Run `vbounce trends` to see root cause breakdown.',
       target: 'scripts/sprint_trends.mjs',
       effort: 'Low',
     });
   }
 }
 
-// Old lessons suggestion
+// --- Lesson graduation ---
 if (oldLessons.length > 0) {
   const notRejected = oldLessons.filter(l => !rejectedItems.some(r => l.includes(r)));
   if (notRejected.length > 0) {
     suggestions.push({
       num: itemNum++,
-      category: 'Framework',
-      title: `${notRejected.length} lessons older than 90 days`,
+      category: 'Graduation',
+      impact: { level: 'P2', label: 'Medium' },
+      title: `${notRejected.length} lesson(s) older than 90 days — graduation candidates`,
       detail: notRejected.map(l => `  - ${l}`).join('\n'),
-      recommendation: 'Review these lessons. Lessons not triggered in 3+ sprints should be archived to LESSONS_ARCHIVE.md. Lessons proven over 3+ sprints should be graduated to agent configs.',
-      target: 'LESSONS.md',
-      effort: 'Trivial',
+      target: 'LESSONS.md → brains/claude-agents/',
+      effort: 'Low',
     });
   }
 }
 
-// General framework suggestions
-suggestions.push({
-  num: itemNum++,
-  category: 'Framework',
-  title: 'Review lesson graduation candidates',
-  detail: `You have ${lessonCount} lessons in LESSONS.md. Lessons proven over 3+ sprints should graduate to permanent agent config rules.`,
-  recommendation: 'Run a review: which lessons have prevented recurrences for 3+ sprints? Graduate those to `.claude/agents/*.md` or `brains/claude-agents/*.md`.',
-  target: 'LESSONS.md + brains/claude-agents/',
-  effort: 'Low',
-});
-
+// --- Health check ---
 suggestions.push({
   num: itemNum++,
   category: 'Health',
+  impact: { level: 'P3', label: 'Low' },
   title: 'Run vbounce doctor',
   detail: 'Verify the V-Bounce Engine installation is healthy after this sprint.',
-  recommendation: 'Run: `vbounce doctor` — checks brain files, templates, scripts, state.json validity.',
   target: 'scripts/doctor.mjs',
   effort: 'Trivial',
 });
 
-// 6. Format output
+// ---------------------------------------------------------------------------
+// 7. Format output
+// ---------------------------------------------------------------------------
+
+function mapAreaToTarget(area) {
+  const map = {
+    'Templates': 'templates/*.md',
+    'Agent Handoffs': 'brains/claude-agents/*.md',
+    'RAG Pipeline': 'scripts/prep_*.mjs',
+    'Skills': 'skills/*/SKILL.md',
+    'Process Flow': 'skills/agent-team/SKILL.md',
+    'Tooling & Scripts': 'scripts/*',
+  };
+  return map[area] || area;
+}
+
+function mapAutomationTypeToTarget(type) {
+  const map = {
+    'gate_check': '.bounce/gate-checks.json OR scripts/pre_gate_runner.sh',
+    'script': 'scripts/',
+    'template_field': 'templates/*.md',
+    'agent_config': 'brains/claude-agents/*.md',
+  };
+  return map[type] || type;
+}
+
 const suggestionBlocks = suggestions.map(s => {
-  const rejectedNote = rejectedItems.some(r => s.title.includes(r)) ? '\n> ⚠ This was previously rejected — skipping.' : '';
-  return `### ${s.num}. [${s.category}] ${s.title}${rejectedNote}
+  return `### ${s.num}. [${badge(s.impact)}] [${s.category}] ${s.title}
 ${s.detail}
 
-**Recommendation:** ${s.recommendation}
 **Target:** \`${s.target}\`
 **Effort:** ${s.effort}`;
 }).join('\n\n---\n\n');
+
+// Impact level reference
+const impactRef = `## Impact Levels
+
+| Level | Label | Meaning | Timeline |
+|-------|-------|---------|----------|
+| **P0** | 🔴 Critical | Blocks agent work or causes incorrect output | Fix before next sprint |
+| **P1** | 🟠 High | Causes rework — bounces, wasted tokens, repeated manual steps | Fix this improvement cycle |
+| **P2** | 🟡 Medium | Friction that slows agents but does not block | Fix within 2 sprints |
+| **P3** | ⚪ Low | Polish — nice-to-have, batch with other improvements | Batch when convenient |`;
+
+// Summary stats
+const summarySection = manifest ? `## Summary
+
+| Source | Count |
+|--------|-------|
+| Retro (§5 findings) | ${manifest.summary.bySource.retro} |
+| Lesson → Automation | ${manifest.summary.bySource.lesson} |
+| Effectiveness checks | ${manifest.summary.bySource.effectiveness_check} |
+| Metric-driven | ${suggestions.filter(s => s.category === 'Metrics').length} |
+| **Total** | **${suggestions.length}** |
+
+| Impact | Count |
+|--------|-------|
+| 🔴 P0 Critical | ${manifest.summary.byImpact.P0} |
+| 🟠 P1 High | ${manifest.summary.byImpact.P1 + suggestions.filter(s => s.category === 'Metrics' && s.impact.level === 'P1').length} |
+| 🟡 P2 Medium | ${manifest.summary.byImpact.P2 + suggestions.filter(s => s.category === 'Metrics' && s.impact.level === 'P2').length} |
+| ⚪ P3 Low | ${manifest.summary.byImpact.P3 + suggestions.filter(s => s.category === 'Health').length} |` : '';
 
 const output = [
   `# Improvement Suggestions (post ${sprintId})`,
   `> Generated: ${today}. Review each item. Approved items are applied by the Lead at sprint boundary.`,
   `> Rejected items go to \`.bounce/improvement-log.md\` with reason.`,
   `> Applied items go to \`.bounce/improvement-log.md\` under Applied.`,
+  '',
+  impactRef,
+  '',
+  summarySection,
+  '',
+  '---',
   '',
   suggestionBlocks || '_No suggestions generated — all metrics look healthy!_',
   '',
@@ -192,9 +354,10 @@ const output = [
   `- **Defer** → Record in \`.bounce/improvement-log.md\` under Deferred`,
   '',
   `> Framework changes (brains/, skills/, templates/) are applied at sprint boundaries only — never mid-sprint.`,
+  `> Use \`/improve\` skill to have the Team Lead apply approved changes with brain-file sync.`,
 ].join('\n');
 
 const outputFile = path.join(ROOT, '.bounce', 'improvement-suggestions.md');
-fs.writeFileSync(outputFile, output); // overwrite, not append
+fs.writeFileSync(outputFile, output);
 console.log(`✓ Improvement suggestions written to .bounce/improvement-suggestions.md`);
 console.log(`  ${suggestions.length} suggestion(s) generated`);

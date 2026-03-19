@@ -20,7 +20,12 @@ This project uses V-Bounce Engine. You are operating in Tier 4 (Awareness) mode.
 vbounce state show            # where is the sprint right now?
 vbounce validate report <f>   # is this report valid?
 vbounce doctor                # is the framework healthy?
+vbounce improve S-XX          # run self-improvement pipeline
 ```
+
+## Self-Improvement
+
+After sprint close, V-Bounce auto-analyzes retro findings + LESSONS.md + cross-sprint patterns → generates `.bounce/improvement-suggestions.md` with impact levels (P0 Critical → P3 Low). Use `/improve` skill to apply approved changes.
 
 ## Critical Rules
 
