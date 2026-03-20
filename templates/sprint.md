@@ -1,11 +1,12 @@
 <instructions>
-FOLLOW THIS EXACT STRUCTURE. Output sections in order 1-4.
+FOLLOW THIS EXACT STRUCTURE. Output sections in order 0-4.
 
-1. **YAML Frontmatter**: Sprint ID, Goal, Dates, Status, Delivery ref
-2. **§1 Active Scope**: Table of stories + Context Pack Readiness checklists
-3. **§2 Execution Strategy**: Parallel phases, dependencies, risk flags
-4. **§3 Sprint Open Questions**: Unresolved items blocking this sprint
-5. **§4 Execution Log**: Accumulated story results (populated during sprint, becomes Sprint Report §2 source)
+1. **YAML Frontmatter**: Sprint ID, Goal, Dates, Status (Planning/Confirmed/Active/Completed), Delivery ref, Confirmed by/at
+2. **§0 Sprint Readiness Gate**: Pre-sprint checklist — ALL items must be checked before human confirms
+3. **§1 Active Scope**: Table of stories + Context Pack Readiness checklists
+4. **§2 Execution Strategy**: Parallel phases, dependencies, risk flags
+5. **§3 Sprint Open Questions**: Unresolved items blocking this sprint
+6. **§4 Execution Log**: Accumulated story results (populated during sprint, becomes Sprint Report §2 source)
 
 Output location: `product_plans/sprints/sprint-{XX}/sprint-{XX}.md`
 
@@ -15,8 +16,11 @@ Role of this document:
 - The Delivery Plan is only updated at sprint boundaries (start and end).
 
 Document Lifecycle:
-- Created by the Team Lead at Sprint Setup (Step 0) via `vbounce sprint init`.
-- §1 V-Bounce States updated at every story transition.
+- Created during Sprint Planning (Phase 2) as a collaborative document between AI and human.
+- Status flow: Planning → Confirmed (human approves) → Active (execution begins) → Completed.
+- **Sprint CANNOT move to Active without human confirmation.** This is a hard gate.
+- §0 Readiness Gate must be fully checked before requesting human confirmation.
+- §1 V-Bounce States updated at every story transition during execution.
 - §4 Execution Log gets one row per completed story (via `vbounce story complete`).
 - At sprint end, §4 becomes the skeleton for Sprint Report §2 — no reconstruction needed.
 - When the sprint completes, this document moves to `product_plans/archive/sprints/sprint-{XX}/`.
@@ -28,11 +32,27 @@ Do NOT output these instructions.
 sprint_id: "sprint-{XX}"
 sprint_goal: "{One-sentence North Star}"
 dates: "{MM/DD - MM/DD}"
-status: "Planning / Active / Completed"
+status: "Planning / Confirmed / Active / Completed"
 delivery: "D-{NN}"
+confirmed_by: ""
+confirmed_at: ""
 ---
 
 # Sprint S-{XX} Plan
+
+## 0. Sprint Readiness Gate
+> This sprint CANNOT start until the human confirms this plan.
+> AI sets status to "Planning" when drafting. Human confirmation moves it to "Confirmed". Execution moves it to "Active".
+
+### Pre-Sprint Checklist
+- [ ] All stories below have been reviewed with the human
+- [ ] Open questions (§3) are resolved or non-blocking
+- [ ] No stories have 🔴 High ambiguity (spike first)
+- [ ] Dependencies identified and sequencing agreed
+- [ ] Risk flags reviewed from Risk Registry
+- [ ] **Human has confirmed this sprint plan**
+
+---
 
 ## 1. Active Scope
 > Stories pulled from the backlog for execution during this sprint window.
@@ -94,7 +114,7 @@ V-Bounce State: Draft / Refinement / Ready to Bounce
 > Updated by the Lead after each story completes via `vbounce story complete STORY-ID`.
 > This table becomes Sprint Report §2 at sprint end — no reconstruction needed.
 
-| Story | Final State | QA Bounces | Arch Bounces | Correction Tax | Notes |
-|-------|-------------|------------|--------------|----------------|-------|
-| STORY-XXX-YY | Done | 0 | 0 | 0% | {brief note} |
+| Story | Final State | QA Bounces | Arch Bounces | Tests Written | Correction Tax | Notes |
+|-------|-------------|------------|--------------|---------------|----------------|-------|
+| STORY-XXX-YY | Done | 0 | 0 | {N} | 0% | {brief note} |
 <!-- EXECUTION_LOG_END -->
