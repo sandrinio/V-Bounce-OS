@@ -41,9 +41,11 @@ Every risk that keeps you up at night has a specific mechanism that catches it:
 
 ## Planning With V-Bounce
 
-V-Bounce separates planning into two layers: **what to build** and **how to ship it**.
+V-Bounce separates planning into two layers: **what to build** and **how to ship it**. The AI is your planning partner — not a tool you invoke with commands.
 
 ### Product Planning — What to Build
+
+Just talk to the AI. Say "plan a feature for X" or "create an epic for payments" and it handles the rest — reading upstream documents, researching your codebase, and drafting planning documents.
 
 A document hierarchy that mirrors how product teams already think:
 
@@ -54,9 +56,9 @@ Charter  (WHY — vision, principles, constraints)
       → Story  (HOW — implementation spec with acceptance criteria)
 ```
 
-**You write the top levels. The AI builds the bottom.**
+**You write the top levels. The AI builds the bottom — informed by your actual codebase.**
 
-A Product Owner authors the Charter and Roadmap. A Product Manager breaks those into Epics with Stories. The AI agent takes each Story, implements it, and submits proof that it meets the acceptance criteria — validated by QA and Architect gates before anything merges.
+When creating Epics, the AI researches your codebase to fill Technical Context with real file paths and verified dependencies — not guesses. When decomposing Epics into Stories, the AI reads affected files, explores architecture patterns, and creates small, focused stories by deliverable (vertical slices), not by layer.
 
 Every document includes an **ambiguity score**:
 - 🔴 High — requirements unclear, blocked from development
@@ -129,24 +131,28 @@ Run `vbounce trends` to see cross-sprint analysis. Run `vbounce suggest` for AI-
 Here's what a sprint looks like from the product side — no terminal commands, no code:
 
 **Phase 1 — Planning**
-The PM reviews the Roadmap and selects which Epics to tackle. Each Epic contains Stories with acceptance criteria and complexity labels (L1 Trivial through L4 Strategic). Stories are assigned to the sprint. Each story passes a readiness checklist before any code is written.
+You talk to the AI about what to build. The AI creates Epics and Stories by reading upstream documents and researching your codebase. Ambiguity, risks, and open questions are surfaced and discussed collaboratively.
 
-**Phase 2 — The Bounce**
+**Phase 2 — Sprint Planning**
+You and the AI decide what goes into the sprint together. The AI reads the backlog, proposes scope, and surfaces blockers — open questions, unresolved ambiguity, dependency risks, edge cases. You discuss, adjust, and confirm. **No sprint starts without your explicit confirmation.** The Sprint Plan is mandatory.
+
+**Phase 3 — The Bounce**
 The AI team works autonomously. For each Story:
-1. The **Developer** builds the feature in isolation
+1. The **Developer** builds the feature in isolation (with E2E tests, not just unit tests)
 2. The **QA agent** checks: does the code meet the acceptance criteria?
 3. The **Architect agent** checks: does the code follow our architecture rules?
 4. If either check fails, the work "bounces" back to the Developer with a tagged reason
-5. After 3 bounces, the story escalates to the human team
+5. After 3 bounces, the story escalates — the AI presents root causes and options (re-scope, split, spike, or remove), and you decide
 
-You can check progress anytime — `state.json` shows exactly which stories are in progress, passed, or stuck. No need to interrupt the agents.
+Lessons are recorded **immediately** after each story merges, not deferred to sprint close.
 
-**Phase 3 — Review**
+**Phase 4 — Review**
 The Sprint Report lands. It tells you:
 - What shipped and what didn't
 - How many bounces each story took (and why)
 - The correction tax (how much human intervention was needed)
-- Lessons the AI captured for future sprints
+- Test counts per story
+- Lessons already captured during the sprint
 - Recommendations for process improvements
 
 You review, approve the release, and the sprint archives itself. The next sprint starts smarter because the agents now carry forward everything they learned.

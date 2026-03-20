@@ -21,10 +21,12 @@ Output location: `product_plans/backlog/EPIC-{NNN}_{epic_name}/EPIC-{NNN}_{epic_
 
 Document Hierarchy Position: LEVEL 3 (Charter → Roadmap → **Epic** → Story)
 
+**Codebase research is mandatory when filling §4 Technical Context.** Do NOT guess at affected files, dependencies, or integration points. Read the actual codebase — explore directories, read files listed in upstream documents, understand current architecture — then fill §4 with real file paths and verified dependencies.
+
 Upstream sources:
 - §1 Problem & Value traces to Charter §1.1 (What It Is) and §5 (Key Workflows)
 - §3.3 Constraints inherits from Charter §6 and Roadmap §5 Strategic Constraints
-- §4 Technical Context references Roadmap §3 ADRs for architecture decisions
+- §4 Technical Context references Roadmap §3 ADRs for architecture decisions AND actual codebase exploration
 - Metadata.Priority aligns with Roadmap §2 Release Plan epic priorities
 
 Downstream consumers:
@@ -132,21 +134,22 @@ flowchart LR
 ---
 
 ## 5. Decomposition Guidance
-> Hints for AI story breakdown. Check all that apply.
+> The AI agent will analyze this epic and research the codebase to create small, focused stories. Each story must deliver a tangible, verifiable result — not just a layer of work.
 
-- [ ] **Schema/Migration** - Database changes, new tables/fields
-- [ ] **API Work** - New/modified endpoints
-- [ ] **UI Work** - New screens or components
-- [ ] **Integration** - External service connection
-- [ ] **Infrastructure** - Config, env vars, deployment
-- [ ] **Testing** - E2E, integration tests
-- [ ] **Documentation** - User-facing or API docs
+### Affected Areas (for codebase research)
+- [ ] {Area 1: e.g., "Authentication flow in `src/auth/`"}
+- [ ] {Area 2: e.g., "User profile API in `src/api/users.ts`"}
+- [ ] {Area 3: e.g., "Dashboard component in `src/components/Dashboard/`"}
 
-### Suggested Story Sequence
-1. {First: usually schema/data layer}
-2. {Then: API/backend layer}
-3. {Then: UI/frontend layer}
-4. {Finally: integration + E2E tests}
+### Key Constraints for Story Sizing
+- Each story should touch 1-3 files and have one clear goal
+- Prefer vertical slices (thin end-to-end) over horizontal layers
+- Stories must be independently verifiable
+
+### Suggested Sequencing Hints
+1. {What must exist first for other work to build on}
+2. {What depends on #1}
+3. {What can run in parallel}
 
 ---
 

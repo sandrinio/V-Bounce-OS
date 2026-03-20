@@ -30,8 +30,8 @@ Downstream consumers:
 - Developer Agent reads §1 The Spec and §3 Implementation Guide (with react-best-practices skill)
 - QA Agent reads §2 The Truth to validate implementation (with vibe-code-review skill)
 - Architect Agent reads full story context for Safe Zone compliance audit
-- Delivery Plan §3 Active Sprint tracks story V-Bounce state
-- Delivery Plan §5 Context Pack Status tracks per-story readiness using this template's sections
+- Sprint Plan §1 Active Scope tracks story V-Bounce state during the sprint
+- Sprint Plan §1 Context Pack Readiness tracks per-story readiness using this template's sections
 
 Agent handoff sections:
 - §1 The Spec → Human contract (PM/BA writes, Dev reads)
@@ -111,10 +111,23 @@ Feature: {Story Name}
 > Instructions for the Developer Agent. The "How".
 > Target Audience: Developer Agent (with react-best-practices + lesson skills).
 
-### 3.0 Test Implementation
-- {Identify which test suites need to be created or modified to cover the Acceptance Criteria from §2.1. e.g. "Create `AuthComponent.test.tsx`"}
+### 3.0 Environment Prerequisites
+> Verify these before starting. Do NOT waste a bounce cycle on setup failures.
 
-### 3.1 Context & Files
+| Prerequisite | Value | Verified? |
+|-------------|-------|-----------|
+| **Env Vars** | {e.g., `DATABASE_URL`, `API_KEY`} | [ ] |
+| **Services Running** | {e.g., "PostgreSQL on localhost:5432"} | [ ] |
+| **Migrations** | {e.g., "Run `npx prisma migrate dev`"} | [ ] |
+| **Seed Data** | {e.g., "Run `npm run seed`" or "None"} | [ ] |
+| **Dependencies** | {e.g., "`npm install` after pulling latest"} | [ ] |
+
+### 3.1 Test Implementation
+- {Identify which test suites need to be created or modified to cover the Acceptance Criteria from §2.1}
+- {Include E2E/acceptance tests — not just unit tests. Every Gherkin scenario in §2.1 must have a corresponding test}
+- {e.g., "Create `AuthComponent.test.tsx` (unit) + `auth.e2e.test.ts` (acceptance)"}
+
+### 3.2 Context & Files
 | Item | Value |
 |------|-------|
 | **Primary File** | `{filepath/to/main/component.ts}` |
@@ -122,11 +135,11 @@ Feature: {Story Name}
 | **New Files Needed** | Yes/No — `{Name of file}` |
 | **ADR References** | ADR-{NNN} from Roadmap §3 |
 
-### 3.2 Technical Logic
+### 3.3 Technical Logic
 - {Describe the logic flow, e.g., "Use the existing useAuth hook to check permissions."}
 - {Describe state management, e.g., "Store the result in the global Zustand store."}
 
-### 3.3 API Contract (If applicable)
+### 3.4 API Contract (If applicable)
 ```json
 // Expected Request
 POST /api/resource
@@ -146,8 +159,10 @@ POST /api/resource
 ---
 
 ## 4. Definition of Done (The Gate)
+- [ ] Environment prerequisites (§3.0) verified before starting.
 - [ ] Code compiles without errors.
-- [ ] Unit/Integration Tests were written FIRST (Red), and now pass (Green).
+- [ ] Unit tests were written FIRST (Red), and now pass (Green).
+- [ ] E2E/acceptance tests cover all Gherkin scenarios from §2.1 and pass.
 - [ ] All Acceptance Criteria (§2.1) pass.
 - [ ] Linting rules passed.
 - [ ] LESSONS.md consulted before implementation.

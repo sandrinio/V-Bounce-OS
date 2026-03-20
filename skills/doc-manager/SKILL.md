@@ -1,6 +1,6 @@
 ---
 name: doc-manager
-description: "Use when creating, modifying, or navigating V-Bounce Engine planning documents. Trigger on any request to create a charter, roadmap, epic, story, delivery plan, or risk registry — or when the user asks to update, refine, decompose, or transition documents between phases. Also trigger when an agent needs to know which template to use, where a document fits in the hierarchy, or what upstream/downstream documents to read before writing. This skill manages the full document lifecycle from Charter through Sprint execution."
+description: "Use when creating, modifying, or navigating V-Bounce Engine planning documents. Trigger on any request to create a charter, roadmap, epic, story, delivery plan, sprint plan, or risk registry — or when the user asks to update, refine, decompose, or transition documents between phases. Also trigger when the user asks about work status, backlog, what's next, what's blocked, or wants to plan/start a sprint. This skill manages the full document lifecycle from Charter through Sprint Planning and execution."
 ---
 
 # Document Hierarchy Manager
@@ -49,7 +49,7 @@ Roadmap §5 (Constraints) ──→ Delivery Plan (sprint capacity)
 
 Epic §2 (Scope Boundaries) ──→ Story §1 (The Spec)
 Epic §4 (Technical Context) ──→ Story §3 (Implementation Guide)
-Epic §5 (Decomposition) ──→ Story creation sequence
+Epic §5 (Decomposition) ──→ Codebase research scope + Story creation sequence
 Epic §6 (Risks) ──→ Risk Registry §1 (Active Risks)
 Epic §7 (Acceptance Criteria) ──→ Story §2 (The Truth)
 Epic §9 (Artifact Links) ──→ Delivery Plan §3 (Backlog)
@@ -207,9 +207,10 @@ Before creating any document, YOU MUST:
 |----------|-----------------|
 | Charter | Nothing — Charter is root. Gather from user input. |
 | Roadmap | Charter (full document) |
-| Epic | Charter §1, §2, §5 + Roadmap §2, §3, §5 |
-| Story | Parent Epic (full document) + Roadmap §3 (ADRs) |
+| Epic | Charter §1, §2, §5 + Roadmap §2, §3, §5 + **Codebase** (explore affected areas for §4) |
+| Story | Parent Epic (full document) + Roadmap §3 (ADRs) + Codebase (affected files) |
 | Spike | Parent Epic (full document) + Roadmap §3 (ADRs) + Risk Registry |
+| Sprint Plan | All candidate stories + Risk Registry + Archive (completed work) + Backlog state |
 | Delivery Plan | Roadmap §2 (Release Plan) + All Stories in scope |
 | Risk Registry | Charter §6 + Roadmap §4, §5 + All Epic §6 sections |
 
@@ -245,15 +246,92 @@ When modifying a document:
 
 **Epic → Stories:**
 
-1. Read Epic §5 (Decomposition Guidance) for the checklist and suggested sequence
-2. Create one Story per checked category (Schema, API, UI, Integration, etc.)
-3. For each Story:
-   - Pull §1 The Spec from Epic §2 Scope Boundaries (relevant items only)
-   - Pull §2 The Truth from Epic §7 Acceptance Criteria (decomposed per story)
-   - Pull §3 Implementation Guide from Epic §4 Technical Context
-   - Set Complexity Label (L1-L4) based on file count and pattern familiarity
-4. Link all created Stories back in Epic §9 Artifact Links
-5. Update Delivery Plan §3 High-Level Backlog with new stories
+Stories are NOT created by mechanically splitting epic sections by category. The AI must analyze the epic, research the actual codebase, and produce small, focused stories — each delivering a tangible, independently verifiable result.
+
+#### Phase 1: Analyze & Research
+
+1. Read the full Epic document (all sections)
+2. Read Roadmap §3 (ADRs) for architecture constraints
+3. **Research the codebase** — this is mandatory, not optional:
+   - Read every file listed in Epic §4 Affected Areas
+   - Explore the surrounding code to understand current architecture, patterns, and conventions
+   - Identify actual dependencies, imports, and integration points in the code
+   - Note existing tests, utilities, and shared modules that stories will interact with
+4. Build a mental model of what needs to change and in what order
+
+#### Phase 2: Draft Stories by Deliverable, Not by Category
+
+Do NOT create stories by layer (one for schema, one for API, one for UI). Instead, create stories by **tangible outcome** — each story should deliver a small, specific, working result that can be verified.
+
+**Story sizing rules:**
+- Each story has **one clear goal** expressible in a single sentence
+- Each story touches **1-3 files** (if more, it needs splitting)
+- Each story produces a **verifiable result** — something you can see, test, or demonstrate
+- Each story is **independently meaningful** — it delivers value or unlocks the next story, not just "part of a layer"
+- Prefer vertical slices (thin end-to-end) over horizontal slices (full layer)
+
+**If a drafted story exceeds size:**
+- Ask: "Can this be split into two stories that each produce a tangible result?"
+- If yes → split it. Each sub-story must still have its own clear goal.
+- If no (the work is inherently atomic) → keep it as one story, label it L3, and document why it can't be smaller.
+
+#### Phase 3: Write Stories with Codebase-Informed Detail
+
+For each story, use what you learned from codebase research:
+- §1 The Spec: Write requirements informed by actual code state (not just epic abstractions)
+- §2 The Truth: Write Gherkin scenarios that reference real components, routes, and data shapes found in the code
+- §3 Implementation Guide: Reference actual file paths, existing patterns, real function signatures — not placeholders. The developer should be able to start coding immediately.
+- Set Complexity Label (L1-L4) based on actual code complexity discovered during research
+
+#### Phase 4: Link & Update
+
+1. Link all created Stories back in Epic §9 Artifact Links
+2. Update Delivery Plan §3 High-Level Backlog with new stories
+
+### SPRINT PLANNING — Preparing a Sprint
+
+Sprint Planning is a collaborative process between AI and human. No sprint starts without a confirmed Sprint Plan.
+
+**Workflow:**
+
+1. **Read current state:**
+   - Scan `product_plans/backlog/` — read all epic and story frontmatter (status, priority, ambiguity, complexity_label, open questions)
+   - Scan `product_plans/archive/` — understand what's already shipped and what context carries forward
+   - Read `product_plans/strategy/RISK_REGISTRY.md` — identify risks affecting candidate stories
+   - If `vdocs/_manifest.json` exists, read it for documentation context
+
+2. **Propose sprint scope:**
+   - Select stories based on priority, dependencies, and capacity
+   - Identify dependency chains — stories with `Depends On:` must be sequenced
+   - Group parallel-safe stories into phases
+   - Flag stories with 🔴 High ambiguity — these CANNOT enter the sprint without completed spikes
+
+3. **Surface blockers to the human:**
+   - Open questions from epics (§8) and stories that haven't been resolved
+   - Environment prerequisites missing from stories
+   - Risks from Risk Registry that affect planned stories
+   - Edge cases or ambiguity the human may not have considered
+   - Dependencies on incomplete work
+
+4. **Collaborate with the human:**
+   - Present proposed scope, risks, and blockers
+   - Discuss and adjust — add/remove stories, resolve open questions
+   - Agree on execution mode per story (Full Bounce vs Fast Track)
+
+5. **Create Sprint Plan:**
+   - Create `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` from `templates/sprint.md`
+   - Fill §0 Sprint Readiness Gate checklist
+   - Fill §1 Active Scope with confirmed stories + Context Pack Readiness
+   - Fill §2 Execution Strategy (phases, dependencies, risk flags)
+   - Fill §3 Sprint Open Questions (all must be resolved or non-blocking)
+   - Set status: `Planning`
+
+6. **Gate — Human confirms:**
+   - Present finalized plan to human
+   - Explicitly ask for confirmation
+   - On confirmation: set `status: Confirmed`, fill `confirmed_by` and `confirmed_at`
+   - Move story files from `product_plans/backlog/EPIC-{NNN}/` to `product_plans/sprints/sprint-{XX}/`
+   - Sprint is now ready for Phase 3 (Execution)
 
 ### TRANSITION — Moving Documents Between Phases
 
@@ -264,7 +342,9 @@ When modifying a document:
 | Charter → Ready for Roadmap | Ambiguity 🟡 or 🟢 (§1 and §5 filled) |
 | Roadmap → Ready for Epics | Charter Ambiguity 🟢 + Roadmap §2 and §3 filled |
 | Epic → Ready for Stories | Ambiguity 🟡 or 🟢 (§2 Scope and §4 Tech Context filled) |
-| Story → Ready to Bounce | Ambiguity 🟢 + ALL Context Pack items checked (Delivery Plan §5) |
+| Story → Ready to Bounce | Ambiguity 🟢 + ALL Context Pack items checked (Sprint Plan §1) |
+| Sprint Plan → Confirmed | §0 Readiness Gate checklist complete + Human explicitly confirms |
+| Sprint Plan → Active | Status is Confirmed (human approval obtained) |
 | Story (Probing/Spiking) → Refinement | All linked spikes are Validated or Closed |
 | Spike → Validated | Architect confirms findings against Safe Zone |
 | Spike → Closed | All items in §7 Affected Documents are checked off |
@@ -333,4 +413,4 @@ When a sprint is complete:
 
 ## Keywords
 
-charter, roadmap, epic, story, delivery plan, risk registry, document hierarchy, template, create document, update document, decompose epic, story breakdown, ambiguity score, context pack, V-Bounce state, phase transition, cascade update, planning documents
+charter, roadmap, epic, story, delivery plan, risk registry, sprint plan, sprint planning, document hierarchy, template, create document, update document, decompose epic, story breakdown, ambiguity score, context pack, V-Bounce state, phase transition, cascade update, planning documents, backlog, what's next, what's blocked, start sprint

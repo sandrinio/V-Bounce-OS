@@ -176,24 +176,25 @@ Examples:
 ## The Bounce Sequence
 
 ### Step 0: Sprint Setup
+
+**Prerequisite:** Sprint Planning (Phase 2) must be complete. The Sprint Plan must be in "Confirmed" status with human approval before proceeding.
+
 ```
 1. Cut sprint branch from main:
    git checkout -b sprint/S-01 main
    mkdir -p .bounce/archive
 
-2. Read RISK_REGISTRY.md — check for open risks relevant to this sprint's stories.
-   If high-severity risks affect planned stories, flag to human before proceeding.
+2. Verify Sprint Plan:
+   - Sprint Plan status must be "Confirmed" (human-approved in Phase 2)
+   - §0 Sprint Readiness Gate must be fully checked
+   - §3 Sprint Open Questions must have no unresolved blocking items
+   If any check fails, return to Phase 2 (Sprint Planning).
 
-3. Read sprint-{XX}.md — check §2 Sprint Open Questions.
-   If unresolved questions block stories in this sprint, flag to human.
-   Do NOT start bouncing stories with unresolved blocking questions.
-
-4. If vdocs/_manifest.json exists, read it.
+3. If vdocs/_manifest.json exists, read it.
    Understand what's already documented — this informs which stories
    may require doc updates after the sprint.
 
-5. Triage Requests: If an incoming task is an L1 Trivial change (1-2 files),
-   use the **Hotfix Path**:
+4. **Hotfix Path** (L1 Trivial tasks only — triaged during Phase 1):
    a. Create `HOTFIX-{Date}-{Name}.md` using the template.
    b. Delegate to Developer (no worktree needed if acting on active branch).
    c. Developer runs `hotfix_manager.sh ledger "{Title}" "{Description}"` after implementation.
@@ -201,25 +202,20 @@ Examples:
    e. DevOps runs `hotfix_manager.sh sync` to update any active story worktrees.
    f. Update Delivery Plan Status to "Done".
 
-6. **Gate Config Check**:
+5. **Gate Config Check**:
    - If `.bounce/gate-checks.json` does not exist, run `./scripts/init_gate_config.sh` to auto-detect the project stack and generate default gate checks.
    - If it exists, verify it's current (stack detection may have changed).
 
-7. **Parallel Readiness Check** (before bouncing multiple stories simultaneously):
+6. **Parallel Readiness Check** (before bouncing multiple stories simultaneously):
    - Verify test runner config excludes `.worktrees/` (vitest, jest, pytest, etc.)
    - Verify no shared mutable state between worktrees (e.g., shared temp files, singletons writing to same path)
    - Verify `.gitignore` includes `.worktrees/`
    If any check fails, fix before spawning parallel stories. Intermittent test failures from worktree cross-contamination erode trust in the test suite fast.
 
-8. **Dependency Check & Execution Mode**:
-   - For each story, check the `Depends On:` field in its template.
-   - If Story B depends on Story A, you MUST execute them sequentially. Do not create Story B's worktree or spawn its Developer until Story A has successfully passed the DevOps merge step.
-   - Determine Execution Mode:
-     - **Full Bounce (Default)**: Normal L2-L4 stories go through full Dev → QA → Architect → DevOps flow.
-     - **Fast Track (L1/L2 Minor)**: For cosmetic UI tweaks or isolated refactors, execute Dev → DevOps only. Skip QA and Architect loops to save overhead. Validate manually during Sprint Review.
-     
-9. Update sprint-{XX}.md: Status → "Active"
+7. Update sprint-{XX}.md: Status → "Active"
 ```
+
+**Note:** Risk assessment, dependency checks, scope selection, and execution mode decisions all happen during Sprint Planning (Phase 2), not here. Step 0 executes the confirmed plan.
 
 ### Step 0.5: Discovery Check (L4 / 🔴 Stories Only)
 
@@ -327,6 +323,18 @@ mkdir -p .worktrees/STORY-{ID}-{StoryName}/.bounce/{tasks,reports}
 ```
 Update sprint-{XX}.md: V-Bounce State → "Done"
 
+### Step 5.5: Immediate Lesson Recording
+After each story merge, before proceeding to the next story:
+```
+1. Read Dev report — check `lessons_flagged` field
+2. Read QA report — check for lessons flagged during validation
+3. For each flagged lesson:
+   - Present to the human for approval
+   - If approved → record to LESSONS.md immediately (follow lesson skill format)
+   - If rejected → note as "No" in Sprint Report §4
+4. Do NOT defer this to Step 7 — context decays fast
+```
+
 ### Step 6: Sprint Integration Audit
 After ALL stories are merged into `sprint/S-01`:
 ```
@@ -350,12 +358,12 @@ After ALL stories are merged into `sprint/S-01`:
      ```
 4. V-Bounce State → "Sprint Review" for all stories
 4. Present Sprint Report to human
-5. **BLOCKING STEP — Lesson Approval:**
-   Review and approve/reject ALL flagged lessons from §4 of the Sprint Report.
-   Do NOT proceed to Sprint Release until every lesson has a status of "Yes" or "No".
-   Stale lessons lose context — approve them while the sprint is fresh.
-   Present each lesson to the human and record approved ones to LESSONS.md immediately.
-6. After approval → Spawn devops subagent for Sprint Release:
+5. **Lesson Review (non-blocking):**
+   Most lessons should already be recorded to LESSONS.md during Step 5.5.
+   Review §4 of the Sprint Report — confirm all flagged lessons have a status.
+   If any lessons were missed during Step 5.5, present them now and record approved ones.
+   This is a review step, not a first-time approval gate.
+6. After review → Spawn devops subagent for Sprint Release:
    - Merge sprint/S-01 → main (--no-ff)
    - Tag release: v{VERSION}
    - Run full test suite + build + lint on main

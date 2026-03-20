@@ -31,6 +31,20 @@ This is NOT just a command — it is a standing directive:
 3. **When offering**, say: *"This looks like a lesson worth recording — want me to capture it?"*
 4. **Never record without the user's approval.** Always ask first.
 
+## Timing: Record Immediately, Not at Sprint Close
+
+**Lessons MUST be recorded as soon as the story that produced them is merged** — not deferred to sprint close. Context decays fast.
+
+**Flow:**
+1. During execution, agents flag lessons in their reports (`lessons_flagged` field)
+2. After DevOps merges a story (Phase 3, Step 9), the Team Lead immediately:
+   - Reads `lessons_flagged` from Dev and QA reports
+   - Presents each lesson to the human for approval
+   - Records approved lessons to LESSONS.md right away
+3. At sprint close (Sprint Report §4), the lesson table serves as a **review of what was already recorded** — not a first-time approval step. This is a confirmation, not a gate.
+
+**Why this matters:** A lesson recorded 5 minutes after the problem is specific and actionable. A lesson recorded 3 days later at sprint close is vague and often forgotten.
+
 ## Recording: The `/lesson` Command
 
 ### Step 1: Gather Context

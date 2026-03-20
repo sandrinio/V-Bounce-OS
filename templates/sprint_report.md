@@ -110,6 +110,8 @@ delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 | **Bounce Ratio** | {X}% | (total bounces / total stories) |
 | **Average Correction Tax** | {X}% | 🟢 0-5% · 🟡 6-15% · 🔴 16%+ requires process review |
 | **First-Pass Success Rate** | {X}% | stories that passed QA on first try |
+| **Total Tests Written** | {N} | across all stories (from Dev report `tests_written`) |
+| **Tests per Story (avg)** | {N} | |
 | **Merge Conflicts** | {N} simple, {N} complex | |
 
 ### Per-Story Breakdown
@@ -128,11 +130,11 @@ delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 
 ## 4. Lessons Learned
 
-> Flagged by agents during the sprint. Each needs user approval before recording to LESSONS.md.
+> Lessons are recorded to LESSONS.md **immediately after each story merge** (Step 5.5), not deferred to sprint close. This table is a review of what was already captured.
 
-| Source | Lesson | Approved? |
-|--------|--------|-----------|
-| STORY-{ID}-{story_name} Dev Report | {What happened and proposed rule} | Pending / Yes / No |
+| Source | Lesson | Recorded? | When |
+|--------|--------|-----------|------|
+| STORY-{ID}-{story_name} Dev Report | {What happened and proposed rule} | Yes / No / Missed | {After story merge / Sprint close} |
 
 ---
 
