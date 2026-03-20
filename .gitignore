@@ -8,6 +8,8 @@ node_modules/
 
 # AI/developer working artifacts (never commit)
 /temporary/
+MANIFEST.md
+IMPROVEMENT_PLAN.md
 
 .env
 *.log
