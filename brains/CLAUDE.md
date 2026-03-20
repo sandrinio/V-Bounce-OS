@@ -214,7 +214,7 @@ Draft → Refinement → Ready to Bounce → Bouncing → QA Passed → Architec
 10. **One source of truth**. Reference upstream documents, don't duplicate.
 11. **Change Logs are mandatory** on every document modification.
 12. **Agent Reports MUST use YAML Frontmatter**. Every `.bounce/report/` generated must start with a strict `---` YAML block containing the core status and metrics before the Markdown body.
-13. **Framework Integrity**. Any modification to a `brains/` or `skills/` file MUST be recorded in `brains/CHANGELOG.md`.
+13. **Framework Integrity**. Any modification to a `brains/`, `skills/`, `templates/`, or `scripts/` file MUST be recorded in `brains/CHANGELOG.md` and reflected in `MANIFEST.md`.
 
 ## Framework Structure
 
