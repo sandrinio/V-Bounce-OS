@@ -83,6 +83,16 @@ reporter: "{human / QA / user}"
 
 ---
 
+---
+
+## Token Usage
+> Auto-populated by agents. Each agent runs `node scripts/count_tokens.mjs --self --append <this-file> --name <Agent>` before writing their report.
+
+| Agent | Input | Output | Total |
+|-------|-------|--------|-------|
+
+---
+
 ## Change Log
 
 | Date | Author | Change |

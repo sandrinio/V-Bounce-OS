@@ -55,3 +55,4 @@ complexity_label: "L1 (Trivial)"
 - [ ] Automated tests still pass (`npm test`).
 - [ ] **Framework Integrity**: If `brains/` or `skills/` were modified, log to `brains/CHANGELOG.md`.
 - [ ] **Post-Fix Action**: Run `./scripts/hotfix_manager.sh ledger "HOTFIX: {Name}" "{Brief Fix Description}"`
+- [ ] **Token Tracking**: Run `node scripts/count_tokens.mjs --self --append <this-file> --name Developer`
