@@ -345,7 +345,7 @@ your-project/
 │   ├── improve/
 │   ├── file-organization/
 │   └── react-best-practices/   # Example — customize for your stack
-├── scripts/                     # 26 automation scripts (validation, context prep, state, graph)
+├── scripts/                     # 27 automation scripts (validation, context prep, state, graph, tokens)
 └── package.json                 # 3 deps: js-yaml, marked, commander. Nothing else.
 ```
 
@@ -469,6 +469,11 @@ vbounce validate ready STORY-ID       # Pre-bounce readiness gate
 vbounce trends                        # Cross-sprint trend analysis
 vbounce suggest S-01                  # Generate improvement suggestions
 vbounce improve S-01                  # Full self-improvement pipeline
+
+# Token tracking
+vbounce tokens                        # Current session token usage
+vbounce tokens --all                  # Per-subagent breakdown
+vbounce tokens --sprint S-01          # Aggregate from story docs
 
 # Health check
 vbounce doctor                        # Verify setup

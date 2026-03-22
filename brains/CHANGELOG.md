@@ -3,6 +3,30 @@
 This log tracks modifications to the core agentic framework (e.g., `brains/`, `skills/`). 
 Per **Rule 13: Framework Integrity**, anytime an entry is made here, all tool-specific brain files must be reviewed for consistency.
 
+## [2026-03-23] — Token Tracking: Per-Agent, Per-Story, Per-Sprint
+
+### Token Tracking Script (New)
+- **Added**: `scripts/count_tokens.mjs` — parses Claude Code JSONL session files for exact token counts. Modes:
+  - `--self`: auto-detects own subagent JSONL (most recently modified file in subagents/)
+  - `--self --append <story.md> --name Developer`: writes input/output/total row to story's Token Usage table
+  - `--all`: per-subagent breakdown for current session
+  - `--sprint S-XX`: aggregates Token Usage tables from all story docs in a sprint folder
+  - `--json`: machine-readable output for report YAML frontmatter
+- **Modified**: `bin/vbounce.mjs` — added `tokens` CLI command with all modes
+
+### Subagent Token Self-Reporting (Modified)
+- **Modified**: All 5 subagent configs (`developer.md`, `qa.md`, `architect.md`, `devops.md`, `scribe.md`):
+  - Token Tracking instruction changed from vague "retrieve your session's token usage" to concrete two-step:
+    1. `node scripts/count_tokens.mjs --self --json` → populate `tokens_used` in report YAML
+    2. `node scripts/count_tokens.mjs --self --append <story.md> --name <Agent>` → write row to story doc
+  - Each story document accumulates a Token Usage table with per-agent input/output/total
+- **Modified**: `brains/claude-agents/developer.md` — also fixed stale "Follow the Safe Zone" → "Comply with ADRs"
+
+### Sprint Token Aggregation
+- `--sprint S-XX` reads all STORY-*.md files in the sprint folder, parses their Token Usage tables, outputs per-story and sprint-total token counts. JSON mode provides data for Sprint Report §3 Execution Metrics.
+
+---
+
 ## [2026-03-22] — Bug & Change Request Templates + Process Fixes
 
 ### Bug Report Template (New)

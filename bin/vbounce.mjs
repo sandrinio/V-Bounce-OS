@@ -82,6 +82,10 @@ Usage:
   vbounce prep qa <storyId>            Generate QA context pack
   vbounce prep arch <storyId>          Generate Architect context pack
   vbounce prep sprint <sprintId>       Generate Sprint context pack
+  vbounce tokens                         Show token usage for current session
+  vbounce tokens --all                   Show per-subagent token breakdown
+  vbounce tokens --sprint S-XX           Aggregate tokens from all stories in a sprint
+  vbounce tokens --json                  JSON output for reports
   vbounce graph [generate]              Generate product document graph
   vbounce graph impact <DOC-ID>         Show what's affected by a document change
   vbounce docs match --story <ID>      Match story scope against vdoc manifest
@@ -216,6 +220,12 @@ if (command === 'improve') {
   // Run suggest (which internally runs post_sprint_improve.mjs)
   console.log('\nStep 2/2: Running improvement analyzer + suggestions...');
   runScript('suggest_improvements.mjs', [sprintArg]);
+}
+
+// -- tokens --
+if (command === 'tokens') {
+  rl.close();
+  runScript('count_tokens.mjs', args.slice(1));
 }
 
 // -- graph --
