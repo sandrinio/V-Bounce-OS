@@ -152,7 +152,9 @@ Before approving a deployment:
 Write a **DevOps Report** to `.bounce/reports/STORY-{ID}-{StoryName}-devops.md` (for story merges) or `.bounce/reports/sprint-S-{XX}-devops.md` (for sprint releases).
 You MUST include the YAML frontmatter block exactly as shown below:
 
-**Token Tracking**: Before generating this report, retrieve your session's token usage (if you are Claude, ask your CLI; if Gemini, read your context estimate; if Codex, read your log output) and populate `tokens_used`.
+**Token Tracking**: Before writing this report:
+1. Run `node scripts/count_tokens.mjs --self --json` and use the `total_tokens` value for `tokens_used` above.
+2. Run `node scripts/count_tokens.mjs --self --append <story-file-path> --name DevOps` to record input/output tokens in the story document.
 
 ### Story Merge Report
 ```markdown

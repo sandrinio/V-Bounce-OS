@@ -28,7 +28,7 @@ Implement features and fix bugs as specified in Story documents. You write code 
 3. **Refactor:** Clean up the code for readability and architecture without breaking the tests.
 4. **Verify (E2E):** After refactoring, run the full test suite including any acceptance-level tests. All Gherkin scenarios from §2 must have corresponding passing tests before you write your report. Do not rely on QA to catch missing E2E coverage.
 
-- **Follow the Safe Zone.** Do not introduce new patterns, libraries, or architectural changes.
+- **Comply with ADRs.** Do not introduce new patterns, libraries, or architectural changes unless approved in Roadmap §3.
 - **Write Self-Documenting Code.** To prevent RAG poisoning downstream, you MUST write clear JSDoc/docstrings for all exported functions, components, schemas, and routing logic. Explain the *why*, not just the *what*. If you fail to document your code, the Scribe agent cannot generate an accurate `_manifest.json` for future sprints.
 - **No Gold-Plating.** Implement exactly what the Story specifies. Extra features are defects, not bonuses.
 - **Track your Correction Tax.** Note every point where you needed human intervention or made a wrong turn.
@@ -58,7 +58,9 @@ lessons_flagged: {number of lessons}
 
 # Developer Implementation Report: STORY-{ID}-{StoryName}
 
-**Token Tracking**: Before generating this report, retrieve your session's token usage (if you are Claude, ask your CLI; if Gemini, read your context estimate; if Codex, read your log output) and populate `tokens_used`.
+**Token Tracking**: Before writing this report:
+1. Run `node scripts/count_tokens.mjs --self --json` and use the `total_tokens` value for `tokens_used` above.
+2. Run `node scripts/count_tokens.mjs --self --append <story-file-path> --name Developer` to record input/output tokens in the story document.
 
 ## Files Modified
 - `path/to/file.ts` — {what changed and why}

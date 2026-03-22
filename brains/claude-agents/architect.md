@@ -83,7 +83,9 @@ Check that the codebase remains self-documenting for downstream RAG consumption:
 Write an **Architectural Audit Report** to `.bounce/reports/STORY-{ID}-{StoryName}-arch.md`.
 You MUST include the YAML frontmatter block exactly as shown below:
 
-**Token Tracking**: Before generating this report, retrieve your session's token usage (if you are Claude, ask your CLI; if Gemini, read your context estimate; if Codex, read your log output) and populate `tokens_used`.
+**Token Tracking**: Before writing this report:
+1. Run `node scripts/count_tokens.mjs --self --json` and use the `total_tokens` value for `tokens_used` above.
+2. Run `node scripts/count_tokens.mjs --self --append <story-file-path> --name Architect` to record input/output tokens in the story document.
 
 ### If Audit PASSES:
 ```markdown
