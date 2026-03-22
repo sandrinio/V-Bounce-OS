@@ -47,7 +47,6 @@ for (let i = 0; i < args.length; i++) {
   count_tokens.mjs --self           # auto-detect own subagent (for agents to self-report)
   count_tokens.mjs --self --append <story.md> --name Developer  # write tokens to story doc
   count_tokens.mjs --sprint S-01    # aggregate tokens from all stories in a sprint
-  count_tokens.mjs --sprint S-01 --json  # JSON output for sprint report
   count_tokens.mjs --agent <ID>     # specific subagent
   count_tokens.mjs --session <ID>   # specific session
   count_tokens.mjs --json           # JSON output for reports`);
