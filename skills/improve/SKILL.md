@@ -39,9 +39,9 @@ Every improvement proposal is classified by impact to help the human prioritize:
 
 ## When to Use
 
-- **Automatically** — `vbounce sprint close S-XX` runs the improvement pipeline and generates `.bounce/improvement-suggestions.md`
+- **Automatically** — `vbounce sprint close S-XX` runs the improvement pipeline and regenerates `.bounce/improvement-suggestions.md` (overwrites previous — always reflects latest data)
 - **On demand** — `vbounce improve S-XX` runs the full pipeline (trends + analyzer + suggestions)
-- After every 2-3 sprints (recommended cadence for applying approved changes)
+- **Applying changes:** After every 1-3 sprints, human reviews suggestions and runs `/improve` to apply approved ones. The analysis runs every sprint; applying changes is the human's call.
 - When the same Process Feedback appears across multiple sprint reports
 - When the user explicitly asks to improve templates, skills, or process
 - When a sprint's Framework Self-Assessment reveals Blocker-severity findings
@@ -239,7 +239,7 @@ For each approved proposal:
 
 ### Step 7: Validate
 After all changes are applied:
-1. Run `./scripts/pre_bounce_sync.sh` to update RAG embeddings with the new framework content
+1. Run `vbounce doctor` to verify framework integrity
 2. Verify no cross-references are broken (template paths, skill names, report field names)
 3. Confirm brain file consistency — all surfaces should describe the same process
 
@@ -284,7 +284,7 @@ The Team Lead should note in the Sprint Report whether the previous improvement 
 - **Never change the framework without human approval.** Propose, don't impose.
 - **Keep all brain surfaces in sync.** A change to CLAUDE.md must be reflected in GEMINI.md, AGENTS.md, and cursor-rules/.
 - **Log everything.** Every change goes in `brains/CHANGELOG.md` with the finding that motivated it.
-- **Run pre_bounce_sync.sh after changes.** Updated skills and rules must be re-indexed for RAG.
+- **Run `vbounce doctor` after changes.** Verify framework integrity after applying improvements.
 - **Don't over-engineer.** Fix the actual problem reported by agents. Don't add speculative improvements.
 - **Respect the hierarchy.** Template changes are low-risk. Process flow changes are high-risk. Scope accordingly.
 - **Skills are living documents.** If a skill's instructions consistently confuse agents, rewrite the confusing section — don't add workarounds elsewhere.

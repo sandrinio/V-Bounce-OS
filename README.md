@@ -29,7 +29,7 @@ Every risk that keeps you up at night has a specific mechanism that catches it:
 | Risk | What catches it |
 |------|----------------|
 | Agent ships code that doesn't match requirements | **QA gate** — validates every story against acceptance criteria before merge |
-| Architectural drift over time | **Architect gate** — audits against your ADRs and safe-zone rules on every story |
+| Architectural drift over time | **Architect gate** — audits against your ADRs on every story |
 | One bad story breaks everything | **Git worktrees** — every story is isolated; failures can't contaminate other work |
 | Agent gets stuck in a loop | **3-bounce escalation** — after 3 failed attempts, the story surfaces to a human |
 | Scope creep on "quick fixes" | **Hotfix hard-stop** — Developer must stop if a fix touches more than 2 files |
@@ -285,7 +285,7 @@ Five specialist agents, each with a single job and strict boundaries:
 |-------|-------------|-------------|
 | **Developer** | Implements stories in isolated worktrees, submits implementation reports | Works only in its assigned worktree |
 | **QA** | Validates code against acceptance criteria | Read-only — cannot modify code |
-| **Architect** | Audits against ADRs, architecture rules, and safe-zone boundaries | Read-only — cannot modify code |
+| **Architect** | Audits against ADRs and architecture rules | Read-only — cannot modify code |
 | **DevOps** | Merges passing stories into the sprint branch | Only acts after both gates pass |
 | **Scribe** | Generates and maintains product documentation from the actual codebase | Only runs after merge |
 
@@ -322,25 +322,30 @@ your-project/
 │   ├── architect.md
 │   ├── devops.md
 │   └── scribe.md
-├── templates/                   # 9 Markdown + YAML frontmatter templates
+├── templates/                   # 12 Markdown + YAML frontmatter templates
 │   ├── charter.md
 │   ├── roadmap.md
 │   ├── epic.md
 │   ├── story.md
+│   ├── spike.md
 │   ├── sprint.md
 │   ├── delivery_plan.md
 │   ├── sprint_report.md
 │   ├── hotfix.md
+│   ├── bug.md
+│   ├── change_request.md
 │   └── risk_registry.md
-├── skills/                      # 7 modular skill files (see Skills below)
+├── skills/                      # 9 modular skill files (see Skills below)
 │   ├── agent-team/
 │   ├── doc-manager/
+│   ├── product-graph/
 │   ├── lesson/
 │   ├── vibe-code-review/
 │   ├── write-skill/
 │   ├── improve/
+│   ├── file-organization/
 │   └── react-best-practices/   # Example — customize for your stack
-├── scripts/                     # 23 automation scripts (validation, context prep, state)
+├── scripts/                     # 26 automation scripts (validation, context prep, state, graph)
 └── package.json                 # 3 deps: js-yaml, marked, commander. Nothing else.
 ```
 
@@ -397,11 +402,13 @@ Skills are modular markdown instructions the Team Lead invokes automatically dur
 | Skill | Purpose |
 |-------|---------|
 | `agent-team` | Spawns temporary sub-agents (Dev, QA, Architect, DevOps, Scribe) to parallelize work |
-| `doc-manager` | Enforces the document hierarchy for Epics and Stories |
+| `doc-manager` | Enforces the document hierarchy, cascade rules, and planning workflows |
+| `product-graph` | Dependency-aware document intelligence — knows what's blocked, what's affected by changes |
 | `lesson` | Extracts mistakes from sprints into `LESSONS.md` |
 | `vibe-code-review` | Runs Quick Scan or Deep Audit against acceptance criteria and architecture rules |
 | `write-skill` | Allows the Team Lead to author new skills when the team encounters a recurring problem |
 | `improve` | Self-improvement loop — reads agent friction signals across sprints and proposes framework changes (with your approval) |
+| `file-organization` | File structure management and organization verification |
 | `react-best-practices` | Example tech-stack skill — customize this for your own stack |
 
 ---
@@ -443,6 +450,10 @@ vbounce story complete STORY-ID       # Mark story done, update state
 vbounce state show                    # Print current state
 vbounce state update STORY-ID STATE   # Update story state
 
+# Product graph
+vbounce graph                         # Generate document dependency graph
+vbounce graph impact EPIC-002         # Show what's affected by a change
+
 # Context preparation
 vbounce prep sprint S-01              # Sprint context pack
 vbounce prep qa STORY-ID              # QA context pack
@@ -479,6 +490,7 @@ product_plans/                   # Created when you start planning
 
 .bounce/                         # Created on first sprint init
   state.json                     #   Machine-readable sprint state (crash recovery)
+  product-graph.json             #   Document dependency graph (auto-generated)
   reports/                       #   QA and Architect bounce reports
   improvement-manifest.json      #   Machine-readable improvement proposals (auto-generated)
   improvement-suggestions.md     #   Human-readable suggestions with impact levels (auto-generated)
@@ -502,7 +514,7 @@ LESSONS.md                       # Accumulated mistakes — agents read this bef
 | **Escalation** | When a story hits the 3-bounce limit and surfaces to a human for intervention |
 | **Gate** | An automated quality checkpoint — QA validates requirements, Architect validates structure |
 | **Hotfix Path** | A fast track for trivial (L1) changes: 1-2 files, no QA/Architect gates, human verifies directly |
-| **L1–L4** | Complexity labels: L1 Trivial, L2 Standard, L3 Complex, L4 Strategic |
+| **L1–L4** | Complexity labels: L1 Trivial, L2 Standard, L3 Complex, L4 Uncertain |
 | **Root Cause Tag** | A label on every bounce failure (e.g., `missing_tests`, `adr_violation`) used for trend analysis |
 | **Scribe** | The documentation agent that maps code into semantic product docs |
 | **Sprint Report** | End-of-sprint summary: what shipped, metrics, bounce analysis, lessons, retrospective |

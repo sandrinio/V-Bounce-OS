@@ -11,6 +11,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { spawnSync } from 'child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -111,3 +112,10 @@ if (content.includes(logStart)) {
 fs.writeFileSync(sprintPlanPath, content);
 console.log(`✓ Updated sprint plan: ${storyId} Done`);
 console.log(`\n  QA bounces: ${qaBounces} | Arch bounces: ${archBounces} | Correction tax: ${correctionTax}`);
+
+// Regenerate product graph (non-blocking)
+const graphScript = path.join(__dirname, 'product_graph.mjs');
+if (fs.existsSync(graphScript)) {
+  const graphResult = spawnSync(process.execPath, [graphScript], { stdio: 'pipe', cwd: ROOT });
+  if (graphResult.status === 0) console.log('✓ Product graph regenerated');
+}

@@ -111,6 +111,15 @@ if (fs.existsSync(suggestScript)) {
   console.warn('  ⚠ suggest_improvements.mjs not found — skipping improvement pipeline.');
 }
 
+// Regenerate product graph (non-blocking)
+const graphScript = path.join(__dirname, 'product_graph.mjs');
+if (fs.existsSync(graphScript)) {
+  const graphResult = spawnSync(process.execPath, [graphScript], { stdio: 'pipe', cwd: process.cwd() });
+  if (graphResult.status === 0) {
+    console.log('✓ Product graph regenerated');
+  }
+}
+
 console.log('');
 console.log('Manual steps remaining:');
 console.log(`  1. Archive sprint plan folder:`);

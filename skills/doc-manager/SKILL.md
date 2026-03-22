@@ -85,6 +85,8 @@ Spike §6 (Residual Risk) ──→ Risk Registry §1 (Active Risks)
 | Story | `templates/story.md` | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{StoryName}.md` |
 | Spike | `templates/spike.md` | `product_plans/backlog/EPIC-{NNN}_{name}/SPIKE-{EpicID}-{NNN}-{topic}.md` |
 | Hotfix | `templates/hotfix.md` | `product_plans/hotfixes/HOTFIX-{Date}-{Name}.md` |
+| Bug Report | `templates/bug.md` | `product_plans/sprints/sprint-{XX}/BUG-{Date}-{Name}.md` |
+| Change Request | `templates/change_request.md` | `product_plans/sprints/sprint-{XX}/CR-{Date}-{Name}.md` |
 | Sprint Report | `templates/sprint_report.md` | `product_plans/sprints/sprint-{XX}/sprint-report.md` |
 
 ### Product Plans Folder Structure (State-Based)
@@ -200,6 +202,24 @@ Before creating any document, YOU MUST:
 4. Fill sections by pulling from upstream sources (see Information Flow above)
 5. Set the Ambiguity Score based on completeness
 6. Verify all cross-references are valid
+7. **Present edge cases and open questions to the human** (see below)
+
+**After creating an Epic — mandatory discussion step:**
+
+After writing the Epic document, you MUST present §6 (Risks & Edge Cases) and §8 (Open Questions) to the human in chat. Do not silently file them — the human needs to see what's uncertain to make good decisions.
+
+Format your presentation like this:
+1. Summarize the epic in 1-2 sentences
+2. List each edge case from §6 with its proposed mitigation — ask the human if the mitigation is adequate or if they see other risks
+3. List each open question from §8 — present the options, explain the impact, and ask the human to decide or delegate
+4. State the current ambiguity score and what must be resolved before decomposition into stories
+
+The epic is NOT ready for decomposition until:
+- All **blocking** questions in §8 are resolved (status = "Decided")
+- All edge cases in §6 have either a decided mitigation or are explicitly accepted as known risk by the human
+- Ambiguity is 🟡 or 🟢
+
+If the human resolves questions during discussion, update the epic document immediately (change §8 status to "Decided", update §6 mitigations, adjust ambiguity score).
 
 **Pre-read requirements by document type:**
 
@@ -241,6 +261,8 @@ When modifying a document:
 | Story — new risk discovered | Risk Registry §1 (new row) |
 | Spike §4/§5 (Findings/Decision) | Epic §4 Technical Context, Epic §8 Open Questions, Risk Registry §1 |
 | Spike §5 (Decision — architectural) | Roadmap §3 ADRs (new row) |
+
+**After any cascade:** Run `vbounce graph` to regenerate the product graph so downstream consumers have current state.
 
 ### DECOMPOSE — Breaking Down Documents
 
@@ -341,7 +363,7 @@ Sprint Planning is a collaborative process between AI and human. No sprint start
 |------------|------|
 | Charter → Ready for Roadmap | Ambiguity 🟡 or 🟢 (§1 and §5 filled) |
 | Roadmap → Ready for Epics | Charter Ambiguity 🟢 + Roadmap §2 and §3 filled |
-| Epic → Ready for Stories | Ambiguity 🟡 or 🟢 (§2 Scope and §4 Tech Context filled) |
+| Epic → Ready for Stories | Ambiguity 🟡 or 🟢 + §2 Scope filled + §4 Tech Context filled + §8 all blocking questions Decided + §6 each edge case has a decided mitigation OR is explicitly accepted as known risk |
 | Story → Ready to Bounce | Ambiguity 🟢 + ALL Context Pack items checked (Sprint Plan §1) |
 | Sprint Plan → Confirmed | §0 Readiness Gate checklist complete + Human explicitly confirms |
 | Sprint Plan → Active | Status is Confirmed (human approval obtained) |
@@ -355,6 +377,13 @@ Sprint Planning is a collaborative process between AI and human. No sprint start
 - **Sprint Setup Phase**: The Team Lead physically MOVES the `STORY-XXX.md` file from `product_plans/backlog/EPIC-XXX/` to `product_plans/sprints/sprint-{XX}/`. 
 - **Sprint Closure Phase**: The Team Lead physically MOVES the entire sprint folder (`sprints/sprint-{XX}/`) to `product_plans/archive/sprints/sprint-{XX}/`. 
 - **Epic Closure**: Once every story attached to an Epic has been archived, the Epic folder itself is moved from `backlog/` to `archive/epics/`.
+
+**Complexity Labels:**
+
+- **L1**: Trivial — Single file, <1hr, known pattern. → Hotfix Path
+- **L2**: Standard — 2-3 files, known pattern, ~2-4hr. *(default)* → Full Bounce
+- **L3**: Complex — Cross-cutting, spike may be needed, ~1-2 days. → Full Bounce
+- **L4**: Uncertain — Requires spikes before Bounce, >2 days. → Discovery first
 
 **V-Bounce State transitions for Stories:**
 

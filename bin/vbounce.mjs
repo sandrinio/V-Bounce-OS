@@ -82,6 +82,8 @@ Usage:
   vbounce prep qa <storyId>            Generate QA context pack
   vbounce prep arch <storyId>          Generate Architect context pack
   vbounce prep sprint <sprintId>       Generate Sprint context pack
+  vbounce graph [generate]              Generate product document graph
+  vbounce graph impact <DOC-ID>         Show what's affected by a document change
   vbounce docs match --story <ID>      Match story scope against vdoc manifest
   vbounce docs check <sprintId>        Detect stale vdocs and generate Scribe task
   vbounce trends                       Cross-sprint trend analysis
@@ -214,6 +216,20 @@ if (command === 'improve') {
   // Run suggest (which internally runs post_sprint_improve.mjs)
   console.log('\nStep 2/2: Running improvement analyzer + suggestions...');
   runScript('suggest_improvements.mjs', [sprintArg]);
+}
+
+// -- graph --
+if (command === 'graph') {
+  rl.close();
+  if (sub === 'impact') {
+    runScript('product_impact.mjs', args.slice(2));
+  } else if (!sub || sub === 'generate') {
+    runScript('product_graph.mjs', args.slice(2));
+  } else {
+    console.error(`Unknown graph subcommand: ${sub}`);
+    console.error('Usage: vbounce graph [generate] | vbounce graph impact <DOC-ID>');
+    process.exit(1);
+  }
 }
 
 // -- docs --
@@ -559,6 +575,13 @@ if (command === 'install') {
       hashes[rule.dest] = computeHash(sourcePath);
       installedFiles.push(rule.dest);
       console.log(`  \x1b[32m✓\x1b[0m ${rule.dest}`);
+    }
+
+    // Create LESSONS.md if missing
+    const lessonsPath = path.join(CWD, 'LESSONS.md');
+    if (!fs.existsSync(lessonsPath)) {
+      fs.writeFileSync(lessonsPath, '# Lessons Learned\n\nProject-specific lessons recorded after each story merge. Read this before writing code.\n');
+      console.log(`  \x1b[32m✓\x1b[0m LESSONS.md (created)`);
     }
 
     // Write install metadata

@@ -86,16 +86,30 @@ V-Bounce State: Draft / Refinement / Ready to Bounce
 - **Phase 1 (parallel)**: {Story IDs that can run simultaneously}
 - **Phase 2 (sequential)**: {Story IDs with dependencies — run in order}
 
-### Risk Flags
-- {Which stories touch shared modules — coordinate access}
-- {Sprint-specific risks pulled from Risk Registry}
+### Execution Mode
+> L1 → Fast Track (Dev → DevOps, skip QA/Arch). L2 → Fast Track only with human approval below. L3/L4 → Full Bounce always.
+
+| Story | Label | Mode | Human Approved? |
+|-------|-------|------|-----------------|
+| STORY-XXX-YY | L2 | Full Bounce / Fast Track | — / Yes |
+
+### Shared File Map
+> Stories touching the same files MUST merge sequentially (first-in wins). Flag these during planning.
+
+| File / Module | Stories Touching It | Merge Order |
+|---------------|--------------------:|-------------|
+| `{src/path/file.ts}` | STORY-A, STORY-B | A before B |
 
 ### Dependency Chain
-> Stories that MUST run sequentially (depends_on relationships).
+> Stories that MUST run sequentially (depends_on OR shared files).
 
 | Story | Depends On | Reason |
 |-------|-----------|--------|
-| STORY-XXX-YY | STORY-XXX-YY | {why sequential} |
+| STORY-XXX-YY | STORY-XXX-YY | {depends_on / shared file / data dependency} |
+
+### Risk Flags
+- {Sprint-specific risks pulled from Risk Registry}
+- {External dependency risks}
 
 ---
 
