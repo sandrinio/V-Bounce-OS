@@ -1,10 +1,10 @@
 {
   "name": "@sandrinio/vbounce",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "V-Bounce Engine: Turn your AI coding assistant into a full engineering team through structured SDLC skills.",
   "type": "module",
   "bin": {
-    "vbounce": "./bin/vbounce.mjs"
+    "vbounce": "bin/vbounce.mjs"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
