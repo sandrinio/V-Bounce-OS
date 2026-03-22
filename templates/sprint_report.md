@@ -87,6 +87,8 @@ delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 
 ## 3. Execution Metrics
 
+> Run `vbounce tokens --sprint S-{XX} --json` to get per-story and sprint-total token data from story documents. Use the output to populate the tables below.
+
 ### AI Performance
 
 | Metric | Value | Notes |

@@ -6,6 +6,7 @@ FOLLOW THIS EXACT STRUCTURE. Output sections in order 1-4.
 3. **§2 The Truth**: Gherkin acceptance criteria + manual verification steps
 4. **§3 Implementation Guide**: Files to modify, technical logic, API contract
 5. **§4 Definition of Done**: Checklist (compiles, tests pass, linting, docs)
+6. **Token Usage**: Table auto-populated by agents — each agent appends their row via `count_tokens.mjs --self --append`
 
 Ambiguity Score:
 - 🔴 High: Requirements unclear
@@ -169,3 +170,11 @@ POST /api/resource
 - [ ] No violations of Roadmap ADRs.
 - [ ] Documentation (API/Tech Stack) updated.
 - [ ] **Framework Integrity**: If `brains/` or `skills/` were modified, log to `brains/CHANGELOG.md`.
+
+---
+
+## Token Usage
+> Auto-populated by agents. Each agent runs `node scripts/count_tokens.mjs --self --append <this-file> --name <Agent>` before writing their report.
+
+| Agent | Input | Output | Total |
+|-------|-------|--------|-------|
