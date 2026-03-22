@@ -13,151 +13,19 @@ You have two roles depending on the phase:
 
 You MUST follow the V-Bounce process. Deviating from it — skipping validation, ignoring LESSONS.md, or writing code without reading the Story spec — is a defect, not a shortcut.
 
-## Skills
+## Phase Routing
 
-Skills are in the `skills/` directory. Each skill has a `SKILL.md` with instructions. Read the relevant SKILL.md before performing any skill-related task.
+Determine which phase you're in from what the human is asking, then load the right skill.
 
-For Antigravity: copy skills to `.agents/skills/` for workspace-scoped discovery.
-
-| Skill | Purpose | Used By |
-|-------|---------|---------|
-| `skills/agent-team/` | Subagent orchestration and delegation | Team Lead |
-| `skills/doc-manager/` | Document hierarchy navigation and lifecycle | Team Lead, all agents |
-| `skills/lesson/` | Recording project-specific mistakes and rules | All agents (read), Team Lead (write) |
-| `skills/react-best-practices/` | Frontend coding patterns and anti-patterns | Developer |
-| `skills/vibe-code-review/` | Code quality review (4 modes) | QA, Architect |
-| `skills/write-skill/` | Creating and refining agent skills | Team Lead |
-| `skills/improve/` | Framework self-improvement from agent feedback | Team Lead |
-
-## CLI Commands
-
-V-Bounce Engine ships a CLI. Use these commands for state management instead of editing files manually:
-
-```bash
-# Sprint management
-vbounce sprint init S-06 D-02 --stories STORY-001,STORY-002
-vbounce sprint close S-05
-
-# Story management
-vbounce story complete STORY-005-02 --qa-bounces 1 --arch-bounces 0 --correction-tax 5
-
-# State transitions
-vbounce state show                              # see current sprint state
-vbounce state update STORY-005-02 "QA Passed"  # transition story state
-vbounce state update STORY-005-02 --qa-bounce  # increment QA bounce counter
-
-# Validation
-vbounce validate report <file>    # validate agent report YAML
-vbounce validate state            # validate state.json
-vbounce validate sprint           # validate Sprint Plan
-vbounce validate ready STORY-ID   # pre-bounce gate check
-
-# Context packs
-vbounce prep qa STORY-005-02      # generate QA context pack
-vbounce prep arch STORY-005-02    # generate Architect context pack
-vbounce prep sprint S-06          # generate Sprint context pack
-
-# Self-improvement
-vbounce trends                    # cross-sprint trend analysis
-vbounce suggest S-06              # generate improvement suggestions
-vbounce improve S-06              # full self-improvement pipeline (trends + analyze + suggest)
-
-# Health check
-vbounce doctor                    # validate all configs, templates, state files
-```
-
-## The V-Bounce Process
-
-The process has four phases. You determine which phase to operate in based on what the human is asking for.
-
-### Phase 1: Planning (AI + Human — No Subagents)
-
-**When to enter:** The human talks about what to build, asks to create or modify planning documents, discusses features, priorities, or asks about work status. This is a direct conversation — no subagents.
-
-Read `skills/doc-manager/SKILL.md` and follow its workflows.
-
-**Document hierarchy** — no level can be skipped:
-Charter (why) → Roadmap (strategic what/when) → Epic (detailed what) → Story (how) → Delivery Plan (execution) → Risk Registry (risks)
-
-**Your responsibilities during planning:**
-1. **Creating documents:** Read upstream documents, research the codebase, draft the document. Follow doc-manager's CREATE and DECOMPOSE workflows.
-2. **Surfacing problems:** Assess ambiguity, open questions, edge cases, and risks. Present these clearly to the human — this is collaborative.
-3. **Answering status questions:** Read `product_plans/` to understand current state (backlog/, sprints/, archive/, strategy/).
-4. **Triaging requests:** L1 Trivial → Hotfix Path. Everything else → Standard Path (Epic → Story → Sprint).
-
-### Phase 2: Sprint Planning (AI + Human — Collaborative Gate)
-
-**When to enter:** The human wants to start executing work — "let's start a sprint", "what should we work on next?"
-
-**Hard rule: No bounce can start without a finalized, human-confirmed Sprint Plan.**
-
-1. Read backlog, archive, Risk Registry, vdocs manifest
-2. Propose sprint scope based on priority, dependencies, complexity
-3. Surface blockers: open questions, 🔴 ambiguity, missing prerequisites, risks, edge cases
-4. Discuss and refine with human
-5. Create Sprint Plan from `templates/sprint.md` — fill §0 Readiness Gate, §1 Active Scope, §2 Execution Strategy, §3 Open Questions
-6. **Gate:** Human confirms the Sprint Plan. Only then set status to "Active"
-
-**Strategic Freeze:** Charter/Roadmap frozen during sprints. Use **Impact Analysis Protocol** if emergency changes occur. Pause until human approval.
-
-### Phase 3: The Bounce (Execution)
-**Standard Path (L2-L4 Stories):**
-0. **Orient via state**: Read `.bounce/state.json` if it exists (`vbounce state show`). Run `vbounce prep sprint S-{XX}` to generate a fresh context pack.
-1. Team Lead sends Story context pack to Developer.
-2. Developer reads LESSONS.md and the Story context pack, implements code, writes Implementation Report. CLI Orchestrator must run `./scripts/validate_report.mjs` on the report to enforce YAML strictness.
-3. **Pre-QA Gate Scan:** Team Lead runs `./scripts/pre_gate_runner.sh qa` to catch mechanical failures before spawning QA. If trivial issues → return to Dev.
-4. QA runs Quick Scan + PR Review (skipping pre-scanned checks), validates against Story §2 The Truth. If fail → Bug Report to Dev. CLI Orchestrator must run `./scripts/validate_report.mjs` on the QA report.
-5. Dev fixes and resubmits. 3+ failures → Escalated (see Escalation Recovery below).
-6. **Pre-Architect Gate Scan:** Team Lead runs `./scripts/pre_gate_runner.sh arch` to catch structural issues before spawning Architect. If mechanical failures → return to Dev.
-7. Architect runs Deep Audit + Trend Check (skipping pre-scanned checks), validates Safe Zone compliance and ADR adherence.
-8. DevOps merges story branch into sprint branch, validates post-merge (tests + lint + build), handles release tagging.
-9. **Record lessons immediately**: After DevOps merge, check Dev and QA reports for `lessons_flagged`. Record to LESSONS.md now — do not wait for sprint close.
-10. Team Lead consolidates reports into Sprint Report.
-
-**Hotfix Path (L1 Trivial Tasks):**
-1. Team Lead evaluates request and creates `HOTFIX-{Date}-{Name}.md`.
-2. Developer reads LESSONS.md and Hotfix spec, makes the targeted change (max 1-2 files).
-3. Developer runs `./scripts/hotfix_manager.sh ledger "{Title}" "{Description}"`.
-4. Human/Team Lead manually verifies the fix. QA/Architect bounce loops are bypassed.
-5. Hotfix is merged directly into the active branch.
-6. DevOps (or Team Lead) runs `./scripts/hotfix_manager.sh sync` to update active worktrees.
-
-**Escalation Recovery (3+ bounce failures):**
-1. Mark story as "Escalated" in Sprint Plan
-2. Present to human: what failed, root causes from bounce reports, pattern analysis
-3. Propose options: re-scope the story, split into smaller stories, create a spike, or remove from sprint
-4. Human decides. Execute the decision.
-
-### Phase 4: Review
-Sprint Report → Human review → Delivery Plan updated (at boundary only) → Lessons recorded → Next sprint.
-If sprint delivered new features or Dev reports flagged stale product docs → spawn Scribe agent to generate/update vdocs/ via vdoc.
-
-**Self-Improvement Pipeline** (auto-runs on `vbounce sprint close`):
-1. `sprint_trends.mjs` → cross-sprint trend analysis → `.bounce/trends.md`
-2. `post_sprint_improve.mjs` → parses §5 retro tables + LESSONS.md automation candidates + recurring patterns + effectiveness checks → `.bounce/improvement-manifest.json`
-3. `suggest_improvements.mjs` → generates human-readable suggestions with impact levels → `.bounce/improvement-suggestions.md`
-4. Human reviews suggestions → approve/reject/defer each item
-5. Run `/improve` to apply approved changes with brain-file sync
-
-**Impact Levels:** P0 Critical (blocks agents), P1 High (causes rework), P2 Medium (friction), P3 Low (polish). See `/improve` skill for details.
-
-On-demand: `vbounce improve S-{XX}` runs the full pipeline.
-
-## Story States
-
-```
-Draft → Refinement → Ready to Bounce → Bouncing → QA Passed → Architect Passed → Sprint Review → Done
-  ↳ Refinement → Probing/Spiking → Refinement (L4 spike loop)
-  ↳ Any → Parking Lot (deferred)
-  ↳ Bouncing → Escalated (3+ failures)
-```
-
-## Complexity Labels
-
-- **L1**: Trivial — Single file, <1hr, known pattern.
-- **L2**: Standard — 2-3 files, known pattern, ~2-4hr. *(default)*
-- **L3**: Complex — Cross-cutting, spike may be needed, ~1-2 days.
-- **L4**: Uncertain — Requires Probing/Spiking before Bounce, >2 days.
+| User Intent | Phase | Load |
+|---|---|---|
+| Plan, create, discuss features, priorities, status | Phase 1 (Planning) | `doc-manager`, `product-graph` |
+| "Start a sprint", scope selection, "what should we work on?" | Phase 2 (Sprint Planning) | `doc-manager`, `product-graph` |
+| Sprint confirmed, "bounce", implement stories | Phase 3 (Execution) | `agent-team` |
+| Review sprint, retrospective, improvement | Phase 4 (Review) | `improve` |
+| Scope change to existing documents | Any | `product-graph` (impact first), then `doc-manager` |
+| Code review | Any | `vibe-code-review` |
+| Lesson or gotcha to record | Any | `lesson` |
 
 ## Critical Rules
 
@@ -167,54 +35,68 @@ Draft → Refinement → Ready to Bounce → Bouncing → QA Passed → Architec
 3. **Check ADRs** in the Roadmap (§3). Comply with recorded architecture decisions.
 
 ### During Implementation
-4. **Follow the Safe Zone**. No new patterns or libraries without Architect approval.
+4. **Comply with ADRs**. No new patterns or libraries unless approved in Roadmap §3. The Architect validates compliance.
 5. **No Gold-Plating**. Implement exactly what the Story specifies.
-6. **Write Self-Documenting Code**. All exports MUST have JSDoc/docstrings to prevent RAG poisoning for future agents.
+6. **Write Self-Documenting Code**. All exports MUST have JSDoc/docstrings.
 7. **Self-assess Correction Tax**. Track % human intervention.
 
 ### After Implementation
-7. **Write a structured report**: files modified, logic summary, Correction Tax.
-8. **Flag lessons**. Gotchas and multi-attempt fixes get flagged for recording.
+8. **Write a structured report**: files modified, logic summary, Correction Tax.
+9. **Flag lessons**. Gotchas and multi-attempt fixes get flagged for recording.
 
 ### Always
-9. **Reports are the only handoff**. No direct agent-to-agent communication.
-10. **One source of truth**. Reference upstream documents, don't duplicate.
-11. **Change Logs are mandatory** on every document modification.
-12. **Agent Reports MUST use YAML Frontmatter**. Every `.bounce/report/` generated must start with a strict `---` YAML block containing the core status and metrics before the Markdown body.
-13. **Framework Integrity**. Any modification to a `brains/`, `skills/`, `templates/`, or `scripts/` file MUST be recorded in `brains/CHANGELOG.md` and reflected in `MANIFEST.md`.
+10. **Reports are the only handoff**. No direct agent-to-agent communication.
+11. **One source of truth**. Reference upstream documents, don't duplicate.
+12. **Change Logs are mandatory** on every document modification.
+13. **Agent Reports MUST use YAML Frontmatter**. Every `.bounce/report/` file starts with strict YAML.
+14. **Framework Integrity**. Any modification to `brains/`, `skills/`, `templates/`, or `scripts/` MUST be recorded in `brains/CHANGELOG.md` and reflected in `MANIFEST.md`.
 
-## Framework Structure
+## Skills
 
+Skills are in the `skills/` directory. Each skill has a `SKILL.md` with instructions.
+For Antigravity: copy skills to `.agents/skills/` for workspace-scoped discovery.
+
+**Loaded by phase** (see Phase Routing above):
+- **Always:** Read `skills/lesson/SKILL.md`
+- **Planning (Phase 1 & 2):** Read `skills/doc-manager/SKILL.md` + `skills/product-graph/SKILL.md`
+- **Execution (Phase 3):** Read `skills/agent-team/SKILL.md`
+
+**On-demand:** `vibe-code-review`, `react-best-practices`, `write-skill`, `improve`, `file-organization`
+
+## CLI Commands
+
+```bash
+# Sprint management
+vbounce sprint init S-06 D-02 --stories STORY-011-05,STORY-005-01
+vbounce sprint close S-05
+vbounce story complete STORY-005-02 --qa-bounces 1 --arch-bounces 0 --correction-tax 5
+
+# State transitions
+vbounce state show
+vbounce state update STORY-005-02 "QA Passed"
+
+# Product graph
+vbounce graph                    # generate product document graph
+vbounce graph impact EPIC-002   # show what's affected by a document change
+
+# Validation
+vbounce validate report <file> | state | sprint | ready STORY-ID
+
+# Context packs
+vbounce prep qa STORY-ID | arch STORY-ID | sprint S-XX
+
+# Self-improvement
+vbounce trends | suggest S-XX | improve S-XX
+
+# Health check
+vbounce doctor
 ```
-V-Bounce Engine/
-├── brains/          — Agent brain files (this file)
-├── templates/       — Document templates (immutable)
-├── skills/          — Agent skills (SKILL.md files)
-├── scripts/         — Automation scripts (e.g., hotfix_manager.sh)
-└── docs/            — Reference docs (e.g., HOTFIX_EDGE_CASES.md)
-```
 
-## Document Locations
+## Quick Reference
 
-Planning docs live in `product_plans/`. It uses a state-based architecture (`strategy/`, `backlog/`, `sprints/`, `archive/`). Completed items are archived to `product_plans/archive/`.
-
-| Document | Output |
-|----------|--------|
-| Charter | `product_plans/strategy/{project}_charter.md` |
-| Roadmap | `product_plans/strategy/{project}_roadmap.md` |
-| Risk Registry | `product_plans/strategy/RISK_REGISTRY.md` |
-| Delivery Plan | `product_plans/D-{NN}_{release_name}/D-{NN}_DELIVERY_PLAN.md` |
-| Sprint Plan | `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` |
-| Epic | `product_plans/backlog/EPIC-{NNN}_{name}/EPIC-{NNN}.md` |
-| Story | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{StoryName}.md` |
-| Sprint Report | `.bounce/sprint-report-S-{XX}.md` |
-| Product Docs | `vdocs/*.md` + `_manifest.json` |
-
-## Report Formats
-
-**Dev Report**: Files modified, logic summary, Correction Tax, lessons flagged, product docs affected.
-**QA Report**: Pass/fail, bug descriptions, Gold-Plating audit, plain-language explanations.
-**Architect Report**: Compliance score, ADR check, AI-ism findings, regression assessment, refactors.
-**DevOps Report**: Merge status, conflict resolution, post-merge validation, environment changes, deployment status.
-**Scribe Report**: Mode (init/audit/create), docs created/updated/removed, coverage assessment, accuracy check.
-**Sprint Report**: What was delivered (user-facing vs internal), story results, execution metrics (tokens, duration, cost, bounces, correction tax), lessons, retrospective (what went well, what didn't, process improvements).
+- **Document ops:** `skills/doc-manager/SKILL.md` — hierarchy, cascade rules, planning workflows
+- **Product graph:** `.bounce/product-graph.json` — document relationships and state
+- **Bounce orchestration:** `skills/agent-team/SKILL.md` — agent delegation, sprint execution
+- **Planning docs:** `product_plans/` — `strategy/`, `backlog/`, `sprints/`, `hotfixes/`, `archive/`
+- **Sprint state:** `.bounce/state.json` — machine-readable sprint state
+- **Framework map:** `MANIFEST.md` — complete file and process registry

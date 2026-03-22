@@ -3,6 +3,119 @@
 This log tracks modifications to the core agentic framework (e.g., `brains/`, `skills/`). 
 Per **Rule 13: Framework Integrity**, anytime an entry is made here, all tool-specific brain files must be reviewed for consistency.
 
+## [2026-03-22] — Bug & Change Request Templates + Process Fixes
+
+### Bug Report Template (New)
+- **Added**: `templates/bug.md` — documents defects found mid-sprint or post-sprint. YAML frontmatter (bug_id, status, severity, found_during, affected_story, reporter). Sections: The Bug (repro steps, expected/actual), Impact (blocking?, affected areas, data impact), Fix Approach (root cause, files, complexity), Verification. Triage rule: L1 bugs use hotfix.md, larger bugs use this template.
+
+### Change Request Template (New)
+- **Added**: `templates/change_request.md` — documents scope changes or approach changes mid-sprint. YAML frontmatter (cr_id, status, category, urgency, affected_stories, requestor). Sections: The Change (original vs proposed), Impact Assessment (affected stories, sprint impact, risk), Decision (human approves/rejects/defers), Execution Plan. Categories: Scope Change and Approach Change (from mid-sprint-triage.md).
+
+### Mid-Sprint Triage Update
+- **Modified**: `skills/agent-team/references/mid-sprint-triage.md` — added Template column to categorization table linking each category to its template. Added decision tree that routes L1 bugs to hotfix.md, larger bugs to bug.md, scope/approach changes to change_request.md, spec clarifications to inline updates. Added Step 4 (present to human). Updated Sprint Report tracking table with Document column.
+
+### Doc-Manager Update
+- **Modified**: `skills/doc-manager/SKILL.md` — added Bug Report and Change Request to Template Locations table.
+
+### Sprint Template Improvements
+- **Modified**: `templates/sprint.md` — added Shared File Map table to §2 (forces explicit merge ordering for parallel stories touching same files). Added Execution Mode table (L1→Fast Track, L2→needs human approval, L3/L4→Full Bounce always). Updated Dependency Chain reason column to include "shared file" as a dependency type.
+
+### Process Fixes
+- **Modified**: `skills/agent-team/SKILL.md` — pre-gate scan escalation after 3 failures (present to human with options). Post-merge test failure recovery path (revert → return to Dev → re-enter Step 2 → escalate after 3). Integration audit fix stories go to backlog (not current sprint) unless release-blocking. Delivery Plan Sync table clarified: updates ONLY at sprint close.
+- **Modified**: `skills/doc-manager/SKILL.md` — added Complexity Labels (L1-L4) to TRANSITION section. Epic readiness gate changed from "reviewed" to "decided mitigation OR explicitly accepted as known risk."
+- **Modified**: `skills/improve/SKILL.md` — fixed stale `pre_bounce_sync.sh` references → `vbounce doctor`. Clarified improvement cadence: analysis runs every sprint, applying is human's call.
+- **Modified**: `brains/CLAUDE.md`, `brains/GEMINI.md`, `brains/AGENTS.md` — replaced "Follow the Safe Zone" with "Comply with ADRs" (concrete, already enforced by Architect).
+- **Modified**: `bin/vbounce.mjs` — install now creates LESSONS.md if missing.
+- **Modified**: `MANIFEST.md` — added bug.md and change_request.md to Template Registry. Updated template count (10→12).
+
+---
+
+## [2026-03-22] — Ownership Restructure: Eliminate Process Knowledge Duplication
+
+### Problem
+Process knowledge (cascade rules, document hierarchy, critical rules, script registry, story states) was duplicated 2-3x across process-guide skill, doc-manager skill, MANIFEST.md, and brain files. Six concepts had no clear single owner, creating drift risk.
+
+### Solution: Each concept has exactly ONE owner
+
+**Ownership map:**
+- **Brain files** own: identity, phase routing table, critical rules (14 rules), skill loading
+- **doc-manager** owns: document hierarchy, information flow, cascade rules, story states, complexity labels, ambiguity rubric, planning workflows, transitions, archiving
+- **agent-team** owns: bounce sequence, worktrees, reports, git strategy, escalation, cleanup
+- **product-graph** owns: graph JSON interpretation, impact analysis, blocked document detection
+- **lesson** owns: lesson recording, graduation
+- **MANIFEST.md** owns: file/skill/script registries, file counts, version tracking (maintainer tool, not deployed)
+
+### Changes
+
+#### Deleted
+- **Deleted**: `skills/process-guide/SKILL.md` — its content was distributed:
+  - Phase routing table → brain files (all three)
+  - Critical rules (14 rules) → brain files (all three)
+  - Script registry → deleted (redundant with CLI `--help` and each skill mentioning its own scripts)
+  - Cascade rules → already in doc-manager (single owner)
+  - Story states → already in doc-manager (single owner)
+  - Document hierarchy → already in doc-manager (single owner)
+  - Complexity labels → moved to doc-manager
+
+#### Modified
+- **Modified**: `skills/doc-manager/SKILL.md` — added Complexity Labels section (L1-L4 definitions) to TRANSITION area. doc-manager is now the single owner of all document-related cross-cutting concepts.
+- **Modified**: `brains/CLAUDE.md` — added Phase Routing table (~10 lines) and Critical Rules (14 rules, ~25 lines). Removed process-guide references. ~85 lines total.
+- **Modified**: `brains/GEMINI.md` — mirrored: added Phase Routing + Critical Rules, removed process-guide references. ~95 lines total (includes CLI commands).
+- **Modified**: `brains/AGENTS.md` — mirrored: added Phase Routing + Critical Rules, removed process-guide references. ~70 lines total.
+- **Modified**: `MANIFEST.md` — removed process-guide from Skill Registry. Updated skill count (48→47). Updated total count.
+
+### Sync Notes
+- All three main brain files (CLAUDE.md, GEMINI.md, AGENTS.md) have identical Phase Routing and Critical Rules sections.
+- Cursor rules and Tier 4 brains (copilot, windsurf) not yet updated — should be synced in a follow-up change.
+
+---
+
+## [2026-03-22] — Product Graph + Process Awareness (EPIC-003 + EPIC-004)
+
+### Product Graph (EPIC-003)
+
+#### Graph Generation Script (New)
+- **Added**: `scripts/product_graph.mjs` — scans `product_plans/` active directories (strategy/, backlog/, sprints/, hotfixes/), extracts YAML frontmatter, outputs `.bounce/product-graph.json` with nodes (type, status, ambiguity, path, title) and edges (parent, depends-on, unlocks, context-source, feeds). Graceful empty graph for missing/empty product_plans/, skips malformed YAML with warning.
+
+#### Impact Analysis Script (New)
+- **Added**: `scripts/product_impact.mjs` — queries "what's affected by X?" using BFS traversal of the product graph. Outputs direct dependents, transitive dependents, upstream feeders. Visited-set for cycle protection. Supports `--json` output mode.
+
+#### Product Graph Skill (New)
+- **Added**: `skills/product-graph/SKILL.md` — interpretation rules for the product graph JSON. Three-tier loading protocol (graph JSON → specific frontmatter → full documents). Edge type semantics, regeneration triggers, blocked document detection logic.
+
+#### CLI Wiring
+- **Modified**: `bin/vbounce.mjs` — added `graph` command (`vbounce graph [generate]`, `vbounce graph impact <DOC-ID>`). Updated help text.
+
+#### Sprint Lifecycle Integration
+- **Modified**: `scripts/init_sprint.mjs` — added non-blocking product graph regeneration after sprint init.
+- **Modified**: `scripts/complete_story.mjs` — added non-blocking product graph regeneration after story completion.
+- **Modified**: `scripts/close_sprint.mjs` — added non-blocking product graph regeneration after sprint close.
+
+#### Doc-Manager Cascade Rule
+- **Modified**: `skills/doc-manager/SKILL.md` — added cascade rule: "After any cascade, run `vbounce graph` to regenerate the product graph."
+
+### Process Awareness (EPIC-004)
+
+#### Process-Guide Skill (New)
+- **Added**: `skills/process-guide/SKILL.md` — condensed process intelligence from MANIFEST.md, doc-manager, and CLAUDE.md. Contains: process flow (4 phases), phase routing table (user intent → phase → skill to load), script registry (all scripts by category), document hierarchy and cascade rules, story states, complexity labels, self-improvement awareness, and all 14 critical rules. ~200 lines, ~3,000 tokens.
+
+#### Brain File Slim-Down
+- **Modified**: `brains/CLAUDE.md` — reduced from ~259 lines to ~55 lines. Moved process flow (Phase 1-4), critical rules, document locations, report formats, story states, complexity labels to process-guide skill. Kept: identity, skill pointers (with phase-based loading), subagent table, quick reference. agent-team now loads only during Phase 3 (was always-loaded).
+- **Modified**: `brains/GEMINI.md` — mirrored slim-down. Skill loading now phase-based (process-guide always, doc-manager/product-graph for planning, agent-team for execution). Kept CLI commands section and quick reference.
+- **Modified**: `brains/AGENTS.md` — mirrored slim-down. Same phase-based skill loading structure.
+
+#### Agent-Team Conditional Loading
+- **Modified**: `brains/CLAUDE.md` Skills section — agent-team is no longer `@`-included (always-loaded). Instead, it loads on-demand when entering Phase 3. Only lesson remains always-loaded via `@`. Context budget reduced from ~9,000 tokens always to ~500 tokens always + ~3,000 during planning + ~9,000 during execution.
+
+### Integration
+- **Modified**: `MANIFEST.md` — added process-guide and product-graph to Skill Registry. Added product_graph.mjs and product_impact.mjs to Script Registry (new "Product Graph" category). Updated Process Flow to reference new skills. Updated file counts (skills: 46→48, scripts: 24→26, total: ~162→~166). Version bumped to 2.1.0.
+
+### Sync Notes
+- All three main brain files (CLAUDE.md, GEMINI.md, AGENTS.md) are consistent in their skill loading structure and quick reference section.
+- Cursor rules and Tier 4 brains (copilot, windsurf) not yet updated — should be synced in a follow-up change.
+
+---
+
 ## [2026-03-13] — Discovery Phase: Structured Spike System
 
 ### Spike Template (New)

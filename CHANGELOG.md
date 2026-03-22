@@ -5,6 +5,33 @@ All notable changes to the V-Bounce Engine framework and its CLI installer will 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-03-22
+### Added
+- **Product Graph** — `scripts/product_graph.mjs` scans product_plans/ and generates `.bounce/product-graph.json` with document nodes and dependency edges. `scripts/product_impact.mjs` runs BFS traversal for "what's affected by X?" queries. New `skills/product-graph/SKILL.md` with three-tier loading protocol.
+- **Bug Report Template** — `templates/bug.md` for defects found mid-sprint or post-sprint (L2+ bugs; L1 bugs use hotfix.md).
+- **Change Request Template** — `templates/change_request.md` for scope changes and approach changes mid-sprint. Human-gated with impact assessment.
+- **CLI: `vbounce graph`** — generate product document graph. `vbounce graph impact <DOC-ID>` for impact analysis.
+- **LESSONS.md auto-creation** — `vbounce install` now creates LESSONS.md if missing.
+- **Shared File Map** in sprint template — forces explicit merge ordering for parallel stories touching same files.
+- **Execution Mode table** in sprint template — L1→Fast Track, L2→needs human approval, L3/L4→Full Bounce.
+- **Complexity Labels** added to doc-manager skill (L1-L4 definitions with routing rules).
+
+### Changed
+- **Brain files restructured** — CLAUDE.md reduced from 259 to ~89 lines. Phase routing table and critical rules moved into brain files. Process-guide skill deleted (content distributed to brain files and doc-manager). All three brain files (CLAUDE, GEMINI, AGENTS) now have identical Phase Routing and Critical Rules sections.
+- **"Safe Zone" replaced with "Comply with ADRs"** — concrete rule referencing Roadmap §3, enforced by Architect.
+- **Epic readiness gate strengthened** — now requires §8 blocking questions decided AND §6 edge cases have decided mitigations or are explicitly accepted as known risk. AI must present edge cases and open questions to human in chat after epic creation.
+- **Mid-sprint triage updated** — decision tree routes to bug.md, change_request.md, or hotfix.md. All triage events logged with documents.
+- **Pre-gate scan escalation** — escalates to human after 3 failures with options.
+- **Post-merge test failure recovery** — defined path: revert → return to Dev → re-enter Step 2 → escalate after 3.
+- **Integration audit fix stories** go to backlog for next sprint (not current sprint) unless release-blocking.
+- **Delivery Plan sync clarified** — updates ONLY at sprint close, never during execution.
+- **Sprint lifecycle scripts** regenerate product graph automatically (init_sprint, complete_story, close_sprint).
+- **Improvement pipeline cadence clarified** — analysis runs every sprint; applying changes is human's call.
+
+### Fixed
+- Stale `pre_bounce_sync.sh` reference in improve skill → replaced with `vbounce doctor`.
+- doc-manager cascade rules now trigger graph regeneration.
+
 ## [2.0.0] - 2026-03-20
 ### Added
 - **4-Phase Process Model**: Restructured brain files from 3 phases to 4 clear phases — Planning (AI + Human), Sprint Planning (collaborative gate), The Bounce (execution), Review.

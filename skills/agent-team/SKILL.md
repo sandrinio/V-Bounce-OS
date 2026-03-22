@@ -263,6 +263,8 @@ mkdir -p .worktrees/STORY-{ID}-{StoryName}/.bounce/{tasks,reports}
    ./scripts/pre_gate_runner.sh qa .worktrees/STORY-{ID}-{StoryName}/ sprint/S-{XX}
    - If scan FAILS on trivial issues (debug statements, missing JSDoc, TODOs):
      Return to Developer for quick fix. Do NOT spawn QA for mechanical failures.
+     If pre-gate scan fails 3+ times → Escalate: present failures to human with options:
+       a) Human fixes manually, b) Descope the story, c) Re-assign to a different approach.
    - If scan PASSES: Include scan output path in the QA task file.
 1. Spawn qa subagent in .worktrees/STORY-{ID}-{StoryName}/ with:
    - Developer Implementation Report
@@ -287,6 +289,7 @@ mkdir -p .worktrees/STORY-{ID}-{StoryName}/.bounce/{tasks,reports}
    ./scripts/pre_gate_runner.sh arch .worktrees/STORY-{ID}-{StoryName}/ sprint/S-{XX}
    - If scan reveals new dependencies or structural violations:
      Return to Developer for resolution. Do NOT spawn Architect for mechanical failures.
+     If pre-gate scan fails 3+ times → Escalate to human (same options as pre-QA escalation).
    - If scan PASSES: Include scan output path in the Architect task file.
 1. Spawn architect subagent in .worktrees/STORY-{ID}-{StoryName}/ with:
    - All reports for this story
@@ -319,7 +322,12 @@ mkdir -p .worktrees/STORY-{ID}-{StoryName}/.bounce/{tasks,reports}
 4. If merge conflicts:
    - Simple (imports, whitespace): DevOps resolves directly
    - Complex (logic): DevOps writes Conflict Report, Lead creates fix story
-5. If post-merge tests fail: DevOps reverts merge, reports failure to Lead
+5. If post-merge tests fail:
+   - DevOps reverts the merge and writes a Post-Merge Failure Report (what failed, which tests, suspected cause)
+   - Lead returns story to Developer with the failure report as input
+   - Developer fixes in the original worktree (which is preserved until merge succeeds)
+   - Story re-enters the bounce at Step 2 (Dev pass). QA/Arch bounce counts are NOT reset — this is a merge issue, not a gate failure.
+   - If post-merge fails 3+ times → Escalate to human
 ```
 Update sprint-{XX}.md: V-Bounce State → "Done"
 
@@ -342,7 +350,11 @@ After ALL stories are merged into `sprint/S-01`:
 2. First, Architect runs `./scripts/hotfix_manager.sh audit` to check for hotfix drift. If it fails, perform deep audit on flagged files.
 3. Run Sprint Integration Audit — Deep Audit on combined changes
 4. Check for: duplicate routes, competing state, overlapping migrations
-5. If issues found → create new stories to fix, bounce individually
+5. If issues found:
+   - Present findings to human with severity assessment
+   - AI suggests which epic the fix story should belong to
+   - Fix stories are added to the BACKLOG (not the current sprint) — they enter the next sprint through normal planning
+   - Exception: if the issue blocks the sprint release (e.g., broken build), fix inline on the sprint branch without creating a story
 ```
 
 ### Step 7: Sprint Consolidation
@@ -457,7 +469,7 @@ The Team Lead MUST update the active `sprint-{XX}.md` at every state transition.
 | Architect passes | §1: V-Bounce State → "Architect Passed" | **Nothing** |
 | DevOps merges story | §1: V-Bounce State → "Done". §4: Add Execution Log row (via `vbounce story complete`) | **Nothing** |
 | Escalated | §1: Move story to Escalated section | **Nothing** |
-| Sprint CLOSES | Status → "Completed" in frontmatter | §2: sprint → Completed. §4: add summary. §3: remove delivered stories |
+| Sprint CLOSES | Status → "Completed" in frontmatter | §2: sprint → Completed. §4: add summary. §3: remove delivered stories. **This is the ONLY time Delivery Plan updates.** |
 
 > **Key rule**: The Delivery Plan is updated ONLY at sprint close, never during active bouncing.
 > See `skills/agent-team/references/delivery-sync.md` for full sync rules.
