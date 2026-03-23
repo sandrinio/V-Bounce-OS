@@ -1,543 +1,110 @@
-# V-Bounce Engine
+<div align="center">
+  <img src="docs/icons/logo.svg" width="100" height="100" alt="V-Bounce Engine Logo" />
+  <h1>V-Bounce Engine</h1>
+  <p><strong>Stop babysitting your AI. Build a disciplined, self-correcting engineering team.</strong></p>
 
-**A structured SDLC framework for AI coding agents.**
-
-V-Bounce Engine turns AI assistants — Claude Code, Cursor, Gemini, Copilot, Codex — into disciplined engineering teams. Instead of letting agents code in a vacuum, it enforces a planning-first workflow with automated quality gates, structured handoffs, and a persistent learning loop.
-
-> Inspired by the work of Cory Hymel
-
----
-
-## The Problem
-
-AI coding agents are powerful — but without structure, they create expensive chaos:
-
-- **No accountability.** The agent writes code, but nobody reviews it against requirements before it ships. Bugs that a junior engineer would catch survive to production.
-- **Invisible progress.** You ask "how's the feature going?" and the only answer is "the agent is still running." No milestones, no intermediate artifacts, no way to course-correct mid-sprint.
-- **No institutional memory.** Every session starts from zero. The agent makes the same architectural mistake it made last week because nothing captures what went wrong.
-- **Rework cycles.** Without quality gates, bad code compounds. A missed requirement discovered late costs 10x more to fix than one caught early.
-- **Risk blindness.** There's no structured way to assess what could go wrong before the agent starts building.
-
-V-Bounce Engine solves this by wrapping AI agents in the same discipline that makes human engineering teams reliable: planning documents, role-based reviews, automated gates, and a learning loop that compounds knowledge across sprints.
+  <p>
+    <a href="https://github.com/sandrinio/v-bounce-engine/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+    <a href="https://www.npmjs.com/package/@sandrinio/vbounce"><img alt="NPM Version" src="https://img.shields.io/npm/v/%40sandrinio%2Fvbounce"></a>
+  </p>
+  
+  <p>
+    V-Bounce Engine turns your single AI assistant — <b>Claude Code, Cursor, Gemini, Copilot</b> — into a fully equipped engineering team. It enforces a planning-first workflow, automated quality gates, structural audits, and a persistent learning loop.
+  </p>
+</div>
 
 ---
 
-## Built-in Guardrails
+## <img src="docs/icons/zap.svg" width="24" height="24" style="vertical-align: text-bottom;" /> Quick Start
 
-Every risk that keeps you up at night has a specific mechanism that catches it:
-
-| Risk | What catches it |
-|------|----------------|
-| Agent ships code that doesn't match requirements | **QA gate** — validates every story against acceptance criteria before merge |
-| Architectural drift over time | **Architect gate** — audits against your ADRs on every story |
-| One bad story breaks everything | **Git worktrees** — every story is isolated; failures can't contaminate other work |
-| Agent gets stuck in a loop | **3-bounce escalation** — after 3 failed attempts, the story surfaces to a human |
-| Scope creep on "quick fixes" | **Hotfix hard-stop** — Developer must stop if a fix touches more than 2 files |
-| Same mistakes keep happening | **LESSONS.md** — agents read accumulated mistakes before writing future code |
-| Silent regressions | **Root cause tagging** — every failure is tagged and tracked across sprints |
-| Framework itself becomes stale | **Self-improvement skill** — analyzes friction patterns and proposes changes (with your approval) |
-
----
-
-## Planning With V-Bounce
-
-V-Bounce separates planning into two layers: **what to build** and **how to ship it**. The AI is your planning partner — not a tool you invoke with commands.
-
-### Product Planning — What to Build
-
-Just talk to the AI. Say "plan a feature for X" or "create an epic for payments" and it handles the rest — reading upstream documents, researching your codebase, and drafting planning documents.
-
-A document hierarchy that mirrors how product teams already think:
-
-```
-Charter  (WHY — vision, principles, constraints)
-  → Roadmap  (WHAT/WHEN — releases, milestones, architecture decisions)
-    → Epic  (scoped WHAT — a feature with clear boundaries)
-      → Story  (HOW — implementation spec with acceptance criteria)
-```
-
-**You write the top levels. The AI builds the bottom — informed by your actual codebase.**
-
-When creating Epics, the AI researches your codebase to fill Technical Context with real file paths and verified dependencies — not guesses. When decomposing Epics into Stories, the AI reads affected files, explores architecture patterns, and creates small, focused stories by deliverable (vertical slices), not by layer.
-
-Every document includes an **ambiguity score**:
-- 🔴 High — requirements unclear, blocked from development
-- 🟡 Medium — tech TBD but logic is clear, safe to plan
-- 🟢 Low — fully specified, ready to build
-
-No level can be skipped. This prevents the most common AI failure mode: building the wrong thing because requirements were vague.
-
-### Execution Planning — How to Ship It
-
-Once you know *what* to build, three documents govern *how* it gets delivered:
-
-| Document | Scope | Who uses it | What it tracks |
-|----------|-------|-------------|----------------|
-| **Delivery Plan** | A full release (multiple sprints) | PM | Which Epics are included, project window (start/end dates), high-level backlog prioritization, escalated/parked stories |
-| **Sprint Plan** | One sprint (typically 1 week) | Team Lead + PM | Active story scope, context pack readiness checklists, execution strategy (parallel vs sequential phases), dependency chains, risk flags, and a live execution log |
-| **Risk Registry** | Cross-cutting (all levels) | PM + Architect | Active risks with likelihood/impact scoring, phase-stamped analysis log, mitigations, and resolution history |
-
-**How they connect:**
-
-```
-Delivery Plan  (the milestone — "we're shipping auth + payments by March 30")
-  → Sprint Plan  (this week — "stories 01-03 in parallel, 04 depends on 01")
-       ↑
-  Risk Registry  (cross-cutting — reviewed at every sprint boundary)
-```
-
-The **Delivery Plan** is updated only at sprint boundaries. The **Sprint Plan** is the single source of truth during active execution — every story state transition is recorded there. At sprint end, the Sprint Plan's execution log becomes the skeleton for the Sprint Report automatically.
-
-The **Sprint Plan** also includes a **Context Pack Readiness** checklist for each story — a preflight check ensuring the spec is complete, acceptance criteria are defined, and ambiguity is low before any code is written. If a story isn't ready, it stays in Refinement.
-
----
-
-## Reports and Visibility
-
-V-Bounce generates structured reports at every stage — designed to answer stakeholder questions without requiring anyone to read code:
-
-| Report | When it's generated | What it answers |
-|--------|-------------------|-----------------|
-| **Implementation Report** | After each story is built | What was built? What decisions were made? What tests were added? |
-| **QA Report** | After validation | Does the implementation match the acceptance criteria? What failed? |
-| **Architect Report** | After audit | Does this align with our architecture? Any ADR violations? |
-| **Sprint Report** | End of sprint | What shipped? What bounced? What's the correction tax? Lessons learned? |
-| **Release Report** | After merge | What went to production? Environment changes? Post-merge validations? |
-| **Scribe Report** | After documentation pass | What product docs were created, updated, or flagged as stale? |
-
-**You don't need to read code to manage the sprint.** The reports surface exactly what a PM or PO needs to make decisions.
-
----
-
-## What You Can Measure
-
-V-Bounce tracks metrics that map directly to product and delivery health:
-
-| Metric | What it tells you | Action when it's bad |
-|--------|------------------|---------------------|
-| **Bounce Rate (QA)** | How often code fails acceptance criteria | Stories may have vague requirements — tighten acceptance criteria |
-| **Bounce Rate (Architect)** | How often code violates architecture rules | ADRs may be unclear, or the agent needs better context |
-| **Correction Tax** | 0% = agent delivered autonomously, 100% = human rewrote everything | High tax means the agent needs better guidance (Charter, Roadmap, or Skills) |
-| **Root Cause Distribution** | Why things fail — `missing_tests`, `adr_violation`, `spec_ambiguity`, etc. | Invest in the category that fails most often |
-| **Escalation Rate** | How often stories hit the 3-bounce limit | Chronic escalation signals structural issues in planning docs |
-| **Sprint Velocity** | Stories completed per sprint | Track trend over time — should improve as LESSONS.md grows |
-
-Run `vbounce trends` to see cross-sprint analysis. Run `vbounce suggest` for AI-generated improvement recommendations.
-
----
-
-## How a Sprint Flows
-
-Here's what a sprint looks like from the product side — no terminal commands, no code:
-
-**Phase 1 — Planning**
-You talk to the AI about what to build. The AI creates Epics and Stories by reading upstream documents and researching your codebase. Ambiguity, risks, and open questions are surfaced and discussed collaboratively.
-
-**Phase 2 — Sprint Planning**
-You and the AI decide what goes into the sprint together. The AI reads the backlog, proposes scope, and surfaces blockers — open questions, unresolved ambiguity, dependency risks, edge cases. You discuss, adjust, and confirm. **No sprint starts without your explicit confirmation.** The Sprint Plan is mandatory.
-
-**Phase 3 — The Bounce**
-The AI team works autonomously. For each Story:
-1. The **Developer** builds the feature in isolation (with E2E tests, not just unit tests)
-2. The **QA agent** checks: does the code meet the acceptance criteria?
-3. The **Architect agent** checks: does the code follow our architecture rules?
-4. If either check fails, the work "bounces" back to the Developer with a tagged reason
-5. After 3 bounces, the story escalates — the AI presents root causes and options (re-scope, split, spike, or remove), and you decide
-
-Lessons are recorded **immediately** after each story merges, not deferred to sprint close.
-
-**Phase 4 — Review**
-The Sprint Report lands. It tells you:
-- What shipped and what didn't
-- How many bounces each story took (and why)
-- The correction tax (how much human intervention was needed)
-- Test counts per story
-- Lessons already captured during the sprint
-- Recommendations for process improvements
-
-You review, approve the release, and the sprint archives itself. The next sprint starts smarter because the agents now carry forward everything they learned.
-
----
-
-## Continuous Improvement
-
-Most AI coding setups are stateless — every session starts from scratch. V-Bounce is the opposite.
-
-The **Context Loop** is a closed feedback system that makes your AI team measurably better over time:
-
-```
-Plan  ──>  Build  ──>  Bounce  ──>  Document  ──>  Learn
- │                        │             │              │
- │                    QA + Arch         │          LESSONS.md
- │                    gate code     Scribe maps        │
- │                                  the codebase       │
- └─────────────────────────────────────────────────────┘
-                  Next sprint reads it all
-```
-
-After each sprint:
-- **LESSONS.md** captures every mistake — agents read this before writing future code
-- **Trend analysis** spots recurring patterns (e.g., "auth-related stories bounce 3x more than average")
-- **Self-improvement pipeline** analyzes friction and proposes concrete framework changes
-- **Scribe** keeps product documentation in sync with actual code
-
-Sprint 1 might have a 40% bounce rate. By Sprint 5, that number drops — because the agents have accumulated context about your codebase, your architecture decisions, and your team's standards.
-
-### The Self-Improvement Pipeline
-
-When a sprint closes (`vbounce sprint close`), an automated pipeline analyzes what went wrong and proposes how to fix the framework itself:
-
-```
-Sprint Close
-  │
-  ├── Trend Analysis         → Cross-sprint bounce patterns
-  │
-  ├── Retro Parser           → Reads §5 Framework Self-Assessment tables
-  │                            from the Sprint Report
-  │
-  ├── Lesson Analyzer        → Classifies LESSONS.md rules by what they
-  │                            can become: gate checks, scripts, template
-  │                            fields, or permanent agent rules
-  │
-  ├── Recurrence Detector    → Cross-references archived sprint reports
-  │                            to find findings that keep coming back
-  │
-  ├── Effectiveness Checker  → Did last sprint's improvements actually
-  │                            resolve their target findings?
-  │
-  └── Improvement Suggestions → Human-readable proposals with impact levels
-```
-
-Every proposal gets an **impact level** so you know what to fix first:
-
-| Level | Label | Meaning | When to fix |
-|-------|-------|---------|-------------|
-| **P0** | Critical | Blocks agent work or causes incorrect output | Before next sprint |
-| **P1** | High | Causes rework — bounces, wasted tokens, repeated manual steps | This improvement cycle |
-| **P2** | Medium | Friction that slows agents but doesn't block | Within 2 sprints |
-| **P3** | Low | Polish — nice-to-have | Batch when convenient |
-
-### Lessons Become Automation
-
-The pipeline doesn't just track lessons — it classifies each one by what it can become:
-
-| Lesson pattern | Becomes | Example |
-|---------------|---------|---------|
-| "Always check X", "Never use Y" | **Gate check** — automated grep/lint rule | "Never import from internal modules" → pre-gate grep pattern |
-| "Run X before Y" | **Script** — validation step | "Run type-check before QA" → added to pre_gate_runner.sh |
-| "Include X in the story" | **Template field** — required section | "Include rollback plan" → new field in story template |
-| General behavioral rules (3+ sprints old) | **Agent config** — permanent brain rule | "Always check for N+1 queries" → graduated to Architect config |
-
-This means your framework evolves organically: agents report friction, the pipeline classifies it, you approve the fix, and the next sprint runs smoother. No manual analysis required.
-
-Run `vbounce improve S-XX` anytime to trigger the pipeline on demand.
-
----
-
-## Is V-Bounce Right For You?
-
-**Best fit:**
-- Teams using AI agents for production code (not just prototypes)
-- Projects with clear requirements that can be expressed as acceptance criteria
-- Codebases where architectural consistency matters
-- Teams that want to scale AI usage without losing quality control
-
-**Less ideal for:**
-- One-off scripts or throwaway prototypes (overkill)
-- Exploratory research with no defined requirements
-- Projects where the entire team is deeply embedded in every code change anyway
-
-**Minimum setup:** One person who can run `npx` commands + one person who can write a Charter and Epics. That's it.
-
----
-
-## Roles and Responsibilities
-
-### Human
-
-You own the planning and the final say. The agents never ship without your approval.
-
-| Responsibility | What it involves |
-|---------------|-----------------|
-| **Set vision and constraints** | Write the Charter and Roadmap — define what to build and what's off-limits |
-| **Define requirements** | Break Roadmap into Epics and Stories with acceptance criteria |
-| **Review and approve** | Read sprint reports, approve releases, intervene on escalations |
-| **Tune agent performance** | Adjust brain files, skills, and ADRs based on trend data and bounce patterns |
-| **Install and configure** | Run the installer, verify setup with `vbounce doctor` |
-
-### Agent — Team Lead (Orchestrator)
-
-The Team Lead reads your planning documents and coordinates the entire sprint. It never writes code — it delegates, tracks state, and generates reports.
-
-| Responsibility | What it involves |
-|---------------|-----------------|
-| **Sprint orchestration** | Assigns stories, manages state transitions, enforces the bounce loop |
-| **Agent delegation** | Spawns Developer, QA, Architect, DevOps, and Scribe agents as needed |
-| **Report routing** | Reads each agent's output and decides the next step (pass, bounce, escalate) |
-| **Escalation** | Surfaces stories to the human after 3 failed bounces |
-| **Sprint reporting** | Consolidates execution data into Sprint Reports and Release Reports |
-
-### Agent — Specialists (Developer, QA, Architect, DevOps, Scribe)
-
-Five specialist agents, each with a single job and strict boundaries:
-
-| Agent | What it does | Constraints |
-|-------|-------------|-------------|
-| **Developer** | Implements stories in isolated worktrees, submits implementation reports | Works only in its assigned worktree |
-| **QA** | Validates code against acceptance criteria | Read-only — cannot modify code |
-| **Architect** | Audits against ADRs and architecture rules | Read-only — cannot modify code |
-| **DevOps** | Merges passing stories into the sprint branch | Only acts after both gates pass |
-| **Scribe** | Generates and maintains product documentation from the actual codebase | Only runs after merge |
-
-One person can fill the entire human side. The framework scales to the team you have.
-
----
-
-## Quick Start
+Get your new AI team up and running in seconds. No complex setup, no vector databases. Just plain Markdown and Node.
 
 ```bash
-npx @sandrinio/vbounce install claude    # Claude Code
-npx @sandrinio/vbounce install cursor    # Cursor
-npx @sandrinio/vbounce install gemini    # Gemini CLI
-npx @sandrinio/vbounce install codex     # OpenAI Codex
-npx @sandrinio/vbounce install vscode    # GitHub Copilot
-```
+# 1. Install the framework for your platform of choice
+npx @sandrinio/vbounce install claude    # Claude Code (Full Orchestration)
+# Or: npx @sandrinio/vbounce install cursor|gemini|codex|vscode
 
-Then verify your setup:
-
-```bash
+# 2. Verify your installation
 npx vbounce doctor
+
+# 3. Initialize your first sprint!
+npx vbounce sprint init S-01 D-01
 ```
 
-### What gets installed
-
-Here's what lands in your repo (example: Claude Code):
-
-```
-your-project/
-├── CLAUDE.md                    # Brain file — teaches the agent the V-Bounce process
-├── .claude/agents/              # Subagent instructions (Claude Code only)
-│   ├── developer.md
-│   ├── qa.md
-│   ├── architect.md
-│   ├── devops.md
-│   └── scribe.md
-├── templates/                   # 12 Markdown + YAML frontmatter templates
-│   ├── charter.md
-│   ├── roadmap.md
-│   ├── epic.md
-│   ├── story.md
-│   ├── spike.md
-│   ├── sprint.md
-│   ├── delivery_plan.md
-│   ├── sprint_report.md
-│   ├── hotfix.md
-│   ├── bug.md
-│   ├── change_request.md
-│   └── risk_registry.md
-├── skills/                      # 9 modular skill files (see Skills below)
-│   ├── agent-team/
-│   ├── doc-manager/
-│   ├── product-graph/
-│   ├── lesson/
-│   ├── vibe-code-review/
-│   ├── write-skill/
-│   ├── improve/
-│   ├── file-organization/
-│   └── react-best-practices/   # Example — customize for your stack
-├── scripts/                     # 27 automation scripts (validation, context prep, state, graph, tokens)
-└── package.json                 # 3 deps: js-yaml, marked, commander. Nothing else.
-```
-
-Other platforms install the same `templates/`, `skills/`, and `scripts/` — only the brain file differs (`.cursor/rules/`, `GEMINI.md`, `AGENTS.md`, or `.github/copilot-instructions.md`).
-
-Everything is plain Markdown and Node.js. No vector DBs, no embedding models, no background services.
+> **Requirements**: Node.js and a project directory. That's it. One person to set the vision, the AI handles the execution.
 
 ---
 
-## Supported Tools
+## <img src="docs/icons/alert.svg" width="24" height="24" style="vertical-align: text-bottom;" /> The Problem: AI Chaos
 
-V-Bounce Engine adapts to each tool's capabilities:
-
-| Tier | Tool | How it works |
-|------|------|-------------|
-| 1 | Claude Code | Full orchestration — spawns subagents for each role, manages state, runs all CLI commands |
-| 2 | Gemini CLI, Codex | Single-agent mode — follows the bounce loop sequentially, full CLI access |
-| 3 | Cursor | Role-specific context injection via `.cursor/rules/` MDC files |
-| 4 | Copilot, Windsurf | Awareness mode — checklist-driven, reads state, safe CLI operations |
+AI coding tools are incredibly fast, but without guardrails, they create **expensive chaos**:
+- **No accountability:** Code ships with bugs a junior dev would catch.
+- **Invisible progress:** "The agent is still running." No milestones, no checks.
+- **Goldfish memory:** Every session is Day 1. It makes the same architectural mistake twice.
+- **Infinite loops:** The agent gets stuck trying to fix its own broken code.
 
 ---
 
-## The Bounce Loop
+## <img src="docs/icons/shield.svg" width="24" height="24" style="vertical-align: text-bottom;" /> Why V-Bounce Engine?
 
-This is the core execution cycle for every Story:
+V-Bounce wraps your AI agents in the same discipline that makes human engineering teams reliable:
 
-```
-         Developer                QA                 Architect            DevOps
-            │                     │                      │                  │
-  Writes code in worktree         │                      │                  │
-  Submits Implementation  ──────> │                      │                  │
-  Report                   Validates against       (waits for QA)          │
-                           acceptance criteria           │                  │
-                                  │                      │                  │
-                           PASS ──────────────────────>  │                  │
-                           FAIL ──> bounces back    Audits against          │
-                                    to Developer    ADRs + safe zone        │
-                                                         │                  │
-                                                  PASS ──────────────────>  │
-                                                  FAIL ──> bounces back  Merges worktree
-                                                           to Developer  into main branch
-```
-
-After 3 failed bounces on either gate, the Story escalates to you for intervention.
-
-Each FAIL report includes a `root_cause` tag that feeds into cross-sprint trend analysis via `vbounce trends`.
+| Guardrail | What It Solves |
+|-------------|-------------------|
+| **Isolated Worktrees** | **Contamination.** Every story is a sandbox. One bad story won't break your app. |
+| **QA Quality Gates** | **Missed Requirements.** Code is validated against Acceptance Criteria *before* merge. |
+| **Architect Audits** | **Drift.** Blocks the AI from hallucinating new dependencies or breaking patterns. |
+| **3-Bounce Escalation** | **Infinite Loops.** After 3 failed attempts, the AI surfaces the root cause to you. |
+| **Persistent Lessons** | **Goldfish Memory.** The AI logs mistakes in `LESSONS.md` and reads them next sprint. |
 
 ---
 
-## Skills
+## <img src="docs/icons/sync.svg" width="24" height="24" style="vertical-align: text-bottom;" /> The "Bounce" Loop
 
-Skills are modular markdown instructions the Team Lead invokes automatically during the SDLC:
+Instead of letting an AI hallucinate straight to production, V-Bounce coordinates specialized roles working in isolation.
 
-| Skill | Purpose |
-|-------|---------|
-| `agent-team` | Spawns temporary sub-agents (Dev, QA, Architect, DevOps, Scribe) to parallelize work |
-| `doc-manager` | Enforces the document hierarchy, cascade rules, and planning workflows |
-| `product-graph` | Dependency-aware document intelligence — knows what's blocked, what's affected by changes |
-| `lesson` | Extracts mistakes from sprints into `LESSONS.md` |
-| `vibe-code-review` | Runs Quick Scan or Deep Audit against acceptance criteria and architecture rules |
-| `write-skill` | Allows the Team Lead to author new skills when the team encounters a recurring problem |
-| `improve` | Self-improvement loop — reads agent friction signals across sprints and proposes framework changes (with your approval) |
-| `file-organization` | File structure management and organization verification |
-| `react-best-practices` | Example tech-stack skill — customize this for your own stack |
+<div align="center">
+  <img src="docs/images/bounce_loop_diagram.png" width="100%" max-width="800" alt="The Bounce Loop Visualization" />
+</div>
+
+1. <img src="docs/icons/terminal.svg" width="16" height="16" style="vertical-align: text-bottom;" /> **Developer**: Implements features in isolated git worktrees.
+2. <img src="docs/icons/beaker.svg" width="16" height="16" style="vertical-align: text-bottom;" /> **QA**: Validates code strictly against acceptance criteria. (Read-only)
+3. <img src="docs/icons/git-branch.svg" width="16" height="16" style="vertical-align: text-bottom;" /> **Architect**: Audits code against ADRs (Architecture Decision Records). (Read-only)
+4. <img src="docs/icons/git-merge.svg" width="16" height="16" style="vertical-align: text-bottom;" /> **DevOps**: Merges passing code cleanly to the sprint branch.
+5. <img src="docs/icons/pencil.svg" width="16" height="16" style="vertical-align: text-bottom;" /> **Scribe**: Keeps product documentation in sync with actual code.
 
 ---
 
-## State Management
+## <img src="docs/icons/graph.svg" width="24" height="24" style="vertical-align: text-bottom;" /> Measure What Matters (Metrics)
 
-Sprint state lives in `.bounce/state.json` — a machine-readable snapshot that survives context resets and session interruptions:
-
-```json
-{
-  "sprint_id": "S-01",
-  "current_phase": "bouncing",
-  "stories": {
-    "STORY-001-01-login": {
-      "state": "Bouncing",
-      "qa_bounces": 1,
-      "arch_bounces": 0,
-      "worktree": ".worktrees/STORY-001-01-login"
-    }
-  }
-}
-```
-
-When a session starts, the Team Lead reads `state.json` to resume exactly where the sprint left off.
+For the first time, manage your AI work like a true Product Manager. Run `vbounce trends` to track:
+- **Bounce Rate (QA / Architect)**: How often does the AI fail to meet spec?
+- **Correction Tax**: How much manual human intervention was required? (0% = AI shipped autonomously).
+- **Escalation Rate**: How often did stories hit the 3-bounce limit?
 
 ---
 
-## CLI Reference
+## <img src="docs/icons/tools.svg" width="24" height="24" style="vertical-align: text-bottom;" /> Supported Platforms
 
-```bash
-# Sprint lifecycle
-vbounce sprint init S-01 D-01         # Initialize sprint
-vbounce sprint close S-01             # Validate, archive, close
+V-Bounce adapts to your current workflow effortlessly.
 
-# Story lifecycle
-vbounce story complete STORY-ID       # Mark story done, update state
-
-# State management
-vbounce state show                    # Print current state
-vbounce state update STORY-ID STATE   # Update story state
-
-# Product graph
-vbounce graph                         # Generate document dependency graph
-vbounce graph impact EPIC-002         # Show what's affected by a change
-
-# Context preparation
-vbounce prep sprint S-01              # Sprint context pack
-vbounce prep qa STORY-ID              # QA context pack
-vbounce prep arch STORY-ID            # Architect context pack
-
-# Validation
-vbounce validate report <file>        # Validate report YAML
-vbounce validate state                # Validate state.json schema
-vbounce validate sprint S-01          # Validate sprint plan
-vbounce validate ready STORY-ID       # Pre-bounce readiness gate
-
-# Self-improvement
-vbounce trends                        # Cross-sprint trend analysis
-vbounce suggest S-01                  # Generate improvement suggestions
-vbounce improve S-01                  # Full self-improvement pipeline
-
-# Token tracking
-vbounce tokens                        # Current session token usage
-vbounce tokens --all                  # Per-subagent breakdown
-vbounce tokens --sprint S-01          # Aggregate from story docs
-
-# Health check
-vbounce doctor                        # Verify setup
-```
+- **Claude Code (Tier 1)**: Full orchestration. Spawns specific subagents for each role seamlessly.
+- **Gemini CLI / Codex (Tier 2)**: Single-agent mode, following the strict sequential bounce loop.
+- **Cursor (Tier 3)**: Deep integration via modular `.cursor/rules/` MDC mapping.
+- **Copilot / Windsurf (Tier 4)**: Embedded awareness through checklists and state reading.
 
 ---
 
-## Runtime Structure
+## <img src="docs/icons/book.svg" width="24" height="24" style="vertical-align: text-bottom;" /> Deep Dive & Docs
 
-As you use V-Bounce Engine, the framework creates these directories to manage your sprints:
-
-```
-product_plans/                   # Created when you start planning
-  strategy/                      #   Charter, Roadmap, Risk Registry (frozen during sprints)
-  backlog/                       #   Epics and Stories awaiting sprint assignment
-  sprints/                       #   Active sprint workspace (one active at a time)
-  hotfixes/                      #   Emergency fixes that bypass sprint cycles
-  archive/                       #   Completed sprints and Epics (immutable history)
-
-.bounce/                         # Created on first sprint init
-  state.json                     #   Machine-readable sprint state (crash recovery)
-  product-graph.json             #   Document dependency graph (auto-generated)
-  reports/                       #   QA and Architect bounce reports
-  improvement-manifest.json      #   Machine-readable improvement proposals (auto-generated)
-  improvement-suggestions.md     #   Human-readable suggestions with impact levels (auto-generated)
-  improvement-log.md             #   Applied/rejected/deferred improvement tracking
-
-.worktrees/                      # Git worktrees for isolated story branches
-
-LESSONS.md                       # Accumulated mistakes — agents read this before coding
-```
+Ready to see how deep the rabbit hole goes?
+- **[System Overview & Architecture](OVERVIEW.md)**
+- **[Epic and Story Templates](templates/epic.md)**
+- **[Self-Improvement Pipeline (`vbounce improve`)](docs/IMPROVEMENT.md)** *(Your AI optimizes its own framework)*
 
 ---
 
-## Glossary
-
-| Term | Definition |
-|------|-----------|
-| **Bounce** | When a story fails a quality gate (QA or Architect) and gets sent back to the Developer for fixes |
-| **Bounce Rate** | Percentage of stories that fail a gate on the first attempt |
-| **Context Loop** | The closed feedback cycle: Plan → Build → Bounce → Document → Learn → next sprint |
-| **Correction Tax** | How much human intervention a story needed — 0% is fully autonomous, 100% means a human rewrote it |
-| **Escalation** | When a story hits the 3-bounce limit and surfaces to a human for intervention |
-| **Gate** | An automated quality checkpoint — QA validates requirements, Architect validates structure |
-| **Hotfix Path** | A fast track for trivial (L1) changes: 1-2 files, no QA/Architect gates, human verifies directly |
-| **L1–L4** | Complexity labels: L1 Trivial, L2 Standard, L3 Complex, L4 Uncertain |
-| **Root Cause Tag** | A label on every bounce failure (e.g., `missing_tests`, `adr_violation`) used for trend analysis |
-| **Scribe** | The documentation agent that maps code into semantic product docs |
-| **Sprint Report** | End-of-sprint summary: what shipped, metrics, bounce analysis, lessons, retrospective |
-| **Worktree** | An isolated git checkout where a single story is implemented — prevents cross-story interference |
-
----
-
-## Documentation
-
-- [System Overview with diagrams](OVERVIEW.md)
-- [Epic template and structure](templates/epic.md)
-- [Hotfix edge cases](docs/HOTFIX_EDGE_CASES.md)
-- [vdoc integration](https://github.com/sandrinio/vdoc)
-
-## Contributing
-
-Contributions, issues, and feature requests are welcome. Check the [issues page](https://github.com/sandrinio/v-bounce-engine/issues).
-
-## License
-
-[MIT](LICENSE)
+<div align="center">
+  <b>Built for builders who want to ship, not babysit.</b><br>
+  <i>Contributions, issues, and feature requests are welcome!</i>
+</div>
