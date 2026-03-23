@@ -59,6 +59,38 @@ V-Bounce wraps your AI agents in the same discipline that makes human engineerin
 
 ---
 
+## <img src="docs/icons/rocket.svg" width="24" height="24" style="vertical-align: text-bottom;" /> The Planning Phase
+
+V-Bounce doesn't just protect execution — it structures **planning** so your AI never starts coding from a vague prompt.
+
+You and the AI collaborate through a strict document hierarchy. Each level inherits context from the one above, so nothing is lost or hallucinated.
+
+```
+Charter  →  Roadmap  →  Epic  →  Story  →  Sprint Plan  →  Bounce
+  WHY         WHAT       WHAT      HOW       WHEN           DO
+```
+
+### How It Works
+
+1. **You set the vision.** Write a Charter (the *why*) and Roadmap (the *what*). The AI reads these before touching anything else.
+2. **AI researches, then plans.** Before creating Stories, the AI explores your actual codebase — reading affected files, discovering patterns, and identifying real dependencies. No guessing.
+3. **Ambiguity is surfaced, not hidden.** Every Epic and Story gets an Ambiguity Score (🟢 Low / 🟡 Medium / 🔴 High). If critical unknowns exist, the AI creates **Spikes** — focused investigations that must complete before coding begins.
+4. **Sprint Planning is collaborative.** The AI proposes scope, surfaces risks, flags open questions, and identifies dependency chains. You discuss, adjust, and confirm. **No sprint starts without your explicit sign-off.**
+5. **Stories are sized for success.** Each story has one clear goal, touches 1–3 files, and produces a verifiable result. Vertical slices over horizontal layers — always.
+
+### The Sprint Planning Gate
+
+| Step | What Happens |
+|------|--------------|
+| **Read** | AI scans backlog, archive, and risk registry to build full context |
+| **Propose** | AI selects stories by priority and dependency, flags blockers |
+| **Discuss** | You and the AI resolve open questions, adjust scope, agree on execution mode |
+| **Confirm** | You approve the Sprint Plan → stories move into execution → Bounce begins |
+
+> **Hard rule:** The Bounce Loop *cannot* start without a finalized, human-confirmed Sprint Plan.
+
+---
+
 ## <img src="docs/icons/sync.svg" width="24" height="24" style="vertical-align: text-bottom;" /> The "Bounce" Loop
 
 Instead of letting an AI hallucinate straight to production, V-Bounce coordinates specialized roles working in isolation.
