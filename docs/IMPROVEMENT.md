@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/icons/sync.svg" width="64" height="64" />
+  <img src="icons/light-bulb.svg" width="64" height="64" />
   <h1>The Self-Improvement Pipeline</h1>
   <p><strong>V-Bounce Engine is the first AI framework designed to optimize its own prompt.</strong></p>
 </div>
@@ -15,7 +15,7 @@ At the end of your sprint, the **Self-Improvement Pipeline** analyzes these less
 ## 🔄 How It Works
 
 ### 1. The Lesson Flag
-During a sprint execution, if the **[🧪 QA Gate]** or **[🏗️ Architect Gate]** fails and bounces code back to the Developer, the agent is forced to log the root cause of the failure in `.bounce/lessons.md`. 
+During a sprint execution, if the **[<img src="icons/beaker.svg" width="16" style="vertical-align: text-bottom;" /> QA Gate]** or **[<img src="icons/git-branch.svg" width="16" style="vertical-align: text-bottom;" /> Architect Gate]** fails and bounces code back to the Developer, the agent is forced to log the root cause of the failure in `.bounce/lessons.md`. 
 > *Example: "I forgot to check if the database migration ran before starting the server."*
 
 ### 2. The Analysis Phase
