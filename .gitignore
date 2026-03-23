@@ -13,3 +13,5 @@ IMPROVEMENT_PLAN.md
 
 .env
 *.log
+.DS_Store
+LAST_SESSION.md
