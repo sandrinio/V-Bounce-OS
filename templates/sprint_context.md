@@ -4,7 +4,7 @@ for all agents in the sprint. Every agent task file must reference this file.
 
 Purpose: Reduce divergence between parallel agents by giving them a single source of cross-cutting rules.
 
-Written to `.bounce/sprint-context-S-{XX}.md`.
+Written to `.vbounce/sprint-context-S-{XX}.md`.
 Updated mid-sprint when cross-cutting decisions change.
 
 Do NOT output these instructions.

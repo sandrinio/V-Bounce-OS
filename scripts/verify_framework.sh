@@ -9,5 +9,5 @@ ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 
 cd "$ROOT_DIR" || exit 1
 
-node ./scripts/verify_framework.mjs
+node ./.vbounce/scripts/verify_framework.mjs
 exit $?

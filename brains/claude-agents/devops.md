@@ -33,15 +33,15 @@ git status
 git log --oneline sprint/S-{XX}..HEAD  # review story commits
 
 # Verify QA and Architect reports exist and show PASS
-ls .bounce/reports/STORY-{ID}-{StoryName}-qa*.md
-ls .bounce/reports/STORY-{ID}-{StoryName}-arch.md
+ls .vbounce/reports/STORY-{ID}-{StoryName}-qa*.md
+ls .vbounce/reports/STORY-{ID}-{StoryName}-arch.md
 ```
 
 ### Merge Execution
 ```bash
 # Archive reports BEFORE removing worktree
-mkdir -p .bounce/archive/S-{XX}/STORY-{ID}-{StoryName}
-cp .worktrees/STORY-{ID}-{StoryName}/.bounce/reports/* .bounce/archive/S-{XX}/STORY-{ID}-{StoryName}/
+mkdir -p .vbounce/archive/S-{XX}/STORY-{ID}-{StoryName}
+cp .worktrees/STORY-{ID}-{StoryName}/.vbounce/reports/* .vbounce/archive/S-{XX}/STORY-{ID}-{StoryName}/
 
 # Switch to sprint branch and merge
 git checkout sprint/S-{XX}
@@ -51,7 +51,7 @@ git merge story/STORY-{ID}-{StoryName} --no-ff -m "Merge STORY-{ID}: {Story Name
 ### Conflict Resolution
 If merge conflicts occur:
 - **Simple conflicts** (import ordering, adjacent edits, whitespace): Resolve directly.
-- **Complex conflicts** (logic changes, competing implementations): Write a **Merge Conflict Report** to `.bounce/reports/STORY-{ID}-{StoryName}-merge-conflict.md` and notify the Lead. Do NOT guess at resolution.
+- **Complex conflicts** (logic changes, competing implementations): Write a **Merge Conflict Report** to `.vbounce/reports/STORY-{ID}-{StoryName}-merge-conflict.md` and notify the Lead. Do NOT guess at resolution.
 
 When resolving conflicts:
 - Preserve the intent of BOTH story branches
@@ -151,17 +151,17 @@ Before approving a deployment:
 
 **Token tracking is NOT optional.** You MUST run these commands before writing your report:
 
-1. Run `node scripts/count_tokens.mjs --self --json`
-   - If not found: `node $(git rev-parse --show-toplevel)/scripts/count_tokens.mjs --self --json`
+1. Run `node .vbounce/scripts/count_tokens.mjs --self --json`
+   - If not found: `node $(git rev-parse --show-toplevel)/.vbounce/scripts/count_tokens.mjs --self --json`
    - Use the `input_tokens`, `output_tokens`, and `total_tokens` values for YAML frontmatter
    - If both commands fail, set all three to `0` AND add "Token tracking script failed: {error}" to Process Feedback
-2. Run `node scripts/count_tokens.mjs --self --append <story-file-path> --name DevOps`
+2. Run `node .vbounce/scripts/count_tokens.mjs --self --append <story-file-path> --name DevOps`
 
 **Do NOT skip this step.** Reports with `0/0/0` tokens and no failure explanation will be flagged by the Team Lead.
 
 ## Your Output
 
-Write a **DevOps Report** to `.bounce/reports/STORY-{ID}-{StoryName}-devops.md` (for story merges) or `.bounce/reports/sprint-S-{XX}-devops.md` (for sprint releases).
+Write a **DevOps Report** to `.vbounce/reports/STORY-{ID}-{StoryName}-devops.md` (for story merges) or `.vbounce/reports/sprint-S-{XX}-devops.md` (for sprint releases).
 You MUST include the YAML frontmatter block exactly as shown below:
 
 ### Story Merge Report
@@ -193,7 +193,7 @@ conflicts_detected: {true/false}
 - [ ] No regressions detected
 
 ## Worktree Cleanup
-- [ ] Reports archived to .bounce/archive/
+- [ ] Reports archived to .vbounce/archive/
 - [ ] Worktree removed
 - [ ] Story branch deleted
 
@@ -262,4 +262,4 @@ version: "{VERSION}"
 - **Always validate after merge.** Run tests and build on the merged branch. If they fail, revert.
 - **Never deploy without approval.** Production deployments require explicit human confirmation.
 - **Never commit secrets.** If you see API keys, tokens, or credentials in the codebase, report it immediately and do NOT proceed with the merge.
-- **Archive before delete.** Always copy reports to `.bounce/archive/` before removing worktrees.
+- **Archive before delete.** Always copy reports to `.vbounce/archive/` before removing worktrees.

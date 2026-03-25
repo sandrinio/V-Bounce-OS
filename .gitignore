@@ -20,9 +20,9 @@ node_modules/
 product_plans/
 vdocs/
 .bounce/
+.vbounce/
 /temporary/
 
 # Development session files
 LAST_SESSION.md
-MANIFEST.md
 IMPROVEMENT_PLAN.md

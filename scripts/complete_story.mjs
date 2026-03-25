@@ -5,7 +5,7 @@
  * Mark a story as Done — updates Sprint Plan §1 + §4, and state.json atomically.
  *
  * Usage:
- *   ./scripts/complete_story.mjs STORY-005-02 --qa-bounces 1 --arch-bounces 0 --correction-tax 5 --notes "Missing validation fixed"
+ *   ./.vbounce/scripts/complete_story.mjs STORY-005-02 --qa-bounces 1 --arch-bounces 0 --correction-tax 5 --notes "Missing validation fixed"
  */
 
 import fs from 'fs';
@@ -37,9 +37,9 @@ if (!storyId) {
 }
 
 // 1. Update state.json
-const stateFile = path.join(ROOT, '.bounce', 'state.json');
+const stateFile = path.join(ROOT, '.vbounce', 'state.json');
 if (!fs.existsSync(stateFile)) {
-  console.error('ERROR: .bounce/state.json not found');
+  console.error('ERROR: .vbounce/state.json not found');
   process.exit(1);
 }
 const state = JSON.parse(fs.readFileSync(stateFile, 'utf8'));

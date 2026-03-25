@@ -48,18 +48,18 @@ Determine which phase you're in from what the human is asking, then load the rig
 10. **Reports are the only handoff**. No direct agent-to-agent communication.
 11. **One source of truth**. Reference upstream documents, don't duplicate.
 12. **Change Logs are mandatory** on every document modification.
-13. **Agent Reports MUST use YAML Frontmatter**. Every `.bounce/report/` file starts with strict YAML.
-14. **Framework Integrity**. Any modification to `brains/`, `skills/`, `templates/`, or `scripts/` MUST be recorded in `brains/CHANGELOG.md` and reflected in `MANIFEST.md`.
+13. **Agent Reports MUST use YAML Frontmatter**. Every `.vbounce/report/` file starts with strict YAML.
+14. **Framework Integrity**. Any modification to `brains/`, `skills/`, `templates/`, or `scripts/` MUST be recorded in `brains/CHANGELOG.md` and reflected in `VBOUNCE_MANIFEST.md`.
 
 ## Skills
 
-Skills are in the `skills/` directory. Each skill has a `SKILL.md` with instructions.
-For Antigravity: copy skills to `.agents/skills/` for workspace-scoped discovery.
+Skills are in the `.vbounce/skills/` directory. Each skill has a `SKILL.md` with instructions.
+For Antigravity: copy `.vbounce/skills/` to `.agents/skills/` for workspace-scoped discovery.
 
 **Loaded by phase** (see Phase Routing above):
-- **Always:** Read `skills/lesson/SKILL.md`
-- **Planning (Phase 1 & 2):** Read `skills/doc-manager/SKILL.md` + `skills/product-graph/SKILL.md`
-- **Execution (Phase 3):** Read `skills/agent-team/SKILL.md`
+- **Always:** Read `.vbounce/skills/lesson/SKILL.md`
+- **Planning (Phase 1 & 2):** Read `.vbounce/skills/doc-manager/SKILL.md` + `.vbounce/skills/product-graph/SKILL.md`
+- **Execution (Phase 3):** Read `.vbounce/skills/agent-team/SKILL.md`
 
 **On-demand:** `vibe-code-review`, `react-best-practices`, `write-skill`, `improve`, `file-organization`
 
@@ -94,9 +94,9 @@ vbounce doctor
 
 ## Quick Reference
 
-- **Document ops:** `skills/doc-manager/SKILL.md` — hierarchy, cascade rules, planning workflows
-- **Product graph:** `.bounce/product-graph.json` — document relationships and state
-- **Bounce orchestration:** `skills/agent-team/SKILL.md` — agent delegation, sprint execution
+- **Document ops:** `.vbounce/skills/doc-manager/SKILL.md` — hierarchy, cascade rules, planning workflows
+- **Product graph:** `.vbounce/product-graph.json` — document relationships and state
+- **Bounce orchestration:** `.vbounce/skills/agent-team/SKILL.md` — agent delegation, sprint execution
 - **Planning docs:** `product_plans/` — `strategy/`, `backlog/`, `sprints/`, `hotfixes/`, `archive/`
-- **Sprint state:** `.bounce/state.json` — machine-readable sprint state
-- **Framework map:** `MANIFEST.md` — complete file and process registry
+- **Sprint state:** `.vbounce/state.json` — machine-readable sprint state
+- **Framework map:** `VBOUNCE_MANIFEST.md` — complete file and process registry

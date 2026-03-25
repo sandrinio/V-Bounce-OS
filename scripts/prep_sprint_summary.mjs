@@ -5,9 +5,9 @@
  * Generates sprint metrics summary from archived agent reports.
  *
  * Usage:
- *   ./scripts/prep_sprint_summary.mjs S-05
+ *   ./.vbounce/scripts/prep_sprint_summary.mjs S-05
  *
- * Output: .bounce/sprint-summary-S-05.md
+ * Output: .vbounce/sprint-summary-S-05.md
  */
 
 import fs from 'fs';
@@ -24,7 +24,7 @@ if (!sprintId) {
   process.exit(1);
 }
 
-const archiveDir = path.join(ROOT, '.bounce', 'archive', sprintId);
+const archiveDir = path.join(ROOT, '.vbounce', 'archive', sprintId);
 if (!fs.existsSync(archiveDir)) {
   console.error(`ERROR: Archive directory not found: ${archiveDir}`);
   console.error('No archived reports found for ' + sprintId);
@@ -148,7 +148,7 @@ const output = [
   storyBreakdownRows || '| (no stories) | — | — | — |',
 ].join('\n');
 
-const outputFile = path.join(ROOT, '.bounce', `sprint-summary-${sprintId}.md`);
+const outputFile = path.join(ROOT, '.vbounce', `sprint-summary-${sprintId}.md`);
 fs.writeFileSync(outputFile, output);
-console.log(`✓ Sprint summary written to .bounce/sprint-summary-${sprintId}.md`);
+console.log(`✓ Sprint summary written to .vbounce/sprint-summary-${sprintId}.md`);
 console.log(`  Stories: ${totalStories} | First-pass: ${firstPassRate}% | Total tokens: ${totalTokens.toLocaleString()}`);

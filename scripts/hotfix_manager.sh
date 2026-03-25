@@ -16,7 +16,7 @@ COMMAND="${1:-}"
 function show_help {
     echo "V-Bounce Engine — Hotfix Manager"
     echo ""
-    echo "Usage: ./scripts/hotfix_manager.sh <command> [args]"
+    echo "Usage: ./.vbounce/scripts/hotfix_manager.sh <command> [args]"
     echo ""
     echo "Commands:"
     echo "  audit               Run a lightweight static analysis on recent commits to detect architectural drift."
@@ -24,9 +24,9 @@ function show_help {
     echo "  ledger <title> <desc>  Append a Hotfix entry to §8 Applied Hotfixes in the active DELIVERY_PLAN.md."
     echo ""
     echo "Examples:"
-    echo "  ./scripts/hotfix_manager.sh audit"
-    echo "  ./scripts/hotfix_manager.sh sync"
-    echo "  ./scripts/hotfix_manager.sh ledger \"Fix Header\" \"Aligned the logo to the left\""
+    echo "  ./.vbounce/scripts/hotfix_manager.sh audit"
+    echo "  ./.vbounce/scripts/hotfix_manager.sh sync"
+    echo "  ./.vbounce/scripts/hotfix_manager.sh ledger \"Fix Header\" \"Aligned the logo to the left\""
     exit 1
 }
 
@@ -111,7 +111,7 @@ case "$COMMAND" in
 
         if [ -z "$TITLE" ] || [ -z "$DESC" ]; then
             echo "❌ Error: Missing title or description for the ledger."
-            echo "Usage: ./scripts/hotfix_manager.sh ledger \"Fix Header\" \"Aligned the logo to the left\""
+            echo "Usage: ./.vbounce/scripts/hotfix_manager.sh ledger \"Fix Header\" \"Aligned the logo to the left\""
             exit 1
         fi
 

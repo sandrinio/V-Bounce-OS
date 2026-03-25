@@ -5,7 +5,7 @@
  * Sprint close automation — validates, archives, updates state.json.
  *
  * Usage:
- *   ./scripts/close_sprint.mjs S-05
+ *   ./.vbounce/scripts/close_sprint.mjs S-05
  */
 
 import fs from 'fs';
@@ -29,11 +29,11 @@ if (!/^S-\d{2}$/.test(sprintId)) {
 }
 
 const sprintNum = sprintId.replace('S-', '');
-const stateFile = path.join(ROOT, '.bounce', 'state.json');
+const stateFile = path.join(ROOT, '.vbounce', 'state.json');
 
 // 1. Read state.json
 if (!fs.existsSync(stateFile)) {
-  console.error(`ERROR: .bounce/state.json not found`);
+  console.error(`ERROR: .vbounce/state.json not found`);
   process.exit(1);
 }
 
@@ -56,20 +56,20 @@ if (activeStories.length > 0) {
 }
 
 // 3. Create archive directory
-const archiveDir = path.join(ROOT, '.bounce', 'archive', sprintId);
+const archiveDir = path.join(ROOT, '.vbounce', 'archive', sprintId);
 fs.mkdirSync(archiveDir, { recursive: true });
 
 // 4. Move sprint report if it exists
-const reportSrc = path.join(ROOT, '.bounce', `sprint-report-${sprintId}.md`);
-const reportLegacy = path.join(ROOT, '.bounce', 'sprint-report.md');
+const reportSrc = path.join(ROOT, '.vbounce', `sprint-report-${sprintId}.md`);
+const reportLegacy = path.join(ROOT, '.vbounce', 'sprint-report.md');
 const reportDst = path.join(archiveDir, `sprint-report-${sprintId}.md`);
 
 if (fs.existsSync(reportSrc)) {
   fs.copyFileSync(reportSrc, reportDst);
-  console.log(`✓ Archived sprint report → .bounce/archive/${sprintId}/sprint-report-${sprintId}.md`);
+  console.log(`✓ Archived sprint report → .vbounce/archive/${sprintId}/sprint-report-${sprintId}.md`);
 } else if (fs.existsSync(reportLegacy)) {
   fs.copyFileSync(reportLegacy, reportDst);
-  console.log(`✓ Archived sprint report → .bounce/archive/${sprintId}/sprint-report-${sprintId}.md`);
+  console.log(`✓ Archived sprint report → .vbounce/archive/${sprintId}/sprint-report-${sprintId}.md`);
 }
 
 // 5. Update state.json
@@ -128,7 +128,7 @@ console.log(`  2. Update Delivery Plan §4 Completed Sprints with a summary row`
 console.log(`  3. Remove delivered stories from Delivery Plan §3 Backlog`);
 console.log(`  4. Delete sprint branch (after merge to main):`);
 console.log(`     git branch -d sprint/${sprintId}`);
-console.log(`  5. Review .bounce/improvement-suggestions.md — approve/reject/defer each item`);
+console.log(`  5. Review .vbounce/improvement-suggestions.md — approve/reject/defer each item`);
 console.log(`  6. Run /improve to apply approved changes with brain-file sync`);
 console.log('');
 console.log(`✓ Sprint ${sprintId} closed.`);

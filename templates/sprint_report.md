@@ -9,7 +9,7 @@ FOLLOW THIS EXACT STRUCTURE. Output sections in order 1-6.
 6. **§5 Retrospective**: What went well, what didn't, and what to change — covers both project and delivery process
 
 This template is used by the Team Lead at Sprint Consolidation (Step 7).
-Written to `.bounce/sprint-report.md`, then archived to `.bounce/archive/S-{XX}/`.
+Written to `.vbounce/sprint-report.md`, then archived to `.vbounce/archive/S-{XX}/`.
 
 When the delivery completes, sprint reports are summarized into the Roadmap §7 Delivery Log
 as Release Notes.
@@ -56,7 +56,7 @@ delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 - {e.g., "STORY-001-03-email_notifications — Escalated (template integration failed 3x)"}
 
 ### Product Docs Affected
-> Auto-populated from staleness detection (`vbounce docs check S-{XX}`). Shows which vdocs were impacted by this sprint's code changes. Scribe agent receives a targeted task from `.bounce/scribe-task-S-{XX}.md`.
+> Auto-populated from staleness detection (`vbounce docs check S-{XX}`). Shows which vdocs were impacted by this sprint's code changes. Scribe agent receives a targeted task from `.vbounce/scribe-task-S-{XX}.md`.
 
 | Doc | Stale Key Files | Touched By | Priority | Scribe Action |
 |-----|----------------|------------|----------|---------------|

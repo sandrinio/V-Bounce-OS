@@ -5,6 +5,19 @@ All notable changes to the V-Bounce Engine framework and its CLI installer will 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2026-03-25
+### Added
+- **`.vbounce/` directory consolidation** — Framework files (`skills/`, `templates/`, `scripts/`) now deploy under `.vbounce/` instead of project root. Reduces root clutter from 7+3 items to 2+2. Runtime files (`.bounce/`) merged into same directory with nested `.gitignore` for committed/ignored separation.
+- **`vbounce uninstall`** — New CLI command that cleanly removes all framework files. Prompts before removing user data (LESSONS.md, product_plans/, archive/).
+- **Migration logic** — `vbounce install` auto-detects old root-level layout and migrates to `.vbounce/`. Existing `.bounce/` contents preserved.
+- **`VBOUNCE_MANIFEST.md`** — Renamed from `MANIFEST.md`, now ships in npm package and deploys to `.vbounce/VBOUNCE_MANIFEST.md`.
+- **`.vbounce/.gitignore`** — Auto-deployed during install. Ignores runtime files (state, reports, context packs) while committing framework files and archive.
+
+### Changed
+- **550+ path references updated** — All brain files, skill files, agent configs, templates, scripts, and docs updated from `skills/` → `.vbounce/skills/`, `templates/` → `.vbounce/templates/`, `scripts/` → `.vbounce/scripts/`, `.bounce/` → `.vbounce/`.
+- **Installer platform mappings** — All 6 platforms now deploy to `.vbounce/` subdirectories.
+- **`vbounce doctor`** — Validates new `.vbounce/` paths.
+
 ## [2.4.0] - 2026-03-25
 ### Changed
 - **Story template rewritten** — 7 improvements: added §1.3 Out of Scope section, complexity legend moved to instructions-only (not output), single `complexity_label` frontmatter field, flexible user story format (infrastructure stories can use direct problem statements), generic §2.2 verification steps (removed UI bias), §3.4 API Contract reframed as context with table format, §4.2 Definition of Done trimmed from 11 to 6 items.

@@ -15,7 +15,7 @@ At the end of your sprint, the **Self-Improvement Pipeline** analyzes these less
 ## 🔄 How It Works
 
 ### 1. The Lesson Flag
-During a sprint execution, if the **[<img src="icons/beaker.svg" width="16" style="vertical-align: text-bottom;" /> QA Gate]** or **[<img src="icons/git-branch.svg" width="16" style="vertical-align: text-bottom;" /> Architect Gate]** fails and bounces code back to the Developer, the agent is forced to log the root cause of the failure in `.bounce/lessons.md`. 
+During a sprint execution, if the **[<img src="icons/beaker.svg" width="16" style="vertical-align: text-bottom;" /> QA Gate]** or **[<img src="icons/git-branch.svg" width="16" style="vertical-align: text-bottom;" /> Architect Gate]** fails and bounces code back to the Developer, the agent is forced to log the root cause of the failure in `.vbounce/lessons.md`. 
 > *Example: "I forgot to check if the database migration ran before starting the server."*
 
 ### 2. The Analysis Phase
@@ -27,8 +27,8 @@ The Engine instantly aggregates all sprint data, measures your **Correction Tax*
 
 ### 3. The Brain Upgrade
 The pipeline automatically categorizes the failures and proposes permanent, structural fixes to its own framework:
-*   **Skill Updates:** It writes new strict rules into its `skills/agent-team/SKILL.md` operating instructions.
-*   **Template Evolution:** It adds missing prerequisite checklists to your `templates/story.md`.
+*   **Skill Updates:** It writes new strict rules into its `.vbounce/skills/agent-team/SKILL.md` operating instructions.
+*   **Template Evolution:** It adds missing prerequisite checklists to your `.vbounce/templates/story.md`.
 *   **Brain Surgery:** It updates the master `brains/CLAUDE.md` prompt context directly.
 
 ---

@@ -5,7 +5,7 @@
  * Validates a Sprint Plan markdown file structure and cross-checks with state.json.
  *
  * Usage:
- *   ./scripts/validate_sprint_plan.mjs product_plans/sprints/sprint-05/sprint-05.md
+ *   ./.vbounce/scripts/validate_sprint_plan.mjs product_plans/sprints/sprint-05/sprint-05.md
  */
 
 import fs from 'fs';
@@ -51,7 +51,7 @@ if (!fmMatch) {
   }
 
   // 2. Cross-check with state.json
-  const stateFile = path.join(ROOT, '.bounce', 'state.json');
+  const stateFile = path.join(ROOT, '.vbounce', 'state.json');
   if (fs.existsSync(stateFile)) {
     const state = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
 

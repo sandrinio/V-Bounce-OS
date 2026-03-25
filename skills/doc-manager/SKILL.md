@@ -76,18 +76,18 @@ Spike §6 (Residual Risk) ──→ Risk Registry §1 (Active Risks)
 
 | Document | Template Path | Output Location |
 |----------|---------------|-----------------|
-| Charter | `templates/charter.md` | `product_plans/strategy/{project}_charter.md` |
-| Roadmap | `templates/roadmap.md` | `product_plans/strategy/{project}_roadmap.md` |
-| Risk Registry | `templates/risk_registry.md` | `product_plans/strategy/RISK_REGISTRY.md` |
-| Delivery Plan | `templates/delivery_plan.md` | `product_plans/strategy/{delivery}_delivery_plan.md` |
-| Sprint Plan | `templates/sprint.md` | `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` |
-| Epic | `templates/epic.md` | `product_plans/backlog/EPIC-{NNN}_{name}/EPIC-{NNN}_{name}.md` |
-| Story | `templates/story.md` | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{StoryName}.md` |
-| Spike | `templates/spike.md` | `product_plans/backlog/EPIC-{NNN}_{name}/SPIKE-{EpicID}-{NNN}-{topic}.md` |
-| Hotfix | `templates/hotfix.md` | `product_plans/hotfixes/HOTFIX-{Date}-{Name}.md` |
-| Bug Report | `templates/bug.md` | `product_plans/sprints/sprint-{XX}/BUG-{Date}-{Name}.md` |
-| Change Request | `templates/change_request.md` | `product_plans/sprints/sprint-{XX}/CR-{Date}-{Name}.md` |
-| Sprint Report | `templates/sprint_report.md` | `product_plans/sprints/sprint-{XX}/sprint-report.md` |
+| Charter | `.vbounce/templates/charter.md` | `product_plans/strategy/{project}_charter.md` |
+| Roadmap | `.vbounce/templates/roadmap.md` | `product_plans/strategy/{project}_roadmap.md` |
+| Risk Registry | `.vbounce/templates/risk_registry.md` | `product_plans/strategy/RISK_REGISTRY.md` |
+| Delivery Plan | `.vbounce/templates/delivery_plan.md` | `product_plans/strategy/{delivery}_delivery_plan.md` |
+| Sprint Plan | `.vbounce/templates/sprint.md` | `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` |
+| Epic | `.vbounce/templates/epic.md` | `product_plans/backlog/EPIC-{NNN}_{name}/EPIC-{NNN}_{name}.md` |
+| Story | `.vbounce/templates/story.md` | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{StoryName}.md` |
+| Spike | `.vbounce/templates/spike.md` | `product_plans/backlog/EPIC-{NNN}_{name}/SPIKE-{EpicID}-{NNN}-{topic}.md` |
+| Hotfix | `.vbounce/templates/hotfix.md` | `product_plans/hotfixes/HOTFIX-{Date}-{Name}.md` |
+| Bug Report | `.vbounce/templates/bug.md` | `product_plans/sprints/sprint-{XX}/BUG-{Date}-{Name}.md` |
+| Change Request | `.vbounce/templates/change_request.md` | `product_plans/sprints/sprint-{XX}/CR-{Date}-{Name}.md` |
+| Sprint Report | `.vbounce/templates/sprint_report.md` | `product_plans/sprints/sprint-{XX}/sprint-report.md` |
 
 ### Product Plans Folder Structure (State-Based)
 
@@ -140,9 +140,9 @@ V-Bounce Engine/
 │   ├── GEMINI.md        — Gemini CLI / Antigravity brain
 │   ├── cursor-rules/    — Cursor modular .mdc rules
 │   └── SETUP.md         — Deployment guide
-├── templates/       — Document templates (immutable during execution)
-├── skills/          — Agent skills (SKILL.md files + references)
-├── scripts/         — Automation scripts (e.g., hotfix_manager.sh)
+├── .vbounce/templates/  — Document templates (immutable during execution)
+├── .vbounce/skills/     — Agent skills (SKILL.md files + references)
+├── .vbounce/scripts/    — Automation scripts (e.g., hotfix_manager.sh)
 └── docs/            — Reference docs (e.g., HOTFIX_EDGE_CASES.md)
 ```
 
@@ -156,7 +156,7 @@ When initializing a new project, deploy the correct brain file for the AI coding
 | Codex CLI | `brains/AGENTS.md` | Project root as `AGENTS.md` |
 | Cursor | `brains/cursor-rules/*.mdc` | `.cursor/rules/` |
 | Gemini CLI | `brains/GEMINI.md` | Project root as `GEMINI.md` |
-| Antigravity | `brains/GEMINI.md` | Project root + copy `skills/` to `.agents/skills/` |
+| Antigravity | `brains/GEMINI.md` | Project root + copy `.vbounce/skills/` to `.agents/skills/` |
 
 Brain files contain the V-Bounce process, critical rules, and skill references. Each tool's brain file is self-contained and authoritative. When updating V-Bounce Engine rules, update each brain file directly and keep them in sync.
 
@@ -189,7 +189,7 @@ When creating or reviewing an Epic or Story, assess ambiguity using these signal
 1. Set `ambiguity: 🔴 High` in frontmatter
 2. Identify which signals triggered it
 3. For each signal, recommend a spike with a one-sentence question
-4. Create spike documents from `templates/spike.md`
+4. Create spike documents from `.vbounce/templates/spike.md`
 5. Block downstream transitions until spikes reach Validated or Closed
 
 ### CREATE — Making a New Document
@@ -341,7 +341,7 @@ Sprint Planning is a collaborative process between AI and human. No sprint start
    - Agree on execution mode per story (Full Bounce vs Fast Track)
 
 5. **Create Sprint Plan:**
-   - Create `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` from `templates/sprint.md`
+   - Create `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` from `.vbounce/templates/sprint.md`
    - Fill §0 Sprint Readiness Gate checklist
    - Fill §1 Active Scope with confirmed stories + Context Pack Readiness
    - Fill §2 Execution Strategy (phases, dependencies, risk flags)

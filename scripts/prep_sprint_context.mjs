@@ -5,9 +5,9 @@
  * Generates a sprint context pack — single file replacing 6+ separate reads.
  *
  * Usage:
- *   ./scripts/prep_sprint_context.mjs S-05
+ *   ./.vbounce/scripts/prep_sprint_context.mjs S-05
  *
- * Output: .bounce/sprint-context-S-05.md
+ * Output: .vbounce/sprint-context-S-05.md
  */
 
 import fs from 'fs';
@@ -27,9 +27,9 @@ if (!sprintId) {
 const MAX_CONTEXT_LINES = 200;
 
 // 1. Read state.json (required)
-const stateFile = path.join(ROOT, '.bounce', 'state.json');
+const stateFile = path.join(ROOT, '.vbounce', 'state.json');
 if (!fs.existsSync(stateFile)) {
-  console.error('ERROR: .bounce/state.json not found. Run: vbounce sprint init');
+  console.error('ERROR: .vbounce/state.json not found. Run: vbounce sprint init');
   process.exit(1);
 }
 const state = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
@@ -133,9 +133,9 @@ if (outputLines.length > MAX_CONTEXT_LINES) {
 }
 
 // 7. Write output
-const outputFile = path.join(ROOT, '.bounce', `sprint-context-${sprintId}.md`);
+const outputFile = path.join(ROOT, '.vbounce', `sprint-context-${sprintId}.md`);
 fs.writeFileSync(outputFile, finalOutput);
 
-console.log(`✓ Sprint context pack written to .bounce/sprint-context-${sprintId}.md`);
+console.log(`✓ Sprint context pack written to .vbounce/sprint-context-${sprintId}.md`);
 if (truncated) console.warn(`  ⚠  Content was truncated (exceeded ${MAX_CONTEXT_LINES} lines)`);
 console.log(`  Stories: ${Object.keys(state.stories || {}).length} | Phase: ${state.phase || 'N/A'}`);

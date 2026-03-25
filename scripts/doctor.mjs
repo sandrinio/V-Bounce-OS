@@ -47,11 +47,11 @@ for (const t of requiredTemplates) {
 if (templateCount === requiredTemplates.length) pass(`templates/ complete (${templateCount}/${requiredTemplates.length})`);
 
 // Check .bounce directory
-if (fs.existsSync(path.join(ROOT, '.bounce'))) {
-  pass('.bounce/ directory exists');
+if (fs.existsSync(path.join(ROOT, '.vbounce'))) {
+  pass('.vbounce/ directory exists');
 
   // Check state.json
-  const stateFile = path.join(ROOT, '.bounce', 'state.json');
+  const stateFile = path.join(ROOT, '.vbounce', 'state.json');
   if (fs.existsSync(stateFile)) {
     try {
       const state = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
@@ -63,7 +63,7 @@ if (fs.existsSync(path.join(ROOT, '.bounce'))) {
     warn('state.json not found — run: vbounce sprint init S-XX D-XX');
   }
 } else {
-  warn('.bounce/ directory missing — run: vbounce sprint init S-XX D-XX');
+  warn('.vbounce/ directory missing — run: vbounce sprint init S-XX D-XX');
 }
 
 // Check brain files

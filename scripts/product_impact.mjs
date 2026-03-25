@@ -6,8 +6,8 @@
  * of the product graph.
  *
  * Usage:
- *   node scripts/product_impact.mjs EPIC-002
- *   node scripts/product_impact.mjs EPIC-002 --json
+ *   node .vbounce/scripts/product_impact.mjs EPIC-002
+ *   node .vbounce/scripts/product_impact.mjs EPIC-002 --json
  */
 
 import fs from 'fs';
@@ -16,7 +16,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const GRAPH_PATH = path.join(ROOT, '.bounce', 'product-graph.json');
+const GRAPH_PATH = path.join(ROOT, '.vbounce', 'product-graph.json');
 
 const args = process.argv.slice(2);
 const docId = args.find(a => !a.startsWith('--'));
@@ -32,7 +32,7 @@ if (!docId) {
 // ── Load graph ───────────────────────────────────────────────────
 
 if (!fs.existsSync(GRAPH_PATH)) {
-  console.error('ERROR: .bounce/product-graph.json not found.');
+  console.error('ERROR: .vbounce/product-graph.json not found.');
   console.error('Run `vbounce graph` first to generate the product graph.');
   process.exit(1);
 }

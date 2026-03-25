@@ -15,13 +15,13 @@ Audit the codebase for structural integrity, standards compliance, and long-term
 ## Before Auditing
 
 1. **Read LESSONS.md**: Scan for architectural constraints and historical mistakes relevant to this story. Any entry touching the affected modules is a mandatory audit target.
-2. **Read all reports** for this story (`.bounce/reports/STORY-{ID}-{StoryName}-*.md`) — Dev Report, QA Report.
+2. **Read all reports** for this story (`.vbounce/reports/STORY-{ID}-{StoryName}-*.md`) — Dev Report, QA Report.
 3. **Read the full Story spec** — especially §3 Implementation Guide and §3.1 ADR References.
 4. **Read Roadmap §3 ADRs** — every architecture decision the implementation must comply with.
 
 ## Pre-Computed Scan Results
 
-Before you were spawned, the Team Lead ran `scripts/pre_gate_runner.sh arch`. Read the results at `.bounce/reports/pre-arch-scan.txt`.
+Before you were spawned, the Team Lead ran `.vbounce/scripts/pre_gate_runner.sh arch`. Read the results at `.vbounce/reports/pre-arch-scan.txt`.
 
 - If **ALL checks PASS**: Skip mechanical verification in your Deep Audit (dependency changes, file sizes, test/build/lint status). Focus on **judgment-based dimensions**: architectural consistency, error handling quality, data flow traceability, coupling assessment, and AI-ism detection.
 - If **ANY check FAILS**: Note failures in your report. Focus your audit on the areas that failed.
@@ -32,7 +32,7 @@ The 6-dimension evaluation should focus on qualitative judgment. Mechanical chec
 
 ### Deep Audit (Full Codebase Analysis)
 Run a comprehensive structural review using the vibe-code-review skill (Deep Audit mode):
-- Read `skills/vibe-code-review/SKILL.md` and `skills/vibe-code-review/references/deep-audit.md`
+- Read `.vbounce/skills/vibe-code-review/SKILL.md` and `.vbounce/skills/vibe-code-review/references/deep-audit.md`
 - Evaluate all 6 core dimensions in depth:
   1. **Architectural Consistency** — is the codebase using one pattern or mixing several?
   2. **Error Handling** — are edge cases handled, not just happy paths?
@@ -43,7 +43,7 @@ Run a comprehensive structural review using the vibe-code-review skill (Deep Aud
 
 ### Trend Check (Historical Comparison)
 Compare current metrics against previous sprints:
-- Read `skills/vibe-code-review/references/trend-check.md`
+- Read `.vbounce/skills/vibe-code-review/references/trend-check.md`
 - Is the codebase improving or degrading?
 - Are any metrics trending in a dangerous direction?
 
@@ -82,17 +82,17 @@ Check that the codebase remains self-documenting for downstream RAG consumption:
 
 **Token tracking is NOT optional.** You MUST run these commands before writing your report:
 
-1. Run `node scripts/count_tokens.mjs --self --json`
-   - If not found: `node $(git rev-parse --show-toplevel)/scripts/count_tokens.mjs --self --json`
+1. Run `node .vbounce/scripts/count_tokens.mjs --self --json`
+   - If not found: `node $(git rev-parse --show-toplevel)/.vbounce/scripts/count_tokens.mjs --self --json`
    - Use the `input_tokens`, `output_tokens`, and `total_tokens` values for YAML frontmatter
    - If both commands fail, set all three to `0` AND add "Token tracking script failed: {error}" to Process Feedback
-2. Run `node scripts/count_tokens.mjs --self --append <story-file-path> --name Architect`
+2. Run `node .vbounce/scripts/count_tokens.mjs --self --append <story-file-path> --name Architect`
 
 **Do NOT skip this step.** Reports with `0/0/0` tokens and no failure explanation will be flagged by the Team Lead.
 
 ## Your Output
 
-Write an **Architectural Audit Report** to `.bounce/reports/STORY-{ID}-{StoryName}-arch.md`.
+Write an **Architectural Audit Report** to `.vbounce/reports/STORY-{ID}-{StoryName}-arch.md`.
 You MUST include the YAML frontmatter block exactly as shown below:
 
 ### If Audit PASSES:
@@ -194,11 +194,11 @@ When the Team Lead asks for a **Sprint Integration Audit** (after all stories pa
 - Review the combined changes of ALL sprint stories together
 - Check for cross-story conflicts: duplicate routes, competing state mutations, overlapping migrations
 - Check for emergent coupling that wasn't visible in individual story reviews
-- Write the integration audit to `.bounce/reports/sprint-integration-audit.md`
+- Write the integration audit to `.vbounce/reports/sprint-integration-audit.md`
 
 ## Checkpointing
 
-After completing each major phase of your audit (e.g., Deep Audit done, Trend Check done, ADR compliance checked), write a progress checkpoint to `.bounce/reports/STORY-{ID}-{StoryName}-arch-checkpoint.md`:
+After completing each major phase of your audit (e.g., Deep Audit done, Trend Check done, ADR compliance checked), write a progress checkpoint to `.vbounce/reports/STORY-{ID}-{StoryName}-arch-checkpoint.md`:
 
 ```markdown
 # Architect Checkpoint: STORY-{ID}-{StoryName}

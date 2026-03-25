@@ -125,11 +125,11 @@ Accelerated candidates are flagged by `suggest_improvements.mjs` with impact lev
 
 ### Graduation Process
 
-1. `scripts/suggest_improvements.mjs` flags graduation candidates in improvement suggestions
+1. `.vbounce/scripts/suggest_improvements.mjs` flags graduation candidates in improvement suggestions
 2. Human approves graduation
 3. Lead adds the rule to the relevant agent config (`brains/claude-agents/developer.md`, etc.)
 4. Lead removes or archives the lesson from `LESSONS.md` with a note: `[Graduated to {agent} config on {date}]`
-5. Record in `.bounce/improvement-log.md` under "Applied"
+5. Record in `.vbounce/improvement-log.md` under "Applied"
 
 ### Why Graduation Matters
 

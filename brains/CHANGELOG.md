@@ -3,6 +3,31 @@
 This log tracks modifications to the core agentic framework (e.g., `brains/`, `skills/`). 
 Per **Rule 13: Framework Integrity**, anytime an entry is made here, all tool-specific brain files must be reviewed for consistency.
 
+## [2026-03-25] — .vbounce/ Directory Consolidation (v2.5.0)
+
+### Directory Consolidation (EPIC-002)
+- **All framework files** now deploy under `.vbounce/` instead of project root:
+  - `skills/` → `.vbounce/skills/`
+  - `templates/` → `.vbounce/templates/`
+  - `scripts/` → `.vbounce/scripts/`
+  - `.bounce/` → `.vbounce/` (merged)
+  - `MANIFEST.md` → `.vbounce/VBOUNCE_MANIFEST.md`
+- **550+ path references** updated across 55 files (brains, skills, agents, templates, scripts, docs)
+- **Modified**: `bin/vbounce.mjs` — platform mappings deploy to `.vbounce/`, added migration logic for old layout, added `vbounce uninstall` command, auto-deploys `.vbounce/.gitignore`
+- **Modified**: `scripts/doctor.mjs` — validates `.vbounce/templates/`, `.vbounce/skills/`, `.vbounce/scripts/`
+- **Modified**: All brain files — skill references now use `.vbounce/skills/` paths
+- **Modified**: All subagent configs — script and report paths use `.vbounce/`
+- **Modified**: All skill files — cross-references use `.vbounce/` paths
+- **Renamed**: `MANIFEST.md` → `VBOUNCE_MANIFEST.md`, now included in npm package
+- **Added**: `.vbounce/.gitignore` template — nested gitignore for mixed committed/runtime content
+- **Note**: Historical entries in this changelog retain original paths (they describe what happened at that time)
+
+### Manifest & Version
+- **Modified**: `VBOUNCE_MANIFEST.md` — updated all registry paths, version 2.4.0→2.5.0
+- **Modified**: `package.json` — version bumped to 2.5.0, added `VBOUNCE_MANIFEST.md` to files array
+
+---
+
 ## [2026-03-25] — Story Template Rewrite & Git Cleanup (v2.4.0)
 
 ### Story Template Rewrite (Modified)

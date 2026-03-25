@@ -131,7 +131,7 @@ V-Bounce adapts to your current workflow effortlessly.
 
 Ready to see how deep the rabbit hole goes?
 - **[System Overview & Architecture](OVERVIEW.md)**
-- **[Epic and Story Templates](templates/epic.md)**
+- **[Epic and Story Templates](.vbounce/templates/epic.md)**
 - **[Self-Improvement Pipeline (`vbounce improve`)](docs/IMPROVEMENT.md)** *(Your AI optimizes its own framework)*
 
 ---

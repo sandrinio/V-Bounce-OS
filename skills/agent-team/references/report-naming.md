@@ -8,23 +8,23 @@ Pattern: `STORY-{EpicID}-{StoryID}-{StoryName}-{agent}[-bounce{N}].md`
 
 | Report | Filename | Location |
 |--------|----------|----------|
-| Dev (first pass) | `STORY-001-01-login-dev.md` | `.worktrees/STORY-001-01-login/.bounce/reports/` |
-| QA FAIL (first bounce) | `STORY-001-01-login-qa-bounce1.md` | `.worktrees/STORY-001-01-login/.bounce/reports/` |
-| Dev fix (second pass) | `STORY-001-01-login-dev-bounce2.md` | `.worktrees/STORY-001-01-login/.bounce/reports/` |
-| QA PASS | `STORY-001-01-login-qa-bounce2.md` | `.worktrees/STORY-001-01-login/.bounce/reports/` |
-| Architect | `STORY-001-01-login-arch.md` | `.worktrees/STORY-001-01-login/.bounce/reports/` |
-| DevOps merge | `STORY-001-01-login-devops.md` | `.bounce/archive/S-{XX}/STORY-001-01-login/` |
+| Dev (first pass) | `STORY-001-01-login-dev.md` | `.worktrees/STORY-001-01-login/.vbounce/reports/` |
+| QA FAIL (first bounce) | `STORY-001-01-login-qa-bounce1.md` | `.worktrees/STORY-001-01-login/.vbounce/reports/` |
+| Dev fix (second pass) | `STORY-001-01-login-dev-bounce2.md` | `.worktrees/STORY-001-01-login/.vbounce/reports/` |
+| QA PASS | `STORY-001-01-login-qa-bounce2.md` | `.worktrees/STORY-001-01-login/.vbounce/reports/` |
+| Architect | `STORY-001-01-login-arch.md` | `.worktrees/STORY-001-01-login/.vbounce/reports/` |
+| DevOps merge | `STORY-001-01-login-devops.md` | `.vbounce/archive/S-{XX}/STORY-001-01-login/` |
 
 ## Sprint-Level Files
 
 | Report | Filename | Location |
 |--------|----------|----------|
-| Sprint DevOps | `sprint-S-{XX}-devops.md` | `.bounce/archive/S-{XX}/` |
-| Sprint Scribe | `sprint-S-{XX}-scribe.md` | `.bounce/archive/S-{XX}/` |
-| Sprint Report (active) | `sprint-report-S-{XX}.md` | `.bounce/` (gitignored) |
-| Sprint Report (archived) | `sprint-report-S-{XX}.md` | `.bounce/archive/S-{XX}/` (committed) |
-| Sprint Context Pack | `sprint-context-S-{XX}.md` | `.bounce/` (gitignored) |
-| Sprint Summary | `sprint-summary-S-{XX}.md` | `.bounce/` (gitignored) |
+| Sprint DevOps | `sprint-S-{XX}-devops.md` | `.vbounce/archive/S-{XX}/` |
+| Sprint Scribe | `sprint-S-{XX}-scribe.md` | `.vbounce/archive/S-{XX}/` |
+| Sprint Report (active) | `sprint-report-S-{XX}.md` | `.vbounce/` (gitignored) |
+| Sprint Report (archived) | `sprint-report-S-{XX}.md` | `.vbounce/archive/S-{XX}/` (committed) |
+| Sprint Context Pack | `sprint-context-S-{XX}.md` | `.vbounce/` (gitignored) |
+| Sprint Summary | `sprint-summary-S-{XX}.md` | `.vbounce/` (gitignored) |
 
 ## Key Rules
 

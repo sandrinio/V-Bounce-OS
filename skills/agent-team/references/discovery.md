@@ -16,7 +16,7 @@ Open → Investigating → Findings Ready → Validated → Closed
 
 | Status | Who Acts | What Happens |
 |--------|----------|-------------|
-| **Open** | Team Lead | Spike created from `templates/spike.md`, linked in Epic §9 |
+| **Open** | Team Lead | Spike created from `.vbounce/templates/spike.md`, linked in Epic §9 |
 | **Investigating** | Developer | Code exploration, prototyping, benchmarks. Fills §4 Findings and §5 Decision |
 | **Findings Ready** | Developer → Architect | Developer marks complete. Awaiting Architect validation |
 | **Validated** | Architect | Confirms findings against Safe Zone and ADRs. PASS → Validated. FAIL → back to Investigating |
@@ -27,7 +27,7 @@ Open → Investigating → Findings Ready → Validated → Closed
 ### Step 1: Create Spike (Team Lead)
 
 1. Identify the blocking unknown (from Epic §8 Open Questions or 🔴 ambiguity signals)
-2. Create spike document from `templates/spike.md`
+2. Create spike document from `.vbounce/templates/spike.md`
 3. Fill §1 Question, §2 Constraints, §3 Approach
 4. Set status → Open
 5. Link spike in parent Epic §9 Artifact Links

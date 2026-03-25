@@ -12,7 +12,7 @@
  * Usage:
  *   ./scripts/suggest_improvements.mjs S-05
  *
- * Output: .bounce/improvement-suggestions.md
+ * Output: .vbounce/improvement-suggestions.md
  */
 
 import fs from 'fs';
@@ -52,7 +52,7 @@ if (fs.existsSync(analyzerScript)) {
 // 1. Read improvement manifest (from post_sprint_improve.mjs)
 // ---------------------------------------------------------------------------
 
-const manifestPath = path.join(ROOT, '.bounce', 'improvement-manifest.json');
+const manifestPath = path.join(ROOT, '.vbounce', 'improvement-manifest.json');
 let manifest = null;
 if (fs.existsSync(manifestPath)) {
   try {
@@ -66,7 +66,7 @@ if (fs.existsSync(manifestPath)) {
 // 2. Read trends if available
 // ---------------------------------------------------------------------------
 
-const trendsFile = path.join(ROOT, '.bounce', 'trends.md');
+const trendsFile = path.join(ROOT, '.vbounce', 'trends.md');
 let trendsContent = null;
 if (fs.existsSync(trendsFile)) {
   trendsContent = fs.readFileSync(trendsFile, 'utf8');
@@ -97,7 +97,7 @@ if (fs.existsSync(lessonsFile)) {
 // 4. Read improvement-log for rejected items
 // ---------------------------------------------------------------------------
 
-const improvementLog = path.join(ROOT, '.bounce', 'improvement-log.md');
+const improvementLog = path.join(ROOT, '.vbounce', 'improvement-log.md');
 let rejectedItems = [];
 if (fs.existsSync(improvementLog)) {
   const logContent = fs.readFileSync(improvementLog, 'utf8');
@@ -197,7 +197,7 @@ if (manifest && manifest.proposals) {
           `**Originally applied in:** ${proposal.appliedInSprint}`,
           '**Action:** Re-examine the original fix — it did not resolve the underlying issue.',
         ].join('\n'),
-        target: 'Review original improvement in .bounce/improvement-log.md',
+        target: 'Review original improvement in .vbounce/improvement-log.md',
         effort: 'Medium',
       });
     }
@@ -213,7 +213,7 @@ if (lastSprintStats) {
       impact: { level: 'P1', label: 'High' },
       title: `Low first-pass rate (${lastSprintStats.firstPassRate}%)`,
       detail: `First-pass rate was below 80% in ${lastSprintStats.sprintId}. This suggests spec ambiguity or insufficient context packs.`,
-      target: 'scripts/validate_bounce_readiness.mjs',
+      target: '.vbounce/scripts/validate_bounce_readiness.mjs',
       effort: 'Low',
     });
   }
@@ -225,7 +225,7 @@ if (lastSprintStats) {
       impact: { level: 'P1', label: 'High' },
       title: `High correction tax (${lastSprintStats.avgTax}% average)`,
       detail: 'Average correction tax exceeded 10%, indicating significant human intervention.',
-      target: 'skills/agent-team/SKILL.md Step 1',
+      target: '.vbounce/skills/agent-team/SKILL.md Step 1',
       effort: 'Low',
     });
   }
@@ -237,7 +237,7 @@ if (lastSprintStats) {
       impact: { level: 'P2', label: 'Medium' },
       title: `High bounce rate (${lastSprintStats.avgBounces} avg per story)`,
       detail: 'Run `vbounce trends` to see root cause breakdown.',
-      target: 'scripts/sprint_trends.mjs',
+      target: '.vbounce/scripts/sprint_trends.mjs',
       effort: 'Low',
     });
   }
@@ -266,7 +266,7 @@ suggestions.push({
   impact: { level: 'P3', label: 'Low' },
   title: 'Run vbounce doctor',
   detail: 'Verify the V-Bounce Engine installation is healthy after this sprint.',
-  target: 'scripts/doctor.mjs',
+  target: '.vbounce/scripts/doctor.mjs',
   effort: 'Trivial',
 });
 
@@ -278,9 +278,9 @@ function mapAreaToTarget(area) {
   const map = {
     'Templates': 'templates/*.md',
     'Agent Handoffs': 'brains/claude-agents/*.md',
-    'RAG Pipeline': 'scripts/prep_*.mjs',
+    'RAG Pipeline': '.vbounce/scripts/prep_*.mjs',
     'Skills': 'skills/*/SKILL.md',
-    'Process Flow': 'skills/agent-team/SKILL.md',
+    'Process Flow': '.vbounce/skills/agent-team/SKILL.md',
     'Tooling & Scripts': 'scripts/*',
   };
   return map[area] || area;
@@ -288,7 +288,7 @@ function mapAreaToTarget(area) {
 
 function mapAutomationTypeToTarget(type) {
   const map = {
-    'gate_check': '.bounce/gate-checks.json OR scripts/pre_gate_runner.sh',
+    'gate_check': '.vbounce/gate-checks.json OR .vbounce/scripts/pre_gate_runner.sh',
     'script': 'scripts/',
     'template_field': 'templates/*.md',
     'agent_config': 'brains/claude-agents/*.md',
@@ -335,8 +335,8 @@ const summarySection = manifest ? `## Summary
 const output = [
   `# Improvement Suggestions (post ${sprintId})`,
   `> Generated: ${today}. Review each item. Approved items are applied by the Lead at sprint boundary.`,
-  `> Rejected items go to \`.bounce/improvement-log.md\` with reason.`,
-  `> Applied items go to \`.bounce/improvement-log.md\` under Applied.`,
+  `> Rejected items go to \`.vbounce/improvement-log.md\` with reason.`,
+  `> Applied items go to \`.vbounce/improvement-log.md\` under Applied.`,
   '',
   impactRef,
   '',
@@ -349,15 +349,15 @@ const output = [
   '---',
   '',
   `## How to Apply`,
-  `- **Approve** → Lead applies change, records in \`.bounce/improvement-log.md\` under Applied`,
-  `- **Reject** → Record in \`.bounce/improvement-log.md\` under Rejected with reason`,
-  `- **Defer** → Record in \`.bounce/improvement-log.md\` under Deferred`,
+  `- **Approve** → Lead applies change, records in \`.vbounce/improvement-log.md\` under Applied`,
+  `- **Reject** → Record in \`.vbounce/improvement-log.md\` under Rejected with reason`,
+  `- **Defer** → Record in \`.vbounce/improvement-log.md\` under Deferred`,
   '',
   `> Framework changes (brains/, skills/, templates/) are applied at sprint boundaries only — never mid-sprint.`,
   `> Use \`/improve\` skill to have the Team Lead apply approved changes with brain-file sync.`,
 ].join('\n');
 
-const outputFile = path.join(ROOT, '.bounce', 'improvement-suggestions.md');
+const outputFile = path.join(ROOT, '.vbounce', 'improvement-suggestions.md');
 fs.writeFileSync(outputFile, output);
-console.log(`✓ Improvement suggestions written to .bounce/improvement-suggestions.md`);
+console.log(`✓ Improvement suggestions written to .vbounce/improvement-suggestions.md`);
 console.log(`  ${suggestions.length} suggestion(s) generated`);

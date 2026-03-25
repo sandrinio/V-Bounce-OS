@@ -2,14 +2,14 @@
 
 /**
  * update_state.mjs
- * Updates .bounce/state.json atomically at every V-Bounce state transition.
+ * Updates .vbounce/state.json atomically at every V-Bounce state transition.
  *
  * Usage:
- *   ./scripts/update_state.mjs STORY-005-02 "QA Passed"
- *   ./scripts/update_state.mjs STORY-005-02 --qa-bounce
- *   ./scripts/update_state.mjs STORY-005-02 --arch-bounce
- *   ./scripts/update_state.mjs --set-phase "Phase 3"
- *   ./scripts/update_state.mjs --set-action "QA FAIL on STORY-005-02, bouncing back to Dev"
+ *   ./.vbounce/scripts/update_state.mjs STORY-005-02 "QA Passed"
+ *   ./.vbounce/scripts/update_state.mjs STORY-005-02 --qa-bounce
+ *   ./.vbounce/scripts/update_state.mjs STORY-005-02 --arch-bounce
+ *   ./.vbounce/scripts/update_state.mjs --set-phase "Phase 3"
+ *   ./.vbounce/scripts/update_state.mjs --set-action "QA FAIL on STORY-005-02, bouncing back to Dev"
  */
 
 import fs from 'fs';
@@ -19,7 +19,7 @@ import { validateState } from './validate_state.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const STATE_FILE = path.join(ROOT, '.bounce', 'state.json');
+const STATE_FILE = path.join(ROOT, '.vbounce', 'state.json');
 
 const VALID_STATES = [
   'Draft', 'Refinement', 'Ready to Bounce', 'Bouncing',

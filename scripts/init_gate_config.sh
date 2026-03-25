@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# init_gate_config.sh — Auto-detect project stack and generate .bounce/gate-checks.json
-# Usage: ./scripts/init_gate_config.sh [project-path]
+# init_gate_config.sh — Auto-detect project stack and generate .vbounce/gate-checks.json
+# Usage: ./.vbounce/scripts/init_gate_config.sh [project-path]
 #
 # Run once during project setup or when the improve skill suggests new checks.
 # Safe to re-run — merges with existing config (preserves custom checks).
@@ -9,7 +9,7 @@ set -euo pipefail
 
 PROJECT_PATH="${1:-.}"
 PROJECT_PATH="$(cd "$PROJECT_PATH" && pwd)"
-CONFIG_PATH="${PROJECT_PATH}/.bounce/gate-checks.json"
+CONFIG_PATH="${PROJECT_PATH}/.vbounce/gate-checks.json"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'

@@ -8,13 +8,13 @@ You are operating in Tier 4 (Awareness) mode. You understand the project uses V-
 
 ## Key Behaviors
 
-1. **When editing planning documents** (`product_plans/**/*.md`): follow the templates in `templates/`. Do not change section numbering or YAML frontmatter structure.
+1. **When editing planning documents** (`product_plans/**/*.md`): follow the templates in `.vbounce/templates/`. Do not change section numbering or YAML frontmatter structure.
 
-2. **When editing agent reports** (`.bounce/reports/**/*.md`): YAML frontmatter is mandatory. Never remove it.
+2. **When editing agent reports** (`.vbounce/reports/**/*.md`): YAML frontmatter is mandatory. Never remove it.
 
-3. **When asked about project state**: suggest running `vbounce state show` or reading `.bounce/state.json`.
+3. **When asked about project state**: suggest running `vbounce state show` or reading `.vbounce/state.json`.
 
-4. **When creating new stories or epics**: use `templates/story.md` and `templates/epic.md`.
+4. **When creating new stories or epics**: use `.vbounce/templates/story.md` and `.vbounce/templates/epic.md`.
 
 ## CLI Commands
 
@@ -28,7 +28,7 @@ vbounce improve S-XX          # run self-improvement pipeline
 
 ## Self-Improvement
 
-After sprint close, V-Bounce automatically analyzes retro findings, LESSONS.md, and cross-sprint patterns to generate improvement suggestions with impact levels (P0 Critical → P3 Low). See `.bounce/improvement-suggestions.md` after running `vbounce sprint close` or `vbounce improve S-XX`.
+After sprint close, V-Bounce automatically analyzes retro findings, LESSONS.md, and cross-sprint patterns to generate improvement suggestions with impact levels (P0 Critical → P3 Low). See `.vbounce/improvement-suggestions.md` after running `vbounce sprint close` or `vbounce improve S-XX`.
 
 ## Document Hierarchy
 

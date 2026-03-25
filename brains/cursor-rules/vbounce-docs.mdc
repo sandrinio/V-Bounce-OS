@@ -27,13 +27,13 @@ All in `product_plans/`. Uses a state-based architecture (`strategy/`, `backlog/
 
 | Skill | Path | Used By |
 |-------|------|---------|
-| agent-team | `skills/agent-team/` | Team Lead |
-| doc-manager | `skills/doc-manager/` | Team Lead, all |
-| lesson | `skills/lesson/` | All (read), Lead (write) |
-| react-best-practices | `skills/react-best-practices/` | Developer |
-| vibe-code-review | `skills/vibe-code-review/` | QA, Architect |
-| write-skill | `skills/write-skill/` | Team Lead |
-| improve | `skills/improve/` | Team Lead |
+| agent-team | `.vbounce/skills/agent-team/` | Team Lead |
+| doc-manager | `.vbounce/skills/doc-manager/` | Team Lead, all |
+| lesson | `.vbounce/skills/lesson/` | All (read), Lead (write) |
+| react-best-practices | `.vbounce/skills/react-best-practices/` | Developer |
+| vibe-code-review | `.vbounce/skills/vibe-code-review/` | QA, Architect |
+| write-skill | `.vbounce/skills/write-skill/` | Team Lead |
+| improve | `.vbounce/skills/improve/` | Team Lead |
 
 ## Report Formats
 

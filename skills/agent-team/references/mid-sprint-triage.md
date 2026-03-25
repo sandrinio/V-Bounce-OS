@@ -17,23 +17,23 @@ The Team Lead MUST classify the request before acting:
 
 | Category | Definition | Example | Template |
 |----------|-----------|---------|----------|
-| **Bug** | Something built (or pre-existing) is broken | "Login crashes when email has a plus sign" | `templates/bug.md` (or `templates/hotfix.md` if L1) |
+| **Bug** | Something built (or pre-existing) is broken | "Login crashes when email has a plus sign" | `.vbounce/templates/bug.md` (or `.vbounce/templates/hotfix.md` if L1) |
 | **Spec Clarification** | The spec was ambiguous; user is clarifying intent, not changing scope | "By 'admin' I meant workspace admin, not super admin" | No template — update story spec inline |
-| **Scope Change** | User wants to add, remove, or modify requirements for the current story | "Also add a forgot-password flow to the login story" | `templates/change_request.md` |
-| **Approach Change** | Implementation strategy is wrong; needs a different technical path | "Don't use REST for this — wire it through WebSockets instead" | `templates/change_request.md` |
+| **Scope Change** | User wants to add, remove, or modify requirements for the current story | "Also add a forgot-password flow to the login story" | `.vbounce/templates/change_request.md` |
+| **Approach Change** | Implementation strategy is wrong; needs a different technical path | "Don't use REST for this — wire it through WebSockets instead" | `.vbounce/templates/change_request.md` |
 
 ### How to Decide
 
 ```
 Is existing behavior broken?
   YES → Bug
-    Is it L1 (1-2 files, trivial)? → Hotfix Path (templates/hotfix.md)
-    Is it larger? → Bug Report (templates/bug.md) → fix task in current sprint
+    Is it L1 (1-2 files, trivial)? → Hotfix Path (.vbounce/templates/hotfix.md)
+    Is it larger? → Bug Report (.vbounce/templates/bug.md) → fix task in current sprint
   NO  → Is the user adding/removing/changing a requirement?
-          YES → Scope Change (templates/change_request.md)
+          YES → Scope Change (.vbounce/templates/change_request.md)
           NO  → Is the user correcting an ambiguity in the spec?
                   YES → Spec Clarification (update story inline, no template)
-                  NO  → Approach Change (templates/change_request.md)
+                  NO  → Approach Change (.vbounce/templates/change_request.md)
 ```
 
 ## Step 2 — Route

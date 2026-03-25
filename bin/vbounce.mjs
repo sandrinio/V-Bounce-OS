@@ -70,6 +70,7 @@ V-Bounce Engine CLI
 
 Usage:
   vbounce install <platform>           Install V-Bounce Engine into a project
+  vbounce uninstall                    Remove V-Bounce Engine from a project
   vbounce state show                   Show current sprint state
   vbounce state update <storyId> <state|--qa-bounce>
   vbounce sprint init <sprintId> <deliveryId> [--stories STORY-001,...]
@@ -263,7 +264,134 @@ if (command === 'doctor') {
 }
 
 // ---------------------------------------------------------------------------
-// install command (original functionality)
+// uninstall command
+// ---------------------------------------------------------------------------
+
+if (command === 'uninstall') {
+  const CWD = process.cwd();
+  const metaPath = path.join(CWD, '.vbounce', 'install-meta.json');
+
+  if (!fs.existsSync(metaPath)) {
+    rl.close();
+    console.log('\nV-Bounce is not installed in this project (no .vbounce/install-meta.json found).\n');
+    process.exit(0);
+  }
+
+  let meta;
+  try {
+    meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+  } catch {
+    rl.close();
+    console.error('Error: Could not parse .vbounce/install-meta.json');
+    process.exit(1);
+  }
+
+  console.log(`\n🗑️  Uninstalling V-Bounce Engine \x1b[36m${meta.version}\x1b[0m (platform: ${meta.platform})\n`);
+
+  // Framework files to remove (always safe)
+  const frameworkRemovals = [];
+  if (meta.files) {
+    for (const f of meta.files) {
+      if (fs.existsSync(path.join(CWD, f))) {
+        frameworkRemovals.push(f);
+      }
+    }
+  }
+
+  // Platform brain files
+  const brainFiles = {
+    claude: ['CLAUDE.md', '.claude/agents'],
+    cursor: ['.cursor/rules'],
+    gemini: ['GEMINI.md', '.agents/skills'],
+    codex: ['AGENTS.md'],
+    vscode: ['.github/copilot-instructions.md'],
+    copilot: ['.github/copilot-instructions.md']
+  };
+  const platformFiles = (brainFiles[meta.platform] || []).filter(f => fs.existsSync(path.join(CWD, f)));
+
+  console.log('Will remove (framework files):');
+  for (const f of [...frameworkRemovals, ...platformFiles]) {
+    console.log(`  \x1b[31m✖\x1b[0m ${f}`);
+  }
+
+  // User data that needs a prompt
+  const userData = [];
+  if (fs.existsSync(path.join(CWD, 'LESSONS.md'))) userData.push('LESSONS.md');
+  if (fs.existsSync(path.join(CWD, 'product_plans'))) userData.push('product_plans/');
+  if (fs.existsSync(path.join(CWD, '.vbounce', 'archive'))) userData.push('.vbounce/archive/');
+  if (fs.existsSync(path.join(CWD, 'vdocs'))) userData.push('vdocs/');
+
+  if (userData.length > 0) {
+    console.log('\n\x1b[33mUser data (will ask separately):\x1b[0m');
+    for (const f of userData) {
+      console.log(`  \x1b[33m?\x1b[0m ${f}`);
+    }
+  }
+
+  console.log('');
+
+  askQuestion('Proceed with uninstall? [y/N] ').then(async answer => {
+    if (answer.trim().toLowerCase() !== 'y' && answer.trim().toLowerCase() !== 'yes') {
+      rl.close();
+      console.log('\n❌ Uninstall cancelled.\n');
+      process.exit(0);
+    }
+
+    // Remove framework files
+    console.log('\n🗑️  Removing framework files...');
+    for (const f of [...frameworkRemovals, ...platformFiles]) {
+      const fullPath = path.join(CWD, f);
+      if (fs.existsSync(fullPath)) {
+        const stats = fs.statSync(fullPath);
+        if (stats.isDirectory()) {
+          fs.rmSync(fullPath, { recursive: true, force: true });
+        } else {
+          fs.unlinkSync(fullPath);
+        }
+        console.log(`  \x1b[32m✓\x1b[0m Removed ${f}`);
+      }
+    }
+
+    // Ask about user data
+    if (userData.length > 0) {
+      const rl2 = readline.createInterface({ input: process.stdin, output: process.stdout });
+      const dataAnswer = await new Promise(resolve =>
+        rl2.question('\nAlso remove your project data (LESSONS.md, product_plans/, archive/, vdocs/)? [y/N] ', resolve)
+      );
+      rl2.close();
+
+      if (dataAnswer.trim().toLowerCase() === 'y' || dataAnswer.trim().toLowerCase() === 'yes') {
+        for (const f of userData) {
+          const fullPath = path.join(CWD, f.replace(/\/$/, ''));
+          if (fs.existsSync(fullPath)) {
+            const stats = fs.statSync(fullPath);
+            if (stats.isDirectory()) {
+              fs.rmSync(fullPath, { recursive: true, force: true });
+            } else {
+              fs.unlinkSync(fullPath);
+            }
+            console.log(`  \x1b[32m✓\x1b[0m Removed ${f}`);
+          }
+        }
+      } else {
+        console.log('  Kept user data.');
+      }
+    }
+
+    // Clean up .vbounce/ directory (remove install-meta last)
+    const vbounceDir = path.join(CWD, '.vbounce');
+    if (fs.existsSync(vbounceDir)) {
+      fs.rmSync(vbounceDir, { recursive: true, force: true });
+      console.log(`  \x1b[32m✓\x1b[0m Removed .vbounce/`);
+    }
+
+    rl.close();
+    console.log('\n✅ V-Bounce Engine uninstalled.\n');
+  });
+}
+
+// ---------------------------------------------------------------------------
+// install command
 // ---------------------------------------------------------------------------
 
 if (command === 'install') {
@@ -291,40 +419,46 @@ if (command === 'install') {
     claude: [
       { src: 'brains/CLAUDE.md', dest: 'CLAUDE.md' },
       { src: 'brains/claude-agents', dest: '.claude/agents' },
-      { src: 'templates', dest: 'templates' },
-      { src: 'skills', dest: 'skills' },
-      { src: 'scripts', dest: 'scripts' }
+      { src: 'templates', dest: '.vbounce/templates' },
+      { src: 'skills', dest: '.vbounce/skills' },
+      { src: 'scripts', dest: '.vbounce/scripts' },
+      { src: 'VBOUNCE_MANIFEST.md', dest: '.vbounce/VBOUNCE_MANIFEST.md' }
     ],
     cursor: [
       { src: 'brains/cursor-rules', dest: '.cursor/rules' },
-      { src: 'templates', dest: 'templates' },
-      { src: 'skills', dest: 'skills' },
-      { src: 'scripts', dest: 'scripts' }
+      { src: 'templates', dest: '.vbounce/templates' },
+      { src: 'skills', dest: '.vbounce/skills' },
+      { src: 'scripts', dest: '.vbounce/scripts' },
+      { src: 'VBOUNCE_MANIFEST.md', dest: '.vbounce/VBOUNCE_MANIFEST.md' }
     ],
     gemini: [
       { src: 'brains/GEMINI.md', dest: 'GEMINI.md' },
-      { src: 'templates', dest: 'templates' },
-      { src: 'skills', dest: 'skills' },
+      { src: 'templates', dest: '.vbounce/templates' },
+      { src: 'skills', dest: '.vbounce/skills' },
       { src: 'skills', dest: '.agents/skills' },
-      { src: 'scripts', dest: 'scripts' }
+      { src: 'scripts', dest: '.vbounce/scripts' },
+      { src: 'VBOUNCE_MANIFEST.md', dest: '.vbounce/VBOUNCE_MANIFEST.md' }
     ],
     codex: [
       { src: 'brains/AGENTS.md', dest: 'AGENTS.md' },
-      { src: 'templates', dest: 'templates' },
-      { src: 'skills', dest: 'skills' },
-      { src: 'scripts', dest: 'scripts' }
+      { src: 'templates', dest: '.vbounce/templates' },
+      { src: 'skills', dest: '.vbounce/skills' },
+      { src: 'scripts', dest: '.vbounce/scripts' },
+      { src: 'VBOUNCE_MANIFEST.md', dest: '.vbounce/VBOUNCE_MANIFEST.md' }
     ],
     vscode: [
       { src: 'brains/CLAUDE.md', dest: '.github/copilot-instructions.md' },
-      { src: 'templates', dest: 'templates' },
-      { src: 'skills', dest: 'skills' },
-      { src: 'scripts', dest: 'scripts' }
+      { src: 'templates', dest: '.vbounce/templates' },
+      { src: 'skills', dest: '.vbounce/skills' },
+      { src: 'scripts', dest: '.vbounce/scripts' },
+      { src: 'VBOUNCE_MANIFEST.md', dest: '.vbounce/VBOUNCE_MANIFEST.md' }
     ],
     copilot: [
       { src: 'brains/CLAUDE.md', dest: '.github/copilot-instructions.md' },
-      { src: 'templates', dest: 'templates' },
-      { src: 'skills', dest: 'skills' },
-      { src: 'scripts', dest: 'scripts' }
+      { src: 'templates', dest: '.vbounce/templates' },
+      { src: 'skills', dest: '.vbounce/skills' },
+      { src: 'scripts', dest: '.vbounce/scripts' },
+      { src: 'VBOUNCE_MANIFEST.md', dest: '.vbounce/VBOUNCE_MANIFEST.md' }
     ]
   };
 
@@ -340,8 +474,9 @@ if (command === 'install') {
   // Upgrade-safe install helpers
   // ---------------------------------------------------------------------------
 
-  const META_PATH = path.join(CWD, '.bounce', 'install-meta.json');
-  const BACKUPS_DIR = path.join(CWD, '.bounce', 'backups');
+  const META_PATH = path.join(CWD, '.vbounce', 'install-meta.json');
+  const BACKUPS_DIR = path.join(CWD, '.vbounce', 'backups');
+  const OLD_META_PATH = path.join(CWD, '.bounce', 'install-meta.json');
 
   /** Compute MD5 hash of a single file's contents. */
   function computeFileHash(filePath) {
@@ -396,14 +531,77 @@ if (command === 'install') {
     return count;
   }
 
-  /** Read install-meta.json, returns null if missing. */
+  /** Read install-meta.json, returns null if missing. Checks new path first, falls back to old .bounce/ path. */
   function readInstallMeta() {
-    if (!fs.existsSync(META_PATH)) return null;
-    try {
-      return JSON.parse(fs.readFileSync(META_PATH, 'utf8'));
-    } catch {
-      return null;
+    for (const p of [META_PATH, OLD_META_PATH]) {
+      if (fs.existsSync(p)) {
+        try {
+          return JSON.parse(fs.readFileSync(p, 'utf8'));
+        } catch {
+          continue;
+        }
+      }
     }
+    return null;
+  }
+
+  /**
+   * Migrate from old root-level layout (skills/, templates/, scripts/, .bounce/) to .vbounce/.
+   * Returns true if migration was performed.
+   */
+  function migrateOldLayout() {
+    const oldPaths = [
+      { old: 'skills', new: '.vbounce/skills' },
+      { old: 'templates', new: '.vbounce/templates' },
+      { old: 'scripts', new: '.vbounce/scripts' },
+    ];
+
+    const needsMigration = oldPaths.some(p =>
+      fs.existsSync(path.join(CWD, p.old)) && !fs.existsSync(path.join(CWD, p.new))
+    );
+
+    if (!needsMigration && !fs.existsSync(path.join(CWD, '.bounce'))) return false;
+
+    console.log('\n🔄 Migrating from old layout to .vbounce/...');
+    fs.mkdirSync(path.join(CWD, '.vbounce'), { recursive: true });
+
+    // Move framework directories
+    for (const p of oldPaths) {
+      const oldPath = path.join(CWD, p.old);
+      const newPath = path.join(CWD, p.new);
+      if (fs.existsSync(oldPath) && !fs.existsSync(newPath)) {
+        fs.cpSync(oldPath, newPath, { recursive: true });
+        fs.rmSync(oldPath, { recursive: true, force: true });
+        console.log(`  \x1b[32m✓\x1b[0m ${p.old}/ → ${p.new}/`);
+      }
+    }
+
+    // Move .bounce/ contents to .vbounce/ (preserve everything)
+    const oldBounce = path.join(CWD, '.bounce');
+    if (fs.existsSync(oldBounce)) {
+      for (const entry of fs.readdirSync(oldBounce, { withFileTypes: true })) {
+        const src = path.join(oldBounce, entry.name);
+        const dest = path.join(CWD, '.vbounce', entry.name);
+        if (!fs.existsSync(dest)) {
+          if (entry.isDirectory()) {
+            fs.cpSync(src, dest, { recursive: true });
+          } else {
+            fs.copyFileSync(src, dest);
+          }
+        }
+      }
+      fs.rmSync(oldBounce, { recursive: true, force: true });
+      console.log(`  \x1b[32m✓\x1b[0m .bounce/ → .vbounce/`);
+    }
+
+    // Move old MANIFEST.md if exists
+    const oldManifest = path.join(CWD, 'MANIFEST.md');
+    if (fs.existsSync(oldManifest)) {
+      fs.rmSync(oldManifest, { force: true });
+      console.log(`  \x1b[32m✓\x1b[0m Removed old MANIFEST.md (replaced by .vbounce/VBOUNCE_MANIFEST.md)`);
+    }
+
+    return true;
   }
 
   /** Write install-meta.json. */
@@ -419,7 +617,7 @@ if (command === 'install') {
     fs.writeFileSync(META_PATH, JSON.stringify(meta, null, 2) + '\n');
   }
 
-  /** Backup files to .bounce/backups/<version>/. Removes previous backup first. */
+  /** Backup files to .vbounce/backups/<version>/. Removes previous backup first. */
   function backupFiles(version, paths) {
     // Remove previous backup (keep only one)
     if (fs.existsSync(BACKUPS_DIR)) {
@@ -501,6 +699,9 @@ if (command === 'install') {
   const meta = readInstallMeta();
   const isUpgrade = meta !== null;
 
+  // Migrate from old layout if needed (skills/, templates/, scripts/ at root → .vbounce/)
+  const migrated = migrateOldLayout();
+
   if (isUpgrade) {
     console.log(`\n🚀 V-Bounce Engine \x1b[36m${pkgVersion}\x1b[0m (upgrading from \x1b[33m${meta.version}\x1b[0m)\n`);
   } else {
@@ -520,7 +721,7 @@ if (command === 'install') {
   }
 
   if (modified.length > 0) {
-    const backupLabel = isUpgrade ? `.bounce/backups/${meta.version}/` : '.bounce/backups/pre-install/';
+    const backupLabel = isUpgrade ? `.vbounce/backups/${meta.version}/` : '.vbounce/backups/pre-install/';
     console.log(`\nModified by you (backed up to ${backupLabel}):`);
     for (const rule of modified) {
       console.log(`  \x1b[33m⚠\x1b[0m ${rule.dest}`);
@@ -596,7 +797,34 @@ if (command === 'install') {
 
     // Write install metadata
     writeInstallMeta(pkgVersion, targetPlatform, installedFiles, hashes);
-    console.log(`  \x1b[32m✓\x1b[0m .bounce/install-meta.json`);
+    console.log(`  \x1b[32m✓\x1b[0m .vbounce/install-meta.json`);
+
+    // Deploy .vbounce/.gitignore for mixed committed/runtime content
+    const vbounceGitignore = path.join(CWD, '.vbounce', '.gitignore');
+    if (!fs.existsSync(vbounceGitignore)) {
+      fs.writeFileSync(vbounceGitignore, [
+        '# V-Bounce runtime files (not tracked in git)',
+        'state.json',
+        'install-meta.json',
+        'backups/',
+        'reports/',
+        'gate-checks.json',
+        'sprint-context-*',
+        'qa-context-*',
+        'arch-context-*',
+        'product-graph.json',
+        'improvement-*',
+        'trends.md',
+        'scribe-task-*',
+        'sprint-report-*',
+        'context-packs/',
+        '',
+        '# Archive is committed (audit trail)',
+        '!archive/',
+        ''
+      ].join('\n'));
+      console.log(`  \x1b[32m✓\x1b[0m .vbounce/.gitignore`);
+    }
 
     console.log('\n⚙️  Installing dependencies...');
     try {
@@ -630,7 +858,7 @@ if (command === 'install') {
 
     // Auto-run doctor to verify installation
     console.log('\n🩺 Running doctor to verify installation...');
-    const doctorPath = path.join(CWD, 'scripts', 'doctor.mjs');
+    const doctorPath = path.join(CWD, '.vbounce', 'scripts', 'doctor.mjs');
     if (fs.existsSync(doctorPath)) {
       const result = spawnSync(process.execPath, [doctorPath], {
         stdio: 'inherit',

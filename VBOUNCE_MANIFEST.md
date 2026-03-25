@@ -1,10 +1,10 @@
 # V-Bounce Engine — Framework Manifest
 
 > **Internal map for AI agents and framework maintainers.**
-> Any modification to `brains/`, `skills/`, `templates/`, or `scripts/` MUST also update this file.
+> Any modification to `brains/`, `.vbounce/skills/`, `.vbounce/templates/`, or `.vbounce/scripts/` MUST also update this file.
 > Run `vbounce doctor` to validate file existence against this manifest.
 
-**Version:** 2.4.0
+**Version:** 2.5.0
 **Last updated:** 2026-03-25
 
 ---
@@ -59,7 +59,7 @@ Phase 4: REVIEW
 | `README.md` | Public documentation — problem, guardrails, planning, sprint flow, CLI reference |
 | `OVERVIEW.md` | System overview with diagrams — phases, agents, bounce loop, git branching |
 | `CHANGELOG.md` | Version history (Keep a Changelog format) |
-| `MANIFEST.md` | **This file** — complete framework map |
+| `VBOUNCE_MANIFEST.md` | **This file** — complete framework map |
 | `package.json` | NPM package definition (v2.4.x), CLI entry point, dependencies |
 | `package-lock.json` | NPM dependency lock file |
 | `vbounce.config.json` | Framework config — max diff lines, context budget, tool selection |
@@ -105,7 +105,7 @@ Brains configure AI tools to follow the V-Bounce process. Each brain contains id
 
 ## 4. Template Registry
 
-Templates are **immutable during execution**. Located in `templates/`.
+Templates are **immutable during execution**. Located in `.vbounce/templates/`.
 
 | Template | Level | Output Path | Key Sections |
 |----------|-------|-------------|-------------|
@@ -116,8 +116,8 @@ Templates are **immutable during execution**. Located in `templates/`.
 | `spike.md` | 3.5 | `product_plans/backlog/EPIC-{NNN}_{name}/SPIKE-{EpicID}-{NNN}-{topic}.md` | §1 Question, §2 Context, §3 Approach, §4 Findings, §5 Decision, §6 Residual Risk, §7 Affected Documents |
 | `delivery_plan.md` | 4.5 | `product_plans/D-{NN}_{release}/D-{NN}_DELIVERY_PLAN.md` | §1 Project Window, §2 Epics, §3 Backlog, §4 Delivery Log, §8 Applied Hotfixes |
 | `sprint.md` | 4.5 | `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` | §0 Sprint Readiness Gate (mandatory confirmation), §1 Active Scope + Context Pack, §2 Execution Strategy (Shared File Map, Dependency Chain, Execution Mode, Risk Flags), §3 Open Questions, §4 Execution Log (with test counts) |
-| `sprint_report.md` | Output | `.bounce/sprint-report-S-{XX}.md` | §1 What Was Delivered, §2 Story Results (with Tax Type), §3 Execution Metrics (Bug Fix Tax / Enhancement Tax split), §4 Lessons Learned (review, not gate), §5 Retrospective + Framework Self-Assessment |
-| `sprint_context.md` | Sprint | `.bounce/sprint-context-S-{XX}.md` | Design tokens, shared patterns, locked deps, active lessons, sprint-specific rules |
+| `sprint_report.md` | Output | `.vbounce/sprint-report-S-{XX}.md` | §1 What Was Delivered, §2 Story Results (with Tax Type), §3 Execution Metrics (Bug Fix Tax / Enhancement Tax split), §4 Lessons Learned (review, not gate), §5 Retrospective + Framework Self-Assessment |
+| `sprint_context.md` | Sprint | `.vbounce/sprint-context-S-{XX}.md` | Design tokens, shared patterns, locked deps, active lessons, sprint-specific rules |
 | `risk_registry.md` | Cross-cutting | `product_plans/strategy/RISK_REGISTRY.md` | §1 Active Risks, §2 Resolved Risks, §3 Analysis Log |
 | `hotfix.md` | Bypass | `product_plans/hotfixes/HOTFIX-{Date}-{Name}.md` | Problem, Fix, Files Affected, Verification |
 | `bug.md` | Mid-sprint | `product_plans/sprints/sprint-{XX}/BUG-{Date}-{Name}.md` | §1 The Bug (repro steps), §2 Impact, §3 Fix Approach, §4 Verification |
@@ -127,122 +127,122 @@ Templates are **immutable during execution**. Located in `templates/`.
 
 ## 5. Skill Registry
 
-Skills are modular instructions loaded by agents. Located in `skills/`.
+Skills are modular instructions loaded by agents. Located in `.vbounce/skills/`.
 
 | Skill | File | Phase | Trigger | Loaded By |
 |-------|------|-------|---------|-----------|
-| **product-graph** | `skills/product-graph/SKILL.md` | Phase 1-2 (Planning) | Auto-loads during planning | Team Lead |
-| **agent-team** | `skills/agent-team/SKILL.md` | Phase 3 (Execution) | Auto-loads during execution | Team Lead |
-| **doc-manager** | `skills/doc-manager/SKILL.md` | Phase 1-2 (Planning) | Auto-loads during planning; also `/doc` | AI (planning partner) |
-| **lesson** | `skills/lesson/SKILL.md` | All phases | Always loaded in brain; also `/lesson` | All agents |
-| **vibe-code-review** | `skills/vibe-code-review/SKILL.md` | Phase 3 (Execution) | `/review`; auto by QA/Architect | QA, Architect |
-| **improve** | `skills/improve/SKILL.md` | Phase 4 (Review) | `/improve`; auto on sprint close | Team Lead |
-| **write-skill** | `skills/write-skill/SKILL.md` | Any | `/write-skill` | Team Lead |
-| **react-best-practices** | `skills/react-best-practices/SKILL.md` | Phase 3 (Execution) | `/react`; auto by Developer | Developer |
-| **file-organization** | `skills/file-organization/SKILL.md` | Phase 1 (Planning) | On-demand | Team Lead |
+| **product-graph** | `.vbounce/skills/product-graph/SKILL.md` | Phase 1-2 (Planning) | Auto-loads during planning | Team Lead |
+| **agent-team** | `.vbounce/skills/agent-team/SKILL.md` | Phase 3 (Execution) | Auto-loads during execution | Team Lead |
+| **doc-manager** | `.vbounce/skills/doc-manager/SKILL.md` | Phase 1-2 (Planning) | Auto-loads during planning; also `/doc` | AI (planning partner) |
+| **lesson** | `.vbounce/skills/lesson/SKILL.md` | All phases | Always loaded in brain; also `/lesson` | All agents |
+| **vibe-code-review** | `.vbounce/skills/vibe-code-review/SKILL.md` | Phase 3 (Execution) | `/review`; auto by QA/Architect | QA, Architect |
+| **improve** | `.vbounce/skills/improve/SKILL.md` | Phase 4 (Review) | `/improve`; auto on sprint close | Team Lead |
+| **write-skill** | `.vbounce/skills/write-skill/SKILL.md` | Any | `/write-skill` | Team Lead |
+| **react-best-practices** | `.vbounce/skills/react-best-practices/SKILL.md` | Phase 3 (Execution) | `/react`; auto by Developer | Developer |
+| **file-organization** | `.vbounce/skills/file-organization/SKILL.md` | Phase 1 (Planning) | On-demand | Team Lead |
 
 ### Skill Reference Files
 
 #### agent-team references
 | File | Purpose |
 |------|---------|
-| `skills/agent-team/references/cleanup.md` | Post-sprint cleanup procedures |
-| `skills/agent-team/references/delivery-sync.md` | When to update Delivery Plan vs Sprint Plan |
-| `skills/agent-team/references/discovery.md` | Spike execution protocol for L4/🔴 stories |
-| `skills/agent-team/references/git-strategy.md` | Branch model and git commands |
-| `skills/agent-team/references/mid-sprint-triage.md` | Routing for mid-sprint changes — decision tree routes to bug.md, change_request.md, or hotfix.md |
-| `skills/agent-team/references/report-naming.md` | Canonical naming for all report files |
+| `.vbounce/skills/agent-team/references/cleanup.md` | Post-sprint cleanup procedures |
+| `.vbounce/skills/agent-team/references/delivery-sync.md` | When to update Delivery Plan vs Sprint Plan |
+| `.vbounce/skills/agent-team/references/discovery.md` | Spike execution protocol for L4/🔴 stories |
+| `.vbounce/skills/agent-team/references/git-strategy.md` | Branch model and git commands |
+| `.vbounce/skills/agent-team/references/mid-sprint-triage.md` | Routing for mid-sprint changes — decision tree routes to bug.md, change_request.md, or hotfix.md |
+| `.vbounce/skills/agent-team/references/report-naming.md` | Canonical naming for all report files |
 
 #### vibe-code-review references
 | File | Purpose |
 |------|---------|
-| `skills/vibe-code-review/references/quick-scan.md` | Fast health check mode |
-| `skills/vibe-code-review/references/pr-review.md` | PR diff analysis mode |
-| `skills/vibe-code-review/references/deep-audit.md` | Full codebase analysis mode |
-| `skills/vibe-code-review/references/trend-check.md` | Cross-sprint metrics comparison mode |
-| `skills/vibe-code-review/references/report-template.md` | Review report structure |
-| `skills/vibe-code-review/scripts/pr-analyze.sh` | PR analysis automation |
-| `skills/vibe-code-review/scripts/generate-snapshot.sh` | Codebase snapshot generation |
+| `.vbounce/skills/vibe-code-review/references/quick-scan.md` | Fast health check mode |
+| `.vbounce/skills/vibe-code-review/references/pr-review.md` | PR diff analysis mode |
+| `.vbounce/skills/vibe-code-review/references/deep-audit.md` | Full codebase analysis mode |
+| `.vbounce/skills/vibe-code-review/references/trend-check.md` | Cross-sprint metrics comparison mode |
+| `.vbounce/skills/vibe-code-review/references/report-template.md` | Review report structure |
+| `.vbounce/skills/vibe-code-review/scripts/pr-analyze.sh` | PR analysis automation |
+| `.vbounce/skills/vibe-code-review/scripts/generate-snapshot.sh` | Codebase snapshot generation |
 
 #### file-organization references
 | File | Purpose |
 |------|---------|
-| `skills/file-organization/references/quick-checklist.md` | File organization verification checklist |
-| `skills/file-organization/references/gitignore-template.md` | Template .gitignore with V-Bounce patterns |
-| `skills/file-organization/evals/evals.json` | Evaluation data for file organization |
-| `skills/file-organization/TEST-RESULTS.md` | Test results for file-organization skill |
+| `.vbounce/skills/file-organization/references/quick-checklist.md` | File organization verification checklist |
+| `.vbounce/skills/file-organization/references/gitignore-template.md` | Template .gitignore with V-Bounce patterns |
+| `.vbounce/skills/file-organization/evals/evals.json` | Evaluation data for file organization |
+| `.vbounce/skills/file-organization/TEST-RESULTS.md` | Test results for file-organization skill |
 
 #### react-best-practices rules (57 files)
 | Directory | Count | Categories |
 |-----------|-------|-----------|
-| `skills/react-best-practices/rules/` | 55 | async (5), bundle (5), client (4), js (12), rendering (8), rerender (12), server (6), advanced (3) |
-| `skills/react-best-practices/rules/_sections.md` | — | Index of all rule categories |
-| `skills/react-best-practices/rules/_template.md` | — | Template for new rules |
+| `.vbounce/skills/react-best-practices/rules/` | 55 | async (5), bundle (5), client (4), js (12), rendering (8), rerender (12), server (6), advanced (3) |
+| `.vbounce/skills/react-best-practices/rules/_sections.md` | — | Index of all rule categories |
+| `.vbounce/skills/react-best-practices/rules/_template.md` | — | Template for new rules |
 
 ---
 
 ## 6. Script Registry
 
-Scripts automate framework operations. Located in `scripts/`.
+Scripts automate framework operations. Located in `.vbounce/scripts/`.
 
 ### Sprint Lifecycle
 | Script | When | Input | Output |
 |--------|------|-------|--------|
-| `scripts/init_sprint.mjs` | Sprint setup | Sprint ID, Delivery ID | `.bounce/state.json`, sprint plan directory |
-| `scripts/close_sprint.mjs` | Sprint end | Sprint ID | Archives reports, triggers improvement pipeline |
-| `scripts/complete_story.mjs` | Story merge | Story ID, metrics | Updates state.json + sprint plan §4 Execution Log |
-| `scripts/update_state.mjs` | Any state change | Story ID, new state | Atomic state.json update |
+| `.vbounce/scripts/init_sprint.mjs` | Sprint setup | Sprint ID, Delivery ID | `.vbounce/state.json`, sprint plan directory |
+| `.vbounce/scripts/close_sprint.mjs` | Sprint end | Sprint ID | Archives reports, triggers improvement pipeline |
+| `.vbounce/scripts/complete_story.mjs` | Story merge | Story ID, metrics | Updates state.json + sprint plan §4 Execution Log |
+| `.vbounce/scripts/update_state.mjs` | Any state change | Story ID, new state | Atomic state.json update |
 
 ### Context Preparation
 | Script | When | Input | Output |
 |--------|------|-------|--------|
-| `scripts/prep_sprint_context.mjs` | Before sprint | Sprint ID | `.bounce/sprint-context-S-XX.md` |
-| `scripts/prep_qa_context.mjs` | Before QA gate | Story ID | `.bounce/qa-context-STORY-ID.md` |
-| `scripts/prep_arch_context.mjs` | Before Architect gate | Story ID | `.bounce/arch-context-STORY-ID.md` |
-| `scripts/prep_sprint_summary.mjs` | Sprint consolidation | Sprint ID | Aggregated metrics from archived reports |
+| `.vbounce/scripts/prep_sprint_context.mjs` | Before sprint | Sprint ID | `.vbounce/sprint-context-S-XX.md` |
+| `.vbounce/scripts/prep_qa_context.mjs` | Before QA gate | Story ID | `.vbounce/qa-context-STORY-ID.md` |
+| `.vbounce/scripts/prep_arch_context.mjs` | Before Architect gate | Story ID | `.vbounce/arch-context-STORY-ID.md` |
+| `.vbounce/scripts/prep_sprint_summary.mjs` | Sprint consolidation | Sprint ID | Aggregated metrics from archived reports |
 
 ### Quality Gates
 | Script | When | Input | Output |
 |--------|------|-------|--------|
-| `scripts/pre_gate_runner.sh` | Before QA/Architect | Gate type, worktree path | `.bounce/reports/pre-{gate}-scan.txt` |
-| `scripts/pre_gate_common.sh` | — | — | Shared functions for gate checks |
-| `scripts/init_gate_config.sh` | First sprint | — | `.bounce/gate-checks.json` (auto-detect stack) |
+| `.vbounce/scripts/pre_gate_runner.sh` | Before QA/Architect | Gate type, worktree path | `.vbounce/reports/pre-{gate}-scan.txt` |
+| `.vbounce/scripts/pre_gate_common.sh` | — | — | Shared functions for gate checks |
+| `.vbounce/scripts/init_gate_config.sh` | First sprint | — | `.vbounce/gate-checks.json` (auto-detect stack) |
 
 ### Validation
 | Script | When | Input | Output |
 |--------|------|-------|--------|
-| `scripts/validate_report.mjs` | After any agent report | Report file | PASS/FAIL (YAML frontmatter validation) |
-| `scripts/validate_state.mjs` | State changes | state.json | Schema validation |
-| `scripts/validate_sprint_plan.mjs` | Sprint setup | Sprint plan file | Structure validation |
-| `scripts/validate_bounce_readiness.mjs` | Before bounce | Story ID | Readiness check (spec, criteria, guide, ambiguity) |
-| `scripts/verify_framework.mjs` | On demand | — | Framework integrity check |
-| `scripts/verify_framework.sh` | On demand | — | Shell wrapper for above |
-| `scripts/doctor.mjs` | `vbounce doctor` | — | Health check (templates, skills, scripts, brains) |
+| `.vbounce/scripts/validate_report.mjs` | After any agent report | Report file | PASS/FAIL (YAML frontmatter validation) |
+| `.vbounce/scripts/validate_state.mjs` | State changes | state.json | Schema validation |
+| `.vbounce/scripts/validate_sprint_plan.mjs` | Sprint setup | Sprint plan file | Structure validation |
+| `.vbounce/scripts/validate_bounce_readiness.mjs` | Before bounce | Story ID | Readiness check (spec, criteria, guide, ambiguity) |
+| `.vbounce/scripts/verify_framework.mjs` | On demand | — | Framework integrity check |
+| `.vbounce/scripts/verify_framework.sh` | On demand | — | Shell wrapper for above |
+| `.vbounce/scripts/doctor.mjs` | `vbounce doctor` | — | Health check (templates, skills, scripts, brains) |
 
 ### Self-Improvement
 | Script | When | Input | Output |
 |--------|------|-------|--------|
-| `scripts/sprint_trends.mjs` | Sprint close | Archived reports | `.bounce/trends.md` |
-| `scripts/post_sprint_improve.mjs` | Sprint close | Sprint Report, LESSONS.md, trends | `.bounce/improvement-manifest.json` |
-| `scripts/suggest_improvements.mjs` | Sprint close | Improvement manifest | `.bounce/improvement-suggestions.md` |
+| `.vbounce/scripts/sprint_trends.mjs` | Sprint close | Archived reports | `.vbounce/trends.md` |
+| `.vbounce/scripts/post_sprint_improve.mjs` | Sprint close | Sprint Report, LESSONS.md, trends | `.vbounce/improvement-manifest.json` |
+| `.vbounce/scripts/suggest_improvements.mjs` | Sprint close | Improvement manifest | `.vbounce/improvement-suggestions.md` |
 
 ### Product Graph
 | Script | When | Input | Output |
 |--------|------|-------|--------|
-| `scripts/product_graph.mjs` | After doc edits, sprint lifecycle events | product_plans/ | `.bounce/product-graph.json` |
-| `scripts/product_impact.mjs` | Before modifying a document | DOC-ID | Impact analysis (BFS traversal) |
+| `.vbounce/scripts/product_graph.mjs` | After doc edits, sprint lifecycle events | product_plans/ | `.vbounce/product-graph.json` |
+| `.vbounce/scripts/product_impact.mjs` | Before modifying a document | DOC-ID | Impact analysis (BFS traversal) |
 
 ### Token Tracking
 | Script | When | Input | Output |
 |--------|------|-------|--------|
-| `scripts/count_tokens.mjs` | After each agent completes; sprint consolidation | Session JSONL / story docs | Per-agent and per-sprint token counts |
+| `.vbounce/scripts/count_tokens.mjs` | After each agent completes; sprint consolidation | Session JSONL / story docs | Per-agent and per-sprint token counts |
 
 ### Utilities
 | Script | When | Input | Output |
 |--------|------|-------|--------|
-| `scripts/hotfix_manager.sh` | Hotfix lifecycle | Subcommand (audit/sync/ledger) | Hotfix ledger, worktree sync |
-| `scripts/vdoc_match.mjs` | Context prep | Story ID, manifest | JSON/markdown context with matched docs |
-| `scripts/vdoc_staleness.mjs` | Sprint close | Sprint ID | `.bounce/scribe-task-S-XX.md` (stale doc list) |
+| `.vbounce/scripts/hotfix_manager.sh` | Hotfix lifecycle | Subcommand (audit/sync/ledger) | Hotfix ledger, worktree sync |
+| `.vbounce/scripts/vdoc_match.mjs` | Context prep | Story ID, manifest | JSON/markdown context with matched docs |
+| `.vbounce/scripts/vdoc_staleness.mjs` | Sprint close | Sprint ID | `.vbounce/scribe-task-S-XX.md` (stale doc list) |
 
 ---
 
@@ -319,9 +319,9 @@ These directories are created during project execution, not part of the framewor
 | `product_plans/sprints/` | Active sprint workspace | Phase 2 (Sprint Planning) |
 | `product_plans/hotfixes/` | Emergency L1 fixes | Phase 3 (Hotfix Path) |
 | `product_plans/archive/` | Completed sprints and epics (immutable) | Phase 4 (Review) |
-| `.bounce/` | Sprint state, reports, improvement artifacts, product graph | `vbounce sprint init` |
-| `.bounce/reports/` | Active bounce reports (gitignored) | Agents during Phase 3 |
-| `.bounce/archive/S-{XX}/` | Archived reports per sprint (committed) | DevOps after merge |
+| `.vbounce/` | Sprint state, reports, improvement artifacts, product graph | `vbounce sprint init` |
+| `.vbounce/reports/` | Active bounce reports (gitignored) | Agents during Phase 3 |
+| `.vbounce/archive/S-{XX}/` | Archived reports per sprint (committed) | DevOps after merge |
 | `.worktrees/` | Git worktrees for isolated story branches | Phase 3 Step 1 |
 | `vdocs/` | Product documentation + `_manifest.json` | Scribe agent |
 

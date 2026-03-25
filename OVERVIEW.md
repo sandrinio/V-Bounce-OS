@@ -189,11 +189,11 @@ A **delivery = a Roadmap release**. It contains one or more sprints. When all sp
 | Setup guide | `brains/SETUP.md` |
 | Brain files | `brains/CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `cursor-rules/` |
 | Agent configs | `brains/claude-agents/*.md` |
-| Document templates | `templates/*.md` |
-| Skills | `skills/*/SKILL.md` |
-| Scripts | `scripts/*.sh` (Automations like `hotfix_manager.sh`) |
+| Document templates | `.vbounce/templates/*.md` |
+| Skills | `.vbounce/skills/*/SKILL.md` |
+| Scripts | `.vbounce/scripts/*.sh` (Automations like `hotfix_manager.sh`) |
 | Planning documents | `product_plans/` |
-| Sprint history (committed) | `.bounce/archive/` |
+| Sprint history (committed) | `.vbounce/archive/` |
 | Product documentation | `vdocs/` |
 | Detailed diagrams | `diagrams/*.mermaid` |
 | Edge Cases & Reference | `docs/HOTFIX_EDGE_CASES.md`, etc. |

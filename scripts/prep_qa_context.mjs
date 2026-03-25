@@ -5,9 +5,9 @@
  * Generates a QA context pack for a story.
  *
  * Usage:
- *   ./scripts/prep_qa_context.mjs STORY-005-02
+ *   ./.vbounce/scripts/prep_qa_context.mjs STORY-005-02
  *
- * Output: .bounce/qa-context-STORY-005-02.md
+ * Output: .vbounce/qa-context-STORY-005-02.md
  */
 
 import fs from 'fs';
@@ -42,9 +42,9 @@ function findFilesMatching(dir, pattern) {
 // 1. Find dev report (required)
 const devReportPattern = new RegExp(`${storyId.replace(/[-]/g, '[-]')}.*-dev\\.md$`);
 const searchDirs = [
-  path.join(ROOT, '.worktrees', storyId, '.bounce', 'reports'),
-  path.join(ROOT, '.bounce', 'reports'),
-  path.join(ROOT, '.bounce', 'archive'),
+  path.join(ROOT, '.worktrees', storyId, '.vbounce', 'reports'),
+  path.join(ROOT, '.vbounce', 'reports'),
+  path.join(ROOT, '.vbounce', 'archive'),
 ];
 let devReport = null;
 for (const dir of searchDirs) {
@@ -147,6 +147,6 @@ if (outputLines.length > MAX_CONTEXT_LINES) {
   finalOutput += `\n\n> ⚠ Truncated at ${MAX_CONTEXT_LINES} lines. Read source files for complete content.`;
 }
 
-const outputFile = path.join(ROOT, '.bounce', `qa-context-${storyId}.md`);
+const outputFile = path.join(ROOT, '.vbounce', `qa-context-${storyId}.md`);
 fs.writeFileSync(outputFile, finalOutput);
-console.log(`✓ QA context pack written to .bounce/qa-context-${storyId}.md`);
+console.log(`✓ QA context pack written to .vbounce/qa-context-${storyId}.md`);

@@ -39,7 +39,7 @@ Every improvement proposal is classified by impact to help the human prioritize:
 
 ## When to Use
 
-- **Automatically** — `vbounce sprint close S-XX` runs the improvement pipeline and regenerates `.bounce/improvement-suggestions.md` (overwrites previous — always reflects latest data)
+- **Automatically** — `vbounce sprint close S-XX` runs the improvement pipeline and regenerates `.vbounce/improvement-suggestions.md` (overwrites previous — always reflects latest data)
 - **On demand** — `vbounce improve S-XX` runs the full pipeline (trends + analyzer + suggestions)
 - **Applying changes:** After every 1-3 sprints, human reviews suggestions and runs `/improve` to apply approved ones. The analysis runs every sprint; applying changes is the human's call.
 - When the same Process Feedback appears across multiple sprint reports
@@ -62,15 +62,15 @@ The self-improvement pipeline runs automatically on `vbounce sprint close` and c
 ```
 vbounce sprint close S-XX
   │
-  ├── scripts/sprint_trends.mjs          → .bounce/trends.md
+  ├── .vbounce/scripts/sprint_trends.mjs          → .vbounce/trends.md
   │
-  ├── scripts/post_sprint_improve.mjs    → .bounce/improvement-manifest.json
+  ├── .vbounce/scripts/post_sprint_improve.mjs    → .vbounce/improvement-manifest.json
   │   ├── Parse Sprint Report §5 Framework Self-Assessment tables
   │   ├── Parse LESSONS.md for automation candidates
   │   ├── Cross-reference archived sprint reports for recurring patterns
   │   └── Check if previous improvements resolved their findings
   │
-  └── scripts/suggest_improvements.mjs   → .bounce/improvement-suggestions.md
+  └── .vbounce/scripts/suggest_improvements.mjs   → .vbounce/improvement-suggestions.md
       ├── Consume improvement-manifest.json
       ├── Add metric-driven suggestions (bounce rate, correction tax, first-pass rate)
       ├── Add lesson graduation candidates
@@ -81,16 +81,16 @@ vbounce sprint close S-XX
 
 | File | Purpose |
 |------|---------|
-| `.bounce/improvement-manifest.json` | Machine-readable proposals with metadata (consumed by this skill) |
-| `.bounce/improvement-suggestions.md` | Human-readable improvement suggestions with impact levels |
-| `.bounce/trends.md` | Cross-sprint trend data |
+| `.vbounce/improvement-manifest.json` | Machine-readable proposals with metadata (consumed by this skill) |
+| `.vbounce/improvement-suggestions.md` | Human-readable improvement suggestions with impact levels |
+| `.vbounce/trends.md` | Cross-sprint trend data |
 
 ## Input Sources
 
 The improve skill reads from multiple signals, in priority order:
 
 ### 1. Improvement Manifest (Primary — Machine-Generated)
-Read `.bounce/improvement-manifest.json` first. It contains pre-analyzed proposals with impact levels, automation classifications, recurrence data, and effectiveness checks. This is the richest, most structured input.
+Read `.vbounce/improvement-manifest.json` first. It contains pre-analyzed proposals with impact levels, automation classifications, recurrence data, and effectiveness checks. This is the richest, most structured input.
 
 ### 2. Sprint Report §5 — Framework Self-Assessment
 The structured retro tables are the richest human-authored source. Each row has:
@@ -104,9 +104,9 @@ Lessons are classified by automation potential:
 
 | Automation Type | What to Look For | Target |
 |----------------|-----------------|--------|
-| **gate_check** | Rules with "Always check...", "Never use...", "Must have..." | `.bounce/gate-checks.json` or `pre_gate_runner.sh` |
-| **script** | Rules with "Run X before Y", "Use X instead of Y" | `scripts/` |
-| **template_field** | Rules with "Include X in...", "Add X to the story/epic/template" | `templates/*.md` |
+| **gate_check** | Rules with "Always check...", "Never use...", "Must have..." | `.vbounce/gate-checks.json` or `pre_gate_runner.sh` |
+| **script** | Rules with "Run X before Y", "Use X instead of Y" | `.vbounce/scripts/` |
+| **template_field** | Rules with "Include X in...", "Add X to the story/epic/template" | `.vbounce/templates/*.md` |
 | **agent_config** | General behavioral rules proven over 3+ sprints | `brains/claude-agents/*.md` |
 
 **Key insight:** Lessons tell you WHAT to enforce. Sprint retro tells you WHERE the framework is weak. Together they drive targeted improvements.
@@ -121,14 +121,14 @@ Quantitative signals from Sprint Report §3:
 The pipeline checks whether previously applied improvements resolved their target findings. Unresolved improvements are re-escalated at P1 priority.
 
 ### 6. Agent Process Feedback (Raw)
-If sprint reports aren't available, read individual agent reports from `.bounce/archive/` and extract `## Process Feedback` sections directly.
+If sprint reports aren't available, read individual agent reports from `.vbounce/archive/` and extract `## Process Feedback` sections directly.
 
 ## The Improvement Process
 
 ### Step 1: Read the Manifest
 ```
-1. Read .bounce/improvement-manifest.json (if it exists)
-2. Read .bounce/improvement-suggestions.md for human-readable context
+1. Read .vbounce/improvement-manifest.json (if it exists)
+2. Read .vbounce/improvement-suggestions.md for human-readable context
 3. If no manifest exists, run: vbounce improve S-XX to generate one
 ```
 
@@ -179,7 +179,7 @@ When a lesson contains a mechanical rule (classified as `gate_check` in the mani
 **Lesson:** "{lesson title}" (active since {date})
 **Rule:** {the lesson's rule}
 **Gate:** qa / arch
-**Check config to add to `.bounce/gate-checks.json`:**
+**Check config to add to `.vbounce/gate-checks.json`:**
 ```json
 {
   "id": "custom_grep",
@@ -235,7 +235,7 @@ For each approved proposal:
 2. If brain files are affected, ensure ALL brain surfaces stay in sync (CLAUDE.md, GEMINI.md, AGENTS.md, cursor-rules/)
 3. Log the change in `brains/CHANGELOG.md`
 4. If skills were modified, update skill descriptions in all brain files that reference them
-5. Record in `.bounce/improvement-log.md` under "Applied" with the impact level
+5. Record in `.vbounce/improvement-log.md` under "Applied" with the impact level
 
 ### Step 7: Validate
 After all changes are applied:
@@ -269,7 +269,7 @@ The improve skill produces:
 1. The list of proposals presented to the human (inline during the conversation)
 2. The applied changes to framework files
 3. The `brains/CHANGELOG.md` entries documenting what changed and why
-4. Updates to `.bounce/improvement-log.md` tracking approved/rejected/deferred items
+4. Updates to `.vbounce/improvement-log.md` tracking approved/rejected/deferred items
 
 ## Tracking Improvement Velocity
 

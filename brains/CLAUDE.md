@@ -47,23 +47,23 @@ Determine which phase you're in from what the human is asking, then load the rig
 10. **Reports are the only handoff**. No direct agent-to-agent communication.
 11. **One source of truth**. Reference upstream documents, don't duplicate.
 12. **Change Logs are mandatory** on every document modification.
-13. **Agent Reports MUST use YAML Frontmatter**. Every `.bounce/report/` file starts with strict YAML.
-14. **Framework Integrity**. Any modification to `brains/`, `skills/`, `templates/`, or `scripts/` MUST be recorded in `brains/CHANGELOG.md` and reflected in `MANIFEST.md`.
+13. **Agent Reports MUST use YAML Frontmatter**. Every `.vbounce/report/` file starts with strict YAML.
+14. **Framework Integrity**. Any modification to `brains/`, `skills/`, `templates/`, or `scripts/` MUST be recorded in `brains/CHANGELOG.md` and reflected in `VBOUNCE_MANIFEST.md`.
 
 ## Skills
 
-@skills/lesson/SKILL.md
+@.vbounce/skills/lesson/SKILL.md
 
 > **Loaded by phase** (see Phase Routing above):
-> - **Planning (Phase 1 & 2):** Load `@skills/doc-manager/SKILL.md` + `@skills/product-graph/SKILL.md`
-> - **Execution (Phase 3):** Load `@skills/agent-team/SKILL.md`
+> - **Planning (Phase 1 & 2):** Load `@.vbounce/skills/doc-manager/SKILL.md` + `@.vbounce/skills/product-graph/SKILL.md`
+> - **Execution (Phase 3):** Load `@.vbounce/skills/agent-team/SKILL.md`
 
 > **On-demand skills:**
-> - `/doc` → `@skills/doc-manager/SKILL.md`
-> - `/review` → `@skills/vibe-code-review/SKILL.md` — code review
-> - `/write-skill` → `@skills/write-skill/SKILL.md` — skill authoring
-> - `/improve` → `@skills/improve/SKILL.md` — framework improvement
-> - `/react` → `@skills/react-best-practices/SKILL.md` — frontend patterns
+> - `/doc` → `@.vbounce/skills/doc-manager/SKILL.md`
+> - `/review` → `@.vbounce/skills/vibe-code-review/SKILL.md` — code review
+> - `/write-skill` → `@.vbounce/skills/write-skill/SKILL.md` — skill authoring
+> - `/improve` → `@.vbounce/skills/improve/SKILL.md` — framework improvement
+> - `/react` → `@.vbounce/skills/react-best-practices/SKILL.md` — frontend patterns
 
 ## Subagents
 
@@ -77,13 +77,13 @@ Specialized agents defined in `brains/claude-agents/` (deploy to `.claude/agents
 | DevOps | `brains/claude-agents/devops.md` | Merges, deploys, infra checks. Tools: Read, Edit, Write, Bash, Glob, Grep |
 | Scribe | `brains/claude-agents/scribe.md` | Product documentation generation. Tools: Read, Write, Bash, Glob, Grep |
 
-Reports flow through `.bounce/reports/` — see agent-team skill for the full orchestration protocol.
+Reports flow through `.vbounce/reports/` — see agent-team skill for the full orchestration protocol.
 
 ## Quick Reference
 
-- **Document ops:** `skills/doc-manager/SKILL.md` — hierarchy, cascade rules, planning workflows
-- **Product graph:** `.bounce/product-graph.json` — document relationships and state
-- **Bounce orchestration:** `skills/agent-team/SKILL.md` — subagent delegation, worktrees, sprint execution
+- **Document ops:** `.vbounce/skills/doc-manager/SKILL.md` — hierarchy, cascade rules, planning workflows
+- **Product graph:** `.vbounce/product-graph.json` — document relationships and state
+- **Bounce orchestration:** `.vbounce/skills/agent-team/SKILL.md` — subagent delegation, worktrees, sprint execution
 - **Planning docs:** `product_plans/` — `strategy/`, `backlog/`, `sprints/`, `hotfixes/`, `archive/`
-- **Sprint state:** `.bounce/state.json` — machine-readable sprint state
-- **Framework map:** `MANIFEST.md` — complete file and process registry
+- **Sprint state:** `.vbounce/state.json` — machine-readable sprint state
+- **Framework map:** `VBOUNCE_MANIFEST.md` — complete file and process registry

@@ -9,11 +9,11 @@
  *   and sums token usage from all assistant messages.
  *
  * Usage:
- *   node scripts/count_tokens.mjs                  # current session (auto-detect)
- *   node scripts/count_tokens.mjs --session <ID>   # specific session
- *   node scripts/count_tokens.mjs --agent <ID>     # specific subagent
- *   node scripts/count_tokens.mjs --all             # all subagents in current session
- *   node scripts/count_tokens.mjs --json            # JSON output (for YAML frontmatter)
+ *   node .vbounce/scripts/count_tokens.mjs                  # current session (auto-detect)
+ *   node .vbounce/scripts/count_tokens.mjs --session <ID>   # specific session
+ *   node .vbounce/scripts/count_tokens.mjs --agent <ID>     # specific subagent
+ *   node .vbounce/scripts/count_tokens.mjs --all             # all subagents in current session
+ *   node .vbounce/scripts/count_tokens.mjs --json            # JSON output (for YAML frontmatter)
  */
 
 import fs from 'fs';

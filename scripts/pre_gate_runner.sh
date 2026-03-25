@@ -2,7 +2,7 @@
 # pre_gate_runner.sh — Runs pre-gate checks before QA or Architect agents
 # Usage: ./scripts/pre_gate_runner.sh <qa|arch> [worktree-path] [base-branch]
 #
-# Reads .bounce/gate-checks.json for check configuration.
+# Reads .vbounce/gate-checks.json for check configuration.
 # If no config exists, runs universal defaults with auto-detected stack.
 
 set -euo pipefail
@@ -50,7 +50,7 @@ fi
 
 # ── Load config or use defaults ──────────────────────────────────────
 
-CONFIG_PATH="${WORKTREE_PATH}/.bounce/gate-checks.json"
+CONFIG_PATH="${WORKTREE_PATH}/.vbounce/gate-checks.json"
 HAS_CONFIG=false
 
 if [[ -f "$CONFIG_PATH" ]]; then
@@ -59,7 +59,7 @@ if [[ -f "$CONFIG_PATH" ]]; then
 else
   # Check parent repo too (worktree might not have it)
   REPO_ROOT=$(cd "$WORKTREE_PATH" && git rev-parse --show-toplevel 2>/dev/null || echo "$WORKTREE_PATH")
-  CONFIG_PATH="${REPO_ROOT}/.bounce/gate-checks.json"
+  CONFIG_PATH="${REPO_ROOT}/.vbounce/gate-checks.json"
   if [[ -f "$CONFIG_PATH" ]]; then
     HAS_CONFIG=true
     echo -e "Config: ${GREEN}${CONFIG_PATH}${NC}"
@@ -160,7 +160,7 @@ fi
 print_summary
 
 # Write report
-REPORT_DIR="${WORKTREE_PATH}/.bounce/reports"
+REPORT_DIR="${WORKTREE_PATH}/.vbounce/reports"
 REPORT_FILE="${REPORT_DIR}/pre-${GATE_TYPE}-scan.txt"
 write_report "$REPORT_FILE"
 echo ""

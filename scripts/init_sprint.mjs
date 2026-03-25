@@ -5,7 +5,7 @@
  * Sprint setup automation — creates state.json, sprint plan dir, and prints git commands.
  *
  * Usage:
- *   ./scripts/init_sprint.mjs S-06 D-02 --stories STORY-011-05,STORY-005-01,STORY-005-02
+ *   ./.vbounce/scripts/init_sprint.mjs S-06 D-02 --stories STORY-011-05,STORY-005-01,STORY-005-02
  */
 
 import fs from 'fs';
@@ -38,8 +38,8 @@ if (!/^D-\d{2}$/.test(deliveryId)) {
 const storiesArg = args.indexOf('--stories');
 const storyIds = storiesArg !== -1 ? args[storiesArg + 1].split(',') : [];
 
-// 1. Create .bounce/ directory
-const bounceDir = path.join(ROOT, '.bounce');
+// 1. Create .vbounce/ directory
+const bounceDir = path.join(ROOT, '.vbounce');
 fs.mkdirSync(bounceDir, { recursive: true });
 fs.mkdirSync(path.join(bounceDir, 'archive'), { recursive: true });
 fs.mkdirSync(path.join(bounceDir, 'reports'), { recursive: true });
@@ -73,7 +73,7 @@ const state = {
 };
 
 fs.writeFileSync(stateFile, JSON.stringify(state, null, 2));
-console.log(`✓ Created .bounce/state.json`);
+console.log(`✓ Created .vbounce/state.json`);
 
 // 3. Create sprint plan directory
 const sprintDir = path.join(ROOT, 'product_plans', 'sprints', `sprint-${sprintNum}`);
@@ -114,7 +114,7 @@ if (storyIds.length > 0) {
   storyIds.forEach(id => {
     const trimmed = id.trim();
     console.log(`  git worktree add .worktrees/${trimmed} -b story/${trimmed} sprint/${sprintId}`);
-    console.log(`  mkdir -p .worktrees/${trimmed}/.bounce/{tasks,reports}`);
+    console.log(`  mkdir -p .worktrees/${trimmed}/.vbounce/{tasks,reports}`);
   });
 }
 

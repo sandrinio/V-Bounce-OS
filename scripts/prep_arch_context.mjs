@@ -5,9 +5,9 @@
  * Generates an Architect context pack for a story.
  *
  * Usage:
- *   ./scripts/prep_arch_context.mjs STORY-005-02
+ *   ./.vbounce/scripts/prep_arch_context.mjs STORY-005-02
  *
- * Output: .bounce/arch-context-STORY-005-02.md
+ * Output: .vbounce/arch-context-STORY-005-02.md
  */
 
 import fs from 'fs';
@@ -46,9 +46,9 @@ function findFilesMatching(dir, pattern) {
 }
 
 const searchDirs = [
-  path.join(ROOT, '.worktrees', storyId, '.bounce', 'reports'),
-  path.join(ROOT, '.bounce', 'reports'),
-  path.join(ROOT, '.bounce', 'archive'),
+  path.join(ROOT, '.worktrees', storyId, '.vbounce', 'reports'),
+  path.join(ROOT, '.vbounce', 'reports'),
+  path.join(ROOT, '.vbounce', 'archive'),
 ];
 
 // 1. Find dev report (required)
@@ -99,7 +99,7 @@ if (qaReport) {
 // 4. Get git diff
 let diffContent = '';
 let diffTruncated = false;
-const stateFile = path.join(ROOT, '.bounce', 'state.json');
+const stateFile = path.join(ROOT, '.vbounce', 'state.json');
 try {
   let diffCmd = 'git diff HEAD~5';
   if (fs.existsSync(stateFile)) {
@@ -118,9 +118,9 @@ try {
     const diffLines = diffContent.split('\n');
     if (diffLines.length > MAX_DIFF_LINES) {
       diffTruncated = true;
-      const fullDiffPath = path.join(ROOT, '.bounce', `arch-full-diff-${storyId}.txt`);
+      const fullDiffPath = path.join(ROOT, '.vbounce', `arch-full-diff-${storyId}.txt`);
       fs.writeFileSync(fullDiffPath, diffContent);
-      console.warn(`⚠  Diff truncated at ${MAX_DIFF_LINES} lines (was ${diffLines.length}). Full diff saved to .bounce/arch-full-diff-${storyId}.txt`);
+      console.warn(`⚠  Diff truncated at ${MAX_DIFF_LINES} lines (was ${diffLines.length}). Full diff saved to .vbounce/arch-full-diff-${storyId}.txt`);
       diffContent = diffLines.slice(0, MAX_DIFF_LINES).join('\n');
     }
   }
@@ -162,7 +162,7 @@ const lines = [
   `- File: \`${path.relative(ROOT, storySpecFile)}\``,
   `- Read §3 Implementation Guide and §3.1 ADR References before auditing`,
   '',
-  `## Git Diff${diffTruncated ? ` (TRUNCATED at ${MAX_DIFF_LINES} lines — full diff in .bounce/arch-full-diff-${storyId}.txt)` : ''}`,
+  `## Git Diff${diffTruncated ? ` (TRUNCATED at ${MAX_DIFF_LINES} lines — full diff in .vbounce/arch-full-diff-${storyId}.txt)` : ''}`,
   '```diff',
   diffContent || '(no diff available)',
   '```',
@@ -172,7 +172,7 @@ const lines = [
 ];
 
 const output = lines.join('\n');
-const outputFile = path.join(ROOT, '.bounce', `arch-context-${storyId}.md`);
+const outputFile = path.join(ROOT, '.vbounce', `arch-context-${storyId}.md`);
 fs.writeFileSync(outputFile, output);
-console.log(`✓ Architect context pack written to .bounce/arch-context-${storyId}.md`);
-if (diffTruncated) console.log(`  ⚠  Diff truncated — full diff at .bounce/arch-full-diff-${storyId}.txt`);
+console.log(`✓ Architect context pack written to .vbounce/arch-context-${storyId}.md`);
+if (diffTruncated) console.log(`  ⚠  Diff truncated — full diff at .vbounce/arch-full-diff-${storyId}.txt`);

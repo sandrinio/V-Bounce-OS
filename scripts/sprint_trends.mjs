@@ -7,7 +7,7 @@
  * Usage:
  *   ./scripts/sprint_trends.mjs
  *
- * Output: .bounce/trends.md
+ * Output: .vbounce/trends.md
  */
 
 import fs from 'fs';
@@ -18,10 +18,10 @@ import yaml from 'js-yaml';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 
-const archiveBase = path.join(ROOT, '.bounce', 'archive');
+const archiveBase = path.join(ROOT, '.vbounce', 'archive');
 
 if (!fs.existsSync(archiveBase)) {
-  console.log('No sprint history found (.bounce/archive/ does not exist)');
+  console.log('No sprint history found (.vbounce/archive/ does not exist)');
   process.exit(0);
 }
 
@@ -30,7 +30,7 @@ const sprintDirs = fs.readdirSync(archiveBase)
   .sort();
 
 if (sprintDirs.length === 0) {
-  console.log('No sprint history found (no S-XX directories in .bounce/archive/)');
+  console.log('No sprint history found (no S-XX directories in .vbounce/archive/)');
   process.exit(0);
 }
 
@@ -154,7 +154,7 @@ const output = [
   `Run \`vbounce suggest S-XX\` to generate improvement recommendations based on this data.`,
 ].join('\n');
 
-const outputFile = path.join(ROOT, '.bounce', 'trends.md');
+const outputFile = path.join(ROOT, '.vbounce', 'trends.md');
 fs.writeFileSync(outputFile, output);
-console.log(`✓ Trends written to .bounce/trends.md`);
+console.log(`✓ Trends written to .vbounce/trends.md`);
 console.log(`  Sprints analyzed: ${sprintDirs.join(', ')}`);

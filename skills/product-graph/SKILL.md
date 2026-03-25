@@ -14,7 +14,7 @@ This skill gives you instant awareness of all product planning documents and the
 When you need to understand the product document landscape, load information in tiers — stop at the tier that answers your question:
 
 ### Tier 1: Graph JSON (~400-1000 tokens)
-Read `.bounce/product-graph.json` for a bird's-eye view.
+Read `.vbounce/product-graph.json` for a bird's-eye view.
 - All document IDs, types, statuses, and paths
 - All edges (dependencies, parent relationships, feeds)
 - **Use when:** answering "what exists?", "what's blocked?", "what depends on X?"
@@ -41,7 +41,7 @@ Read the complete document body.
 
 ## When to Regenerate the Graph
 
-Run `vbounce graph` (or `node scripts/product_graph.mjs`) after:
+Run `vbounce graph` (or `node .vbounce/scripts/product_graph.mjs`) after:
 - **Any document edit** that changes status, dependencies, or relationships
 - **Sprint lifecycle events** (sprint init, story complete, sprint close)
 - **Planning session start** — ensure graph reflects current state

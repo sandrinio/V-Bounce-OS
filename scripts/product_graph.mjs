@@ -3,14 +3,14 @@
 /**
  * product_graph.mjs
  * Scans product_plans/ for planning documents, extracts YAML frontmatter,
- * and outputs a lightweight JSON graph to .bounce/product-graph.json.
+ * and outputs a lightweight JSON graph to .vbounce/product-graph.json.
  *
  * The graph gives AI instant awareness of all product documents and their
  * relationships without reading every file.
  *
  * Usage:
- *   node scripts/product_graph.mjs
- *   node scripts/product_graph.mjs --json   # output to stdout instead of file
+ *   node .vbounce/scripts/product_graph.mjs
+ *   node .vbounce/scripts/product_graph.mjs --json   # output to stdout instead of file
  */
 
 import fs from 'fs';
@@ -30,7 +30,7 @@ const ROOT = path.resolve(__dirname, '..');
 
 const SCAN_DIRS = ['strategy', 'backlog', 'sprints', 'hotfixes'];
 const PRODUCT_PLANS = path.join(ROOT, 'product_plans');
-const OUTPUT_PATH = path.join(ROOT, '.bounce', 'product-graph.json');
+const OUTPUT_PATH = path.join(ROOT, '.vbounce', 'product-graph.json');
 
 const args = process.argv.slice(2);
 const toStdout = args.includes('--json');
@@ -377,11 +377,11 @@ const graph = buildGraph();
 if (toStdout) {
   console.log(JSON.stringify(graph, null, 2));
 } else {
-  // Ensure .bounce/ exists
-  const bounceDir = path.join(ROOT, '.bounce');
+  // Ensure .vbounce/ exists
+  const bounceDir = path.join(ROOT, '.vbounce');
   fs.mkdirSync(bounceDir, { recursive: true });
 
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(graph, null, 2) + '\n');
-  console.log(`✓ Product graph generated: .bounce/product-graph.json`);
+  console.log(`✓ Product graph generated: .vbounce/product-graph.json`);
   console.log(`  Nodes: ${graph.node_count} | Edges: ${graph.edge_count}`);
 }

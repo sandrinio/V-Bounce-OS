@@ -14,7 +14,7 @@ When to use this template:
 - A previously working feature regresses
 
 Triage rules (from mid-sprint-triage.md):
-- If the bug is L1 (1-2 files, trivial fix) → use templates/hotfix.md instead
+- If the bug is L1 (1-2 files, trivial fix) → use .vbounce/templates/hotfix.md instead
 - If the bug is larger → use THIS template, add to current sprint as a fix task
 - Bug fixes do NOT increment QA/Architect bounce counts
 
@@ -70,7 +70,7 @@ reporter: "{human / QA / user}"
 - **Files to Modify:** `{filepath1}`, `{filepath2}`
 - **Complexity:** {L1 Trivial / L2 Standard / L3 Complex}
 
-> If complexity is L1 → consider using `templates/hotfix.md` instead for faster resolution.
+> If complexity is L1 → consider using `.vbounce/templates/hotfix.md` instead for faster resolution.
 
 ---
 
@@ -79,14 +79,14 @@ reporter: "{human / QA / user}"
 - [ ] {Reproduction steps no longer reproduce the bug}
 - [ ] {Existing tests still pass}
 - [ ] {New test covers the bug scenario — if applicable}
-- [ ] Run `./scripts/hotfix_manager.sh ledger "BUG: {Name}" "{Brief description}"`
+- [ ] Run `./.vbounce/scripts/hotfix_manager.sh ledger "BUG: {Name}" "{Brief description}"`
 
 ---
 
 ---
 
 ## Token Usage
-> Auto-populated by agents. Each agent runs `node scripts/count_tokens.mjs --self --append <this-file> --name <Agent>` before writing their report.
+> Auto-populated by agents. Each agent runs `node .vbounce/scripts/count_tokens.mjs --self --append <this-file> --name <Agent>` before writing their report.
 
 | Agent | Input | Output | Total |
 |-------|-------|--------|-------|

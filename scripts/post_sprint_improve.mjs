@@ -9,9 +9,9 @@
  * for recurring patterns. Outputs a structured improvement manifest.
  *
  * Usage:
- *   ./scripts/post_sprint_improve.mjs S-05
+ *   ./.vbounce/scripts/post_sprint_improve.mjs S-05
  *
- * Output: .bounce/improvement-manifest.json
+ * Output: .vbounce/improvement-manifest.json
  *         (consumed by suggest_improvements.mjs and the /improve skill)
  */
 
@@ -413,12 +413,12 @@ function generateAutomationDetail(lesson) {
 // ---------------------------------------------------------------------------
 
 const today = new Date().toISOString().split('T')[0];
-const archiveDir = path.join(ROOT, '.bounce', 'archive');
+const archiveDir = path.join(ROOT, '.vbounce', 'archive');
 const lessonsPath = path.join(ROOT, 'LESSONS.md');
-const improvementLogPath = path.join(ROOT, '.bounce', 'improvement-log.md');
+const improvementLogPath = path.join(ROOT, '.vbounce', 'improvement-log.md');
 
 // Current sprint report
-const reportPath = path.join(ROOT, '.bounce', `sprint-report-${sprintId}.md`);
+const reportPath = path.join(ROOT, '.vbounce', `sprint-report-${sprintId}.md`);
 const reportArchivePath = path.join(archiveDir, sprintId, `sprint-report-${sprintId}.md`);
 const actualReportPath = fs.existsSync(reportPath) ? reportPath : reportArchivePath;
 
@@ -472,12 +472,12 @@ for (const p of proposals) {
   manifest.summary.byType[p.type] = (manifest.summary.byType[p.type] || 0) + 1;
 }
 
-const manifestPath = path.join(ROOT, '.bounce', 'improvement-manifest.json');
+const manifestPath = path.join(ROOT, '.vbounce', 'improvement-manifest.json');
 fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
 fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
 
 console.log('');
-console.log(`✓ Improvement manifest written to .bounce/improvement-manifest.json`);
+console.log(`✓ Improvement manifest written to .vbounce/improvement-manifest.json`);
 console.log(`  ${proposals.length} proposal(s): ${manifest.summary.byImpact.P0} P0, ${manifest.summary.byImpact.P1} P1, ${manifest.summary.byImpact.P2} P2, ${manifest.summary.byImpact.P3} P3`);
 
 if (proposals.length > 0) {

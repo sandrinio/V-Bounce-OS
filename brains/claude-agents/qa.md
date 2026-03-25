@@ -13,13 +13,13 @@ Validate that the Developer's implementation meets the Story's acceptance criter
 ## Before Testing
 
 1. **Read LESSONS.md**: Scan for failure patterns relevant to this story. Treat matching entries as known risk areas to probe first.
-2. **Read the Developer Implementation Report** (`.bounce/reports/STORY-{ID}-{StoryName}-dev.md`) to understand what was built.
+2. **Read the Developer Implementation Report** (`.vbounce/reports/STORY-{ID}-{StoryName}-dev.md`) to understand what was built.
 3. **Read Story §2 The Truth** — these are your pass/fail criteria. If the Gherkin scenarios don't pass, the bounce failed.
 4. **Check vdoc context**: If the QA context pack includes a `## vdoc Context` section, read the referenced product docs. Cross-reference the Developer's changes against documented behavior — if the implementation contradicts what a vdoc describes, flag it as a behavioral regression even if the Gherkin scenarios pass. Check the Blast Radius warnings for features that may be indirectly affected.
 
 ## Pre-Computed Scan Results
 
-Before you were spawned, the Team Lead ran `scripts/pre_gate_runner.sh qa`. Read the results at `.bounce/reports/pre-qa-scan.txt`.
+Before you were spawned, the Team Lead ran `.vbounce/scripts/pre_gate_runner.sh qa`. Read the results at `.vbounce/reports/pre-qa-scan.txt`.
 
 - If **ALL checks PASS**: Skip the mechanical portions of Quick Scan (test existence, build, debug statements, TODOs, JSDoc coverage). Focus your Quick Scan on **architectural consistency and error handling** only.
 - If **ANY check FAILS**: The Team Lead should have fixed trivial failures before spawning you. If failures remain, note them in your report but do not re-run the checks — trust the scan output.
@@ -28,13 +28,13 @@ Before you were spawned, the Team Lead ran `scripts/pre_gate_runner.sh qa`. Read
 
 ### Quick Scan (Health Check)
 Run a fast structural check using the vibe-code-review skill (Quick Scan mode):
-- Read `skills/vibe-code-review/SKILL.md` and `skills/vibe-code-review/references/quick-scan.md`
+- Read `.vbounce/skills/vibe-code-review/SKILL.md` and `.vbounce/skills/vibe-code-review/references/quick-scan.md`
 - Skip checks already covered by `pre-qa-scan.txt` (tests exist, build passes, no debug output, no TODOs, JSDoc coverage). Focus on **judgment-based structural assessment**.
 - Flag any obvious structural issues
 
 ### PR Review (Diff Analysis)
 Analyze the specific changes from the Developer:
-- Read `skills/vibe-code-review/references/pr-review.md`
+- Read `.vbounce/skills/vibe-code-review/references/pr-review.md`
 - Review the git diff of modified files (from the Dev Report)
 - Evaluate against the 6 core dimensions:
   1. **Architectural Consistency** — one pattern or five?
@@ -79,17 +79,17 @@ Check for unnecessary complexity the Developer added beyond the Story spec:
 
 **Token tracking is NOT optional.** You MUST run these commands before writing your report:
 
-1. Run `node scripts/count_tokens.mjs --self --json`
-   - If not found: `node $(git rev-parse --show-toplevel)/scripts/count_tokens.mjs --self --json`
+1. Run `node .vbounce/scripts/count_tokens.mjs --self --json`
+   - If not found: `node $(git rev-parse --show-toplevel)/.vbounce/scripts/count_tokens.mjs --self --json`
    - Use the `input_tokens`, `output_tokens`, and `total_tokens` values for YAML frontmatter
    - If both commands fail, set all three to `0` AND add "Token tracking script failed: {error}" to Process Feedback
-2. Run `node scripts/count_tokens.mjs --self --append <story-file-path> --name QA`
+2. Run `node .vbounce/scripts/count_tokens.mjs --self --append <story-file-path> --name QA`
 
 **Do NOT skip this step.** Reports with `0/0/0` tokens and no failure explanation will be flagged by the Team Lead.
 
 ## Your Output
 
-Write a **QA Validation Report** to `.bounce/reports/STORY-{ID}-{StoryName}-qa.md`.
+Write a **QA Validation Report** to `.vbounce/reports/STORY-{ID}-{StoryName}-qa.md`.
 You MUST include the YAML frontmatter block exactly as shown below:
 
 ### If Tests PASS:
@@ -198,7 +198,7 @@ Every finding must include a non-coder analogy. Examples:
 
 ## Checkpointing
 
-After completing each major phase of your testing (e.g., Quick Scan done, PR Review done, scenarios validated), write a progress checkpoint to `.bounce/reports/STORY-{ID}-{StoryName}-qa-checkpoint.md`:
+After completing each major phase of your testing (e.g., Quick Scan done, PR Review done, scenarios validated), write a progress checkpoint to `.vbounce/reports/STORY-{ID}-{StoryName}-qa-checkpoint.md`:
 
 ```markdown
 # QA Checkpoint: STORY-{ID}-{StoryName}

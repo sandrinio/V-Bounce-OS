@@ -2,7 +2,7 @@
 
 /**
  * validate_state.mjs
- * Validates .bounce/state.json schema.
+ * Validates .vbounce/state.json schema.
  * Usage: ./scripts/validate_state.mjs
  * Also exportable: import { validateState } from './validate_state.mjs'
  */
@@ -13,7 +13,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const STATE_FILE = path.join(ROOT, '.bounce', 'state.json');
+const STATE_FILE = path.join(ROOT, '.vbounce', 'state.json');
 
 const VALID_STATES = [
   'Draft', 'Refinement', 'Ready to Bounce', 'Bouncing',

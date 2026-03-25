@@ -6,9 +6,9 @@
  * descriptions, and key files. Returns relevant doc paths and blast radius.
  *
  * Usage:
- *   ./scripts/vdoc_match.mjs --story STORY-005-02
- *   ./scripts/vdoc_match.mjs --files "src/auth/index.ts,src/middleware/auth.ts"
- *   ./scripts/vdoc_match.mjs --keywords "authentication,jwt,login"
+ *   ./.vbounce/scripts/vdoc_match.mjs --story STORY-005-02
+ *   ./.vbounce/scripts/vdoc_match.mjs --files "src/auth/index.ts,src/middleware/auth.ts"
+ *   ./.vbounce/scripts/vdoc_match.mjs --keywords "authentication,jwt,login"
  *
  * Output: JSON to stdout, human-readable to stderr
  */

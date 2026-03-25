@@ -99,17 +99,17 @@ The manifest is a semantic routing table — it helps agents quickly find releva
 
 **Token tracking is NOT optional.** You MUST run these commands before writing your report:
 
-1. Run `node scripts/count_tokens.mjs --self --json`
-   - If not found: `node $(git rev-parse --show-toplevel)/scripts/count_tokens.mjs --self --json`
+1. Run `node .vbounce/scripts/count_tokens.mjs --self --json`
+   - If not found: `node $(git rev-parse --show-toplevel)/.vbounce/scripts/count_tokens.mjs --self --json`
    - Use the `input_tokens`, `output_tokens`, and `total_tokens` values for YAML frontmatter
    - If both commands fail, set all three to `0` AND add "Token tracking script failed: {error}" to Process Feedback
-2. Run `node scripts/count_tokens.mjs --self --append <story-file-path> --name Scribe`
+2. Run `node .vbounce/scripts/count_tokens.mjs --self --append <story-file-path> --name Scribe`
 
 **Do NOT skip this step.** Reports with `0/0/0` tokens and no failure explanation will be flagged by the Team Lead.
 
 ## Your Output
 
-Write a **Scribe Report** to `.bounce/reports/sprint-S-{XX}-scribe.md`:
+Write a **Scribe Report** to `.vbounce/reports/sprint-S-{XX}-scribe.md`:
 You MUST include the YAML frontmatter block exactly as shown below:
 
 ```markdown

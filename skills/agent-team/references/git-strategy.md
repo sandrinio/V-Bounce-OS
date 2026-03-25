@@ -20,7 +20,7 @@ git checkout -b sprint/S-06 main
 
 # Create story worktree
 git worktree add .worktrees/STORY-001-01-login -b story/STORY-001-01-login sprint/S-06
-mkdir -p .worktrees/STORY-001-01-login/.bounce/{tasks,reports}
+mkdir -p .worktrees/STORY-001-01-login/.vbounce/{tasks,reports}
 
 # List active worktrees
 git worktree list

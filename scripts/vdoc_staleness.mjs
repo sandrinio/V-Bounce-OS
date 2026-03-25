@@ -6,9 +6,9 @@
  * Generates a targeted Scribe task file listing stale docs.
  *
  * Usage:
- *   ./scripts/vdoc_staleness.mjs S-05
+ *   ./.vbounce/scripts/vdoc_staleness.mjs S-05
  *
- * Output: .bounce/scribe-task-S-05.md
+ * Output: .vbounce/scribe-task-S-05.md
  */
 
 import fs from 'fs';
@@ -56,8 +56,8 @@ function findDevReports(dir) {
 }
 
 const reportDirs = [
-  path.join(ROOT, '.bounce', 'reports'),
-  path.join(ROOT, '.bounce', 'archive', sprintId),
+  path.join(ROOT, '.vbounce', 'reports'),
+  path.join(ROOT, '.vbounce', 'archive', sprintId),
 ];
 
 for (const dir of reportDirs) {
@@ -189,10 +189,10 @@ const taskLines = [
   }),
 ];
 
-const taskFile = path.join(ROOT, '.bounce', `scribe-task-${sprintId}.md`);
+const taskFile = path.join(ROOT, '.vbounce', `scribe-task-${sprintId}.md`);
 fs.writeFileSync(taskFile, taskLines.join('\n'));
 
-console.log(`✓ Scribe task written to .bounce/scribe-task-${sprintId}.md`);
+console.log(`✓ Scribe task written to .vbounce/scribe-task-${sprintId}.md`);
 console.log(`  ${staleDocs.length} stale doc(s) detected:`);
 for (const d of staleDocs) {
   console.log(`  - ${d.filepath} (${d.overlappingFiles.length} key files modified by ${d.touchedBy.join(', ')})`);

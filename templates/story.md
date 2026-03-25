@@ -187,7 +187,7 @@ Feature: {Story Name}
 ---
 
 ## Token Usage
-> Auto-populated by agents. Each agent runs `node scripts/count_tokens.mjs --self --append <this-file> --name <Agent>` before writing their report.
+> Auto-populated by agents. Each agent runs `node .vbounce/scripts/count_tokens.mjs --self --append <this-file> --name <Agent>` before writing their report.
 
 | Agent | Input | Output | Total |
 |-------|-------|--------|-------|

@@ -17,7 +17,7 @@ Implement features and fix bugs as specified in Story documents. You write code 
 3. **Read the Story spec** — §1 The Spec for requirements, §3 Implementation Guide for technical approach.
 4. **Check ADR references** in §3.1 — comply with all architecture decisions from the Roadmap.
 5. **Check environment prerequisites** — if Story §3 lists required env vars, services, or migrations, verify they're available before starting. If prerequisites are missing, flag in your report immediately — do not waste a bounce cycle on setup failures.
-6. **Read relevant react-best-practices rules** — consult `skills/react-best-practices/` for patterns matching your task.
+6. **Read relevant react-best-practices rules** — consult `.vbounce/skills/react-best-practices/` for patterns matching your task.
 7. **Check product documentation** — if the task file references product docs from `vdocs/`, read them. Understand how the existing feature works before changing adjacent code. If your implementation changes behavior described in a product doc, flag it in your report.
 
 ## During Implementation
@@ -36,7 +36,7 @@ Implement features and fix bugs as specified in Story documents. You write code 
 ## If You Discover the Spec is Wrong
 
 Do NOT proceed with a broken spec. Instead:
-- Write a **Spec Conflict Report** to `.bounce/reports/STORY-{ID}-{StoryName}-conflict.md`
+- Write a **Spec Conflict Report** to `.vbounce/reports/STORY-{ID}-{StoryName}-conflict.md`
 - Describe exactly what's wrong (missing API, changed schema, contradictory requirements)
 - Stop implementation and wait for the Lead to resolve
 
@@ -44,17 +44,17 @@ Do NOT proceed with a broken spec. Instead:
 
 **Token tracking is NOT optional.** You MUST run these commands before writing your report:
 
-1. Run `node scripts/count_tokens.mjs --self --json`
-   - If not found: `node $(git rev-parse --show-toplevel)/scripts/count_tokens.mjs --self --json`
+1. Run `node .vbounce/scripts/count_tokens.mjs --self --json`
+   - If not found: `node $(git rev-parse --show-toplevel)/.vbounce/scripts/count_tokens.mjs --self --json`
    - Use the `input_tokens`, `output_tokens`, and `total_tokens` values for YAML frontmatter
    - If both commands fail, set all three to `0` AND add "Token tracking script failed: {error}" to Process Feedback
-2. Run `node scripts/count_tokens.mjs --self --append <story-file-path> --name Developer`
+2. Run `node .vbounce/scripts/count_tokens.mjs --self --append <story-file-path> --name Developer`
 
 **Do NOT skip this step.** Reports with `0/0/0` tokens and no failure explanation will be flagged by the Team Lead.
 
 ## Your Output
 
-Write a **Developer Implementation Report** to `.bounce/reports/STORY-{ID}-{StoryName}-dev.md`.
+Write a **Developer Implementation Report** to `.vbounce/reports/STORY-{ID}-{StoryName}-dev.md`.
 You MUST include the YAML frontmatter block exactly as shown below:
 
 ```markdown
@@ -108,7 +108,7 @@ lessons_flagged: {number of lessons}
 
 ## Checkpointing
 
-After completing each major phase of your work (e.g., initial implementation done, tests written, bug fixes applied), write a progress checkpoint to `.bounce/reports/STORY-{ID}-{StoryName}-dev-checkpoint.md`:
+After completing each major phase of your work (e.g., initial implementation done, tests written, bug fixes applied), write a progress checkpoint to `.vbounce/reports/STORY-{ID}-{StoryName}-dev-checkpoint.md`:
 
 ```markdown
 # Developer Checkpoint: STORY-{ID}-{StoryName}

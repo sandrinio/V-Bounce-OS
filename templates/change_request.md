@@ -17,7 +17,7 @@ Categories (from mid-sprint-triage.md):
 - **Scope Change**: Adding/removing/modifying requirements → use THIS template
 - **Approach Change**: Different technical path → use THIS template
 - **Spec Clarification**: Just clarifying ambiguity → do NOT use this template (update story spec inline)
-- **Bug**: Something is broken → use templates/bug.md instead
+- **Bug**: Something is broken → use .vbounce/templates/bug.md instead
 
 Triage rules:
 - Scope changes PAUSE the active bounce until the human approves

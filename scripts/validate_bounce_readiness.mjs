@@ -5,7 +5,7 @@
  * Pre-bounce gate check — verifies a story is ready to bounce.
  *
  * Usage:
- *   ./scripts/validate_bounce_readiness.mjs STORY-005-02
+ *   ./.vbounce/scripts/validate_bounce_readiness.mjs STORY-005-02
  */
 
 import fs from 'fs';
@@ -26,9 +26,9 @@ const errors = [];
 const warnings = [];
 
 // 1. Check state.json
-const stateFile = path.join(ROOT, '.bounce', 'state.json');
+const stateFile = path.join(ROOT, '.vbounce', 'state.json');
 if (!fs.existsSync(stateFile)) {
-  errors.push('.bounce/state.json not found — run: vbounce sprint init S-XX D-XX');
+  errors.push('.vbounce/state.json not found — run: vbounce sprint init S-XX D-XX');
 } else {
   const state = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
   if (!state.stories[storyId]) {
