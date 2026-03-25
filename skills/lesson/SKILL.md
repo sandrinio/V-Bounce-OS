@@ -114,6 +114,15 @@ A lesson is a **graduation candidate** when:
 - It has been triggered (prevented a recurrence) at least once
 - No bounce in the last 3 sprints matches its root cause
 
+#### Accelerated Graduation
+
+A lesson qualifies for **accelerated graduation** (after 1 sprint instead of 3) when:
+- It affected 5+ files across multiple stories, OR
+- It caused a bounce (QA or Architect failure directly attributable to the lesson's root cause), OR
+- It describes a cross-cutting concern (UI consistency, naming conventions, shared patterns) that will recur every sprint
+
+Accelerated candidates are flagged by `suggest_improvements.mjs` with impact level P1. The human still approves — the only difference is the 3-sprint waiting period is waived.
+
 ### Graduation Process
 
 1. `scripts/suggest_improvements.mjs` flags graduation candidates in improvement suggestions

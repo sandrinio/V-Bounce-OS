@@ -3,6 +3,91 @@
 This log tracks modifications to the core agentic framework (e.g., `brains/`, `skills/`). 
 Per **Rule 13: Framework Integrity**, anytime an entry is made here, all tool-specific brain files must be reviewed for consistency.
 
+## [2026-03-25] — Story Template Rewrite & Git Cleanup (v2.4.0)
+
+### Story Template Rewrite (Modified)
+- **Modified**: `templates/story.md` — 7 improvements:
+  1. Complexity legend moved to `<instructions>` block only (not repeated in output)
+  2. Single `complexity_label` frontmatter field (removed redundant `complexity`)
+  3. Flexible §1.1 format: user-facing stories use "As a {Persona}..." format; infrastructure stories can use direct problem statements
+  4. Added §1.3 Out of Scope section (prevents scope creep)
+  5. Generic §2.2 Verification Steps (removed UI bias — adapts to story type)
+  6. §3.4 API Contract reframed: documents existing contracts to comply with OR new contracts to create. Table format with Endpoint/Method/Auth/Request/Response
+  7. §4.2 Definition of Done trimmed from 11 to 6 items (removed duplicates of §4.1 and general best practices)
+
+### Git History Cleanup
+- **Modified**: `.gitignore` — added explicit exclusions for `product_plans/`, `vdocs/`, `.bounce/`, `/temporary/`
+- Git history rewritten via `filter-branch` to remove internal development artifacts from public repo
+
+### Manifest & Version
+- **Modified**: `MANIFEST.md` — updated story template Key Sections (added §1.3 Out of Scope), version 2.3.0→2.4.0
+- **Modified**: `package.json` — version bumped to 2.4.0
+- **Modified**: `CHANGELOG.md` — backfilled missing 2.2.0 and 2.3.0 entries, added 2.4.0
+
+---
+
+## [2026-03-24] — Post-Sprint Improvement Pipeline & Process Enhancements (v2.3.0)
+
+### Unconditional Improvement Suggestions (Modified)
+- **Modified**: `skills/agent-team/SKILL.md` Step 7.7 — Framework Self-Assessment now **always** runs `suggest_improvements.mjs`, not just conditionally on 2nd+ sprint or blocker findings. First sprints generate the most friction.
+- **Key change**: Team Lead must **verbally present** P0/P1 suggestions to the user in plain language, not just embed them in the sprint report. Lower-priority items referenced in `.bounce/improvement-suggestions.md`.
+
+### User Walkthrough Phase (New)
+- **Modified**: `skills/agent-team/SKILL.md` — added **Step 5.7: User Walkthrough** between story merges and Sprint Integration Audit. User tests the running app; feedback tracked as "Review Feedback" (no Correction Tax) or "Bug" (counts as Bug Fix Tax). Gives post-delivery feedback a proper home instead of ad-hoc post-sprint changes.
+
+### Sprint Context Template (New)
+- **Added**: `templates/sprint_context.md` — shared context file for all agents in a sprint. Contains design tokens, UI conventions, shared patterns, locked dependencies, active lessons, sprint-specific rules. Created at Step 0.7 (Sprint Setup), included in every agent task file. Reduces divergence between parallel agents.
+- **Modified**: `skills/agent-team/SKILL.md` Step 0 — added Step 0.7 to create sprint context file. Step 1 now includes sprint context in agent task files.
+
+### Correction Tax Split (Modified)
+- **Modified**: `templates/sprint_report.md` — Correction Tax now split into two sub-categories:
+  - **Bug Fix Tax**: Quality failures that agents should have caught. Triggers threshold alerts.
+  - **Enhancement Tax**: Healthy iteration from user feedback. Does NOT trigger alerts.
+- Story Results table now includes "Tax Type" column (Bug Fix / Enhancement / Mixed).
+
+### Quality Gates in Story Template (Modified)
+- **Modified**: `templates/story.md` — §4 renamed from "Definition of Done" to "Quality Gates". Added §4.1 "Minimum Test Expectations" table (unit, component, E2E, integration counts defined during planning). §4.2 is the existing Definition of Done checklist, now includes sprint context consultation.
+
+### Accelerated Lesson Graduation (Modified)
+- **Modified**: `skills/lesson/SKILL.md` — added accelerated graduation path. Lessons can graduate after 1 sprint (instead of 3) when: affected 5+ files, caused a bounce, or describe cross-cutting concerns. Flagged by `suggest_improvements.mjs` at P1.
+
+### QA Runtime Verification (Modified)
+- **Modified**: `brains/claude-agents/qa.md` — added "Runtime Verification" step between test execution and spec fidelity check. QA starts the dev server, verifies no white screens or startup crashes, clicks through main flows. Smoke test gate for runtime health.
+
+### Token Tracking Enforcement (Modified)
+- **Modified**: All 5 subagent configs (`developer.md`, `qa.md`, `architect.md`, `devops.md`, `scribe.md`):
+  - Promoted token tracking from a soft inline instruction in the report template to a **mandatory pre-report section** ("Before Writing Your Report (Mandatory)").
+  - Removed the old `**Token Tracking**:` block from the report body — instructions now live in their own section with explicit "Do NOT skip" language.
+  - Added warning: "Reports with `0/0/0` tokens and no failure explanation will be flagged by the Team Lead."
+  - Developer agent: added "Token tracking completed" to the Status checklist.
+
+### Manifest & Version
+- **Modified**: `MANIFEST.md` — added sprint_context.md to Template Registry, Step 5.7 to Process Flow, updated Phase 4 to show unconditional improvement pipeline, template count 12→13, total ~173→~174. Version 2.2.1→2.3.0.
+- **Modified**: `package.json` — version bumped to 2.3.0.
+
+---
+
+## [2026-03-23] — Token Tracking Reliability Fixes
+
+### Script: Worktree-Aware Session Discovery (Fixed)
+- **Modified**: `scripts/count_tokens.mjs` — `findProjectDir()` now falls back to `git rev-parse --git-common-dir` when CWD walk-up fails. Fixes agents in git worktrees unable to find their Claude Code session JSONL files.
+- **Refactored**: Extracted `tryProjectDir()` helper from `findProjectDir()` to reduce duplication.
+
+### Agent Reports: Input/Output Token Split (Modified)
+- **Modified**: All 5 subagent configs (`developer.md`, `qa.md`, `architect.md`, `devops.md`, `scribe.md`):
+  - YAML frontmatter changed from `tokens_used: {number}` to `input_tokens: {number}`, `output_tokens: {number}`, `total_tokens: {number}`.
+  - Token Tracking instructions now include fallback: if `count_tokens.mjs` not found in worktree, try `$(git rev-parse --show-toplevel)/scripts/count_tokens.mjs`.
+  - If both fail, agents set all token fields to `0` and note the failure in Process Feedback.
+
+### Sprint Consolidation: Token Aggregation Improvements (Modified)
+- **Modified**: `skills/agent-team/SKILL.md` Step 7 — Team Lead now:
+  - Sums `input_tokens`, `output_tokens`, and `total_tokens` separately from agent reports.
+  - Uses task notification `total_tokens` as authoritative fallback when script-based totals are `0` or diverge >20%.
+  - Cross-references three data sources: agent report YAML, task notifications, and `vbounce tokens --sprint` output.
+- **Modified**: `templates/sprint_report.md` — YAML frontmatter now includes `total_input_tokens` and `total_output_tokens` alongside `total_tokens_used`.
+
+---
+
 ## [2026-03-23] — Token Tracking: Per-Agent, Per-Story, Per-Sprint
 
 ### Token Tracking Script (New)

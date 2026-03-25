@@ -1,17 +1,31 @@
 <instructions>
 FOLLOW THIS EXACT STRUCTURE. Output sections in order 1-4.
 
-1. **YAML Frontmatter**: Story ID, Parent Epic, Status, Ambiguity, Context Source, Actor, Complexity, Complexity Label
-2. **§1 The Spec**: User Story (As a... I want... So that...) + Detailed Requirements
-3. **§2 The Truth**: Gherkin acceptance criteria + manual verification steps
+1. **YAML Frontmatter**: Story ID, Parent Epic, Status, Ambiguity, Context Source, Actor, Complexity Label
+2. **§1 The Spec**: Problem Statement or User Story + Detailed Requirements + Out of Scope
+3. **§2 The Truth**: Gherkin acceptance criteria + verification steps
 4. **§3 Implementation Guide**: Files to modify, technical logic, API contract
-5. **§4 Definition of Done**: Checklist (compiles, tests pass, linting, docs)
+5. **§4 Quality Gates**: Minimum test expectations + Definition of Done checklist
 6. **Token Usage**: Table auto-populated by agents — each agent appends their row via `count_tokens.mjs --self --append`
 
 Ambiguity Score:
 - 🔴 High: Requirements unclear
 - 🟡 Medium: Logic clear, files TBD
 - 🟢 Low: Ready for coding
+
+Complexity Labels:
+- **L1**: Trivial — Single file, <1hr vibe time, known pattern
+- **L2**: Standard — 2-3 files, known pattern, ~2-4hr vibe time *(default)*
+- **L3**: Complex — Cross-cutting, spike may be needed, ~1-2 days
+- **L4**: Uncertain — Requires Probing/Spiking before Bounce, >2 days
+
+Output the complexity as a single line: **Complexity: L{N}** — {brief description from above}. Do NOT output the full legend.
+
+§1.1 Format:
+- For user-facing stories, use: "As a {Persona}, I want to {Action}, So that {Benefit}."
+- For infrastructure/framework stories, a direct problem statement is acceptable: "This story {does X} because {reason}."
+
+§3.4 API Contract: Document EXISTING API contracts the implementation must comply with (current request/response shapes, auth requirements, rate limits). If this story creates a NEW API, describe the required contract. Remove this section entirely if no API changes.
 
 Output location (Draft/Refinement): `product_plans/backlog/EPIC-{NNN}_{epic_name}/STORY-{EpicID}-{StoryID}-{StoryName}.md`
 
@@ -49,20 +63,12 @@ status: "Draft / Refinement / Probing/Spiking / Ready to Bounce / Bouncing / QA 
 ambiguity: "🔴 High / 🟡 Medium / 🟢 Low"
 context_source: "Epic §{section} / Codebase / User Input"
 actor: "{Persona Name}"
-complexity: "Small (1 file) / Medium (2-3 files) / Large (Refactor needed)"
 complexity_label: "L1 / L2 / L3 / L4 (default: L2)"
 ---
 
 # STORY-{EpicID}-{StoryID}: {Story Name}
 
-### Complexity Labels (Sprint Planning)
-
-- **L1**: Trivial — Single file, <1hr vibe time, known pattern
-- **L2**: Standard — 2-3 files, known pattern, ~2-4hr vibe time *(default)*
-- **L3**: Complex — Cross-cutting, spike may be needed, ~1-2 days
-- **L4**: Uncertain — Requires Probing/Spiking before Bounce, >2 days
-
-This story is labeled: **{L1/L2/L3/L4}**
+**Complexity: {L1/L2/L3/L4}** — {brief description}
 
 ---
 
@@ -76,9 +82,13 @@ This story is labeled: **{L1/L2/L3/L4}**
 > So that **{Benefit}**.
 
 ### 1.2 Detailed Requirements
-- **Requirement 1**: {Specific behavior, e.g., "The button must be disabled until..."}
-- **Requirement 2**: {Specific data, e.g., "The field accepts only valid UUIDs."}
-- **Requirement 3**: {UI state, e.g., "Show a spinner while loading."}
+- **Requirement 1**: {Specific behavior}
+- **Requirement 2**: {Specific data or constraint}
+- **Requirement 3**: {Expected state or outcome}
+
+### 1.3 Out of Scope
+- {What this story explicitly does NOT do}
+- {Deferred to STORY-XXX or future work}
 
 ---
 
@@ -102,9 +112,9 @@ Feature: {Story Name}
     Then {error message}
 ```
 
-### 2.2 Verification Steps (Manual/Mob)
-- [ ] Verify visual alignment with Design System.
-- [ ] Check mobile responsiveness.
+### 2.2 Verification Steps (Manual)
+- [ ] {Story-specific manual checks — adapt to story type}
+- [ ] {e.g., "Verify API returns 200 for valid input" or "Verify UI renders correctly on mobile"}
 
 ---
 
@@ -141,35 +151,38 @@ Feature: {Story Name}
 - {Describe state management, e.g., "Store the result in the global Zustand store."}
 
 ### 3.4 API Contract (If applicable)
-```json
-// Expected Request
-POST /api/resource
-{
-  "id": "string",
-  "value": number
-}
+> Document existing API contracts the implementation must comply with.
+> If this story creates a new API, describe the required contract.
+> Remove this section if no API changes.
 
-// Expected Response
-200 OK
-{
-  "id": "string",
-  "status": "created"
-}
-```
+| Endpoint | Method | Auth | Request Shape | Response Shape |
+|----------|--------|------|---------------|----------------|
+| {`/api/resource`} | {GET/POST} | {Bearer/None} | {`{ id: string }`} | {`{ status: string }`} |
 
 ---
 
-## 4. Definition of Done (The Gate)
-- [ ] Environment prerequisites (§3.0) verified before starting.
-- [ ] Code compiles without errors.
-- [ ] Unit tests were written FIRST (Red), and now pass (Green).
-- [ ] E2E/acceptance tests cover all Gherkin scenarios from §2.1 and pass.
-- [ ] All Acceptance Criteria (§2.1) pass.
-- [ ] Linting rules passed.
-- [ ] LESSONS.md consulted before implementation.
+## 4. Quality Gates
+
+### 4.1 Minimum Test Expectations
+> Defined during sprint planning. Sets the minimum test bar for this story. QA validates against these.
+
+| Test Type | Minimum Count | Notes |
+|-----------|--------------|-------|
+| Unit tests | {N} | {e.g., "1 per exported function"} |
+| Component tests | {N} | {e.g., "render, interaction, edge case" — for UI stories} |
+| E2E / acceptance tests | {N} | {e.g., "1 per Gherkin scenario in §2.1"} |
+| Integration tests | {N} | {e.g., "1 per API endpoint" — for backend stories} |
+
+> Guidelines: L1 stories ≥2 tests. L2 stories ≥5 tests. L3/L4 stories: planner defines based on scope.
+> If "N/A" for a test type, write "0 — N/A (no {type} in scope)".
+
+### 4.2 Definition of Done (The Gate)
+- [ ] Tests written FIRST (Red → Green → Refactor). All Gherkin scenarios from §2.1 covered.
+- [ ] Minimum test expectations (§4.1) met.
+- [ ] LESSONS.md + Sprint Context consulted before implementation.
 - [ ] No violations of Roadmap ADRs.
-- [ ] Documentation (API/Tech Stack) updated.
-- [ ] **Framework Integrity**: If `brains/` or `skills/` were modified, log to `brains/CHANGELOG.md`.
+- [ ] Environment prerequisites (§3.0) verified before starting.
+- [ ] **Framework Integrity**: If `brains/`, `skills/`, `templates/`, or `scripts/` were modified, log to `brains/CHANGELOG.md`.
 
 ---
 

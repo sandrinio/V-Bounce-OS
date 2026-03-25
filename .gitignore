@@ -1,17 +1,28 @@
 .DS_Store
 node_modules/
+*.log
 
-# V-Bounce local state
-.worktrees/
+# Environment
+.env
+.env.local
+
+# IDE
 .claude/
 .gemini/
+.vscode/
+.idea/
 
-# AI/developer working artifacts (never commit)
+# Git worktrees (development only)
+.worktrees/
+
+# V-Bounce local development (NEVER ship to npm)
+# These are internal team development artifacts
+product_plans/
+vdocs/
+.bounce/
 /temporary/
+
+# Development session files
+LAST_SESSION.md
 MANIFEST.md
 IMPROVEMENT_PLAN.md
-
-.env
-*.log
-.DS_Store
-LAST_SESSION.md

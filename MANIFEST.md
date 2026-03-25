@@ -4,8 +4,8 @@
 > Any modification to `brains/`, `skills/`, `templates/`, or `scripts/` MUST also update this file.
 > Run `vbounce doctor` to validate file existence against this manifest.
 
-**Version:** 2.2.1
-**Last updated:** 2026-03-23
+**Version:** 2.4.0
+**Last updated:** 2026-03-25
 
 ---
 
@@ -35,6 +35,7 @@ Phase 3: THE BOUNCE (Subagent orchestration)
   ├─ Step 4: Architect Pass (pre-gate scan + audit)
   ├─ Step 5: DevOps Merge
   ├─ Step 5.5: Immediate Lesson Recording
+  ├─ Step 5.7: User Walkthrough (Post-Delivery Review)
   ├─ Step 6: Sprint Integration Audit
   ├─ Step 7: Sprint Consolidation
   ├─ Escalation Recovery: 3+ bounces → present options → human decides
@@ -44,7 +45,7 @@ Phase 4: REVIEW
   ├─ Sprint Report → Human review
   ├─ Delivery Plan updated (boundary only)
   ├─ Scribe generates/updates product docs
-  └─ Self-Improvement Pipeline: trends → improve → suggest → human approves
+  └─ Self-Improvement Pipeline (UNCONDITIONAL): trends → suggest → verbally present P0/P1 → human approves → improve
 ```
 
 ---
@@ -59,7 +60,7 @@ Phase 4: REVIEW
 | `OVERVIEW.md` | System overview with diagrams — phases, agents, bounce loop, git branching |
 | `CHANGELOG.md` | Version history (Keep a Changelog format) |
 | `MANIFEST.md` | **This file** — complete framework map |
-| `package.json` | NPM package definition (v2.2.x), CLI entry point, dependencies |
+| `package.json` | NPM package definition (v2.4.x), CLI entry point, dependencies |
 | `package-lock.json` | NPM dependency lock file |
 | `vbounce.config.json` | Framework config — max diff lines, context budget, tool selection |
 | `.gitignore` | Git ignore rules |
@@ -111,11 +112,12 @@ Templates are **immutable during execution**. Located in `templates/`.
 | `charter.md` | 1 | `product_plans/strategy/{project}_charter.md` | §1 Identity, §2 Design Principles, §3 Architecture, §4 Tech Stack, §5 Key Workflows, §6 Constraints |
 | `roadmap.md` | 2 | `product_plans/strategy/{project}_roadmap.md` | §1 Strategic Context, §2 Release Plan, §3 ADRs, §4 Dependencies, §5 Strategic Constraints |
 | `epic.md` | 3 | `product_plans/backlog/EPIC-{NNN}_{name}/EPIC-{NNN}_{name}.md` | §1 Problem & Value, §2 Scope Boundaries, §3 Context, §4 Technical Context (codebase research required), §5 Decomposition Guidance, §6 Risks, §7 Acceptance Criteria, §8 Open Questions, §9 Artifact Links |
-| `story.md` | 4 | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{Name}.md` | §1 The Spec, §2 The Truth (Gherkin), §3 Implementation Guide (§3.0 Env Prerequisites, §3.1 Tests, §3.2 Context, §3.3 Logic, §3.4 API), §4 Definition of Done |
+| `story.md` | 4 | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{Name}.md` | §1 The Spec (§1.1 User Story, §1.2 Detailed Requirements, §1.3 Out of Scope), §2 The Truth (Gherkin + Verification), §3 Implementation Guide (§3.0 Env Prerequisites, §3.1 Tests, §3.2 Context, §3.3 Logic, §3.4 API Contract), §4 Quality Gates (§4.1 Min Test Expectations, §4.2 Definition of Done) |
 | `spike.md` | 3.5 | `product_plans/backlog/EPIC-{NNN}_{name}/SPIKE-{EpicID}-{NNN}-{topic}.md` | §1 Question, §2 Context, §3 Approach, §4 Findings, §5 Decision, §6 Residual Risk, §7 Affected Documents |
 | `delivery_plan.md` | 4.5 | `product_plans/D-{NN}_{release}/D-{NN}_DELIVERY_PLAN.md` | §1 Project Window, §2 Epics, §3 Backlog, §4 Delivery Log, §8 Applied Hotfixes |
 | `sprint.md` | 4.5 | `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` | §0 Sprint Readiness Gate (mandatory confirmation), §1 Active Scope + Context Pack, §2 Execution Strategy (Shared File Map, Dependency Chain, Execution Mode, Risk Flags), §3 Open Questions, §4 Execution Log (with test counts) |
-| `sprint_report.md` | Output | `.bounce/sprint-report-S-{XX}.md` | §1 What Was Delivered, §2 Story Results, §3 Execution Metrics (incl. test counts), §4 Lessons Learned (review, not gate), §5 Retrospective + Framework Self-Assessment |
+| `sprint_report.md` | Output | `.bounce/sprint-report-S-{XX}.md` | §1 What Was Delivered, §2 Story Results (with Tax Type), §3 Execution Metrics (Bug Fix Tax / Enhancement Tax split), §4 Lessons Learned (review, not gate), §5 Retrospective + Framework Self-Assessment |
+| `sprint_context.md` | Sprint | `.bounce/sprint-context-S-{XX}.md` | Design tokens, shared patterns, locked deps, active lessons, sprint-specific rules |
 | `risk_registry.md` | Cross-cutting | `product_plans/strategy/RISK_REGISTRY.md` | §1 Active Risks, §2 Resolved Risks, §3 Analysis Log |
 | `hotfix.md` | Bypass | `product_plans/hotfixes/HOTFIX-{Date}-{Name}.md` | Problem, Fix, Files Affected, Verification |
 | `bug.md` | Mid-sprint | `product_plans/sprints/sprint-{XX}/BUG-{Date}-{Name}.md` | §1 The Bug (repro steps), §2 Impact, §3 Fix Approach, §4 Verification |
@@ -370,11 +372,11 @@ These directories are created during project execution, not part of the framewor
 |----------|-------|
 | Root files (core) | 8 |
 | Brain files | 15 |
-| Templates | 12 |
+| Templates | 13 |
 | Skills (SKILL.md + references) | 26 |
 | React rules | 57 |
 | Scripts | 27 |
 | Diagrams | 6 |
 | Docs + Visual Assets | 6 + ~15 icons/images |
 | CLI | 1 |
-| **Total** | **~173** |
+| **Total** | **~174** |

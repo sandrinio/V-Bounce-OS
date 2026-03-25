@@ -25,6 +25,8 @@ sprint_id: "S-{XX}"
 sprint_goal: "{One-sentence North Star}"
 dates: "{MM/DD - MM/DD}"
 status: "Achieved / Partially Achieved / Failed"
+total_input_tokens: {N}
+total_output_tokens: {N}
 total_tokens_used: {N}
 delivery_ref: "D-{NN}_{release_name}"
 delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
@@ -66,9 +68,9 @@ delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 
 ## 2. Story Results
 
-| Story | Epic | Label | Final State | Bounces (QA) | Bounces (Arch) | Correction Tax |
-|-------|------|-------|-------------|--------------|----------------|----------------|
-| STORY-{ID}-{story_name} | EPIC-{ID} | L{N} | Done / Escalated / Parking Lot | {N} | {N} | {X}% |
+| Story | Epic | Label | Final State | Bounces (QA) | Bounces (Arch) | Correction Tax | Tax Type |
+|-------|------|-------|-------------|--------------|----------------|----------------|----------|
+| STORY-{ID}-{story_name} | EPIC-{ID} | L{N} | Done / Escalated / Parking Lot | {N} | {N} | {X}% | Bug Fix / Enhancement / Mixed |
 
 ### Story Highlights
 - **STORY-{ID}-{story_name}**: {1-sentence summary of what was built and notable decisions}
@@ -111,6 +113,8 @@ delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 | **Total Architect Bounces** | {N} | across all stories |
 | **Bounce Ratio** | {X}% | (total bounces / total stories) |
 | **Average Correction Tax** | {X}% | 🟢 0-5% · 🟡 6-15% · 🔴 16%+ requires process review |
+| **— Bug Fix Tax** | {X}% | Quality failures — bugs that should have been caught by agents |
+| **— Enhancement Tax** | {X}% | Healthy iteration — user feedback, UX tweaks, spec refinements |
 | **First-Pass Success Rate** | {X}% | stories that passed QA on first try |
 | **Total Tests Written** | {N} | across all stories (from Dev report `tests_written`) |
 | **Tests per Story (avg)** | {N} | |
@@ -124,8 +128,9 @@ delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 
 ### Threshold Alerts
 > Flag any metrics that crossed warning or critical thresholds. If none, write "No threshold alerts."
+> **Only Bug Fix Tax triggers threshold alerts.** Enhancement Tax (user-driven iteration) is healthy and expected.
 
-- {e.g., "STORY-001-05-test_arch: Correction Tax 10% (🟡) — root cause: test architecture rework due to ESM timer conflict"}
+- {e.g., "STORY-001-05-test_arch: Bug Fix Tax 10% (🟡) — root cause: test architecture rework due to ESM timer conflict"}
 - {e.g., "STORY-002-03-edge_cases: 2 QA bounces — spec ambiguity in edge case handling"}
 
 ---

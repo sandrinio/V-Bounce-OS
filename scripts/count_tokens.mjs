@@ -19,6 +19,7 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import { execSync } from 'child_process';
 
 const args = process.argv.slice(2);
 let sessionId = null;
@@ -87,29 +88,47 @@ function pathToProjectDir(dirPath) {
   return dirPath.replace(/\//g, '-').replace(/^-/, '-');
 }
 
+function tryProjectDir(dirPath) {
+  const candidate = pathToProjectDir(dirPath);
+  const candidatePath = path.join(CLAUDE_DIR, candidate);
+  if (fs.existsSync(candidatePath)) return candidatePath;
+  // Claude Code may normalize special chars (underscores → dashes)
+  const normalized = candidate.replace(/_/g, '-');
+  const normalizedPath = path.join(CLAUDE_DIR, normalized);
+  if (normalized !== candidate && fs.existsSync(normalizedPath)) return normalizedPath;
+  return null;
+}
+
 function findProjectDir() {
   if (!fs.existsSync(CLAUDE_DIR)) return null;
 
-  // Get all project dirs on disk for fuzzy matching
-  const projectDirs = fs.readdirSync(CLAUDE_DIR).filter(d =>
-    fs.statSync(path.join(CLAUDE_DIR, d)).isDirectory() || fs.existsSync(path.join(CLAUDE_DIR, d))
-  );
-
-  // Try exact and parent directory matches
+  // Try exact and parent directory matches (walks up from CWD)
   let dir = CWD;
   while (dir !== path.dirname(dir)) {
-    const candidate = pathToProjectDir(dir);
-    const candidatePath = path.join(CLAUDE_DIR, candidate);
-    if (fs.existsSync(candidatePath)) {
-      return candidatePath;
-    }
-    // Claude Code may normalize special chars (underscores → dashes)
-    const normalized = candidate.replace(/_/g, '-');
-    const normalizedPath = path.join(CLAUDE_DIR, normalized);
-    if (normalized !== candidate && fs.existsSync(normalizedPath)) {
-      return normalizedPath;
-    }
+    const found = tryProjectDir(dir);
+    if (found) return found;
     dir = path.dirname(dir);
+  }
+
+  // If CWD walk-up failed, try git-based resolution for worktrees.
+  // When running inside a git worktree, CWD may not be a child of the
+  // main repo directory.  `git rev-parse --git-common-dir` returns the
+  // shared .git directory which lives in the main repo root.
+  try {
+    const gitCommonDir = execSync('git rev-parse --git-common-dir', {
+      encoding: 'utf8',
+      cwd: CWD,
+      stdio: ['pipe', 'pipe', 'pipe'],
+    }).trim();
+    const resolvedGitDir = path.resolve(CWD, gitCommonDir);
+    // The main repo root is the parent of the .git/ directory
+    const mainRepoRoot = resolvedGitDir.endsWith('.git')
+      ? path.dirname(resolvedGitDir)
+      : path.dirname(resolvedGitDir.replace(/\/\.git\/.*$/, '/.git'));
+    const found = tryProjectDir(mainRepoRoot);
+    if (found) return found;
+  } catch {
+    // Not a git repo or git not available — fall through
   }
 
   return null;

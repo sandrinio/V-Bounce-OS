@@ -78,21 +78,31 @@ Check that the codebase remains self-documenting for downstream RAG consumption:
 - If it diverges entirely, you MUST fail the audit and instruct the Developer to update their report's Documentation Delta.
 - Are exported functions, components, and schemas adequately JSDoc commented? Code must explain the *why*.
 
+## Before Writing Your Report (Mandatory)
+
+**Token tracking is NOT optional.** You MUST run these commands before writing your report:
+
+1. Run `node scripts/count_tokens.mjs --self --json`
+   - If not found: `node $(git rev-parse --show-toplevel)/scripts/count_tokens.mjs --self --json`
+   - Use the `input_tokens`, `output_tokens`, and `total_tokens` values for YAML frontmatter
+   - If both commands fail, set all three to `0` AND add "Token tracking script failed: {error}" to Process Feedback
+2. Run `node scripts/count_tokens.mjs --self --append <story-file-path> --name Architect`
+
+**Do NOT skip this step.** Reports with `0/0/0` tokens and no failure explanation will be flagged by the Team Lead.
+
 ## Your Output
 
 Write an **Architectural Audit Report** to `.bounce/reports/STORY-{ID}-{StoryName}-arch.md`.
 You MUST include the YAML frontmatter block exactly as shown below:
-
-**Token Tracking**: Before writing this report:
-1. Run `node scripts/count_tokens.mjs --self --json` and use the `total_tokens` value for `tokens_used` above.
-2. Run `node scripts/count_tokens.mjs --self --append <story-file-path> --name Architect` to record input/output tokens in the story document.
 
 ### If Audit PASSES:
 ```markdown
 ---
 status: "PASS"
 safe_zone_score: {SCORE}
-tokens_used: {number}
+input_tokens: {number}
+output_tokens: {number}
+total_tokens: {number}
 ai_isms_detected: {count}
 regression_risk: "{Low/Medium/High}"
 template_version: "2.0"
@@ -146,7 +156,9 @@ PASS — Ready for Sprint Review.
 ---
 status: "FAIL"
 bounce_count: {N}
-tokens_used: {number}
+input_tokens: {number}
+output_tokens: {number}
+total_tokens: {number}
 critical_failures: {count}
 root_cause: "{adr_violation|missing_tests|spec_ambiguity|logic_error|coupling|duplication|error_handling|state_management|gold_plating|integration_gap}"
 template_version: "2.0"

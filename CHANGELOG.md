@@ -5,6 +5,36 @@ All notable changes to the V-Bounce Engine framework and its CLI installer will 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2026-03-25
+### Changed
+- **Story template rewritten** — 7 improvements: added §1.3 Out of Scope section, complexity legend moved to instructions-only (not output), single `complexity_label` frontmatter field, flexible user story format (infrastructure stories can use direct problem statements), generic §2.2 verification steps (removed UI bias), §3.4 API Contract reframed as context with table format, §4.2 Definition of Done trimmed from 11 to 6 items.
+- **Refinement Gate designed** — EPIC-001 story (STORY-001-06) defines a mandatory Q&A loop for Charter, Epic, and Roadmap templates: surface open questions with options + suggestions, surface edge cases with mitigations, lock decisions before proceeding to decomposition.
+- **Git history cleaned** — Removed internal development artifacts (`product_plans/`, `.bounce/`) from git history. Public repo now contains only framework files shipped via npm.
+- **`.gitignore` updated** — Explicitly excludes `product_plans/`, `vdocs/`, `.bounce/`, `/temporary/` from version control.
+
+## [2.3.0] - 2026-03-24
+### Added
+- **Sprint Context Template** — `templates/sprint_context.md` for shared design tokens, UI conventions, locked dependencies, and active lessons across all agents in a sprint.
+- **User Walkthrough Phase** — Step 5.7 between story merges and Sprint Integration Audit. User tests the running app; feedback categorized as Review Feedback or Bug.
+
+### Changed
+- **Unconditional Improvement Pipeline** — `suggest_improvements.mjs` now always runs (not just on 2nd+ sprint). Team Lead verbally presents P0/P1 suggestions.
+- **Correction Tax Split** — Sprint Report now separates Bug Fix Tax (quality failures) from Enhancement Tax (healthy iteration).
+- **Quality Gates in Story Template** — §4 renamed, added §4.1 Minimum Test Expectations table.
+- **Accelerated Lesson Graduation** — Lessons can graduate after 1 sprint when high-impact (5+ files, caused a bounce, cross-cutting).
+- **QA Runtime Verification** — QA agent now verifies no white screens or startup crashes before spec fidelity check.
+- **Token Tracking Enforcement** — All 5 subagent configs promote token tracking to mandatory pre-report section.
+
+## [2.2.0] - 2026-03-23
+### Added
+- **Token Tracking Script** — `scripts/count_tokens.mjs` parses Claude Code session JSONL for exact per-agent, per-story, per-sprint token counts. Modes: `--self`, `--all`, `--sprint`, `--json`.
+- **CLI: `vbounce tokens`** — All token tracking modes available via CLI.
+
+### Changed
+- **Worktree-aware session discovery** — `count_tokens.mjs` falls back to `git rev-parse --git-common-dir` for agents in git worktrees.
+- **Input/Output token split** — Agent report YAML now uses `input_tokens`, `output_tokens`, `total_tokens` (was single `tokens_used`).
+- **Sprint token aggregation** — Team Lead cross-references agent YAML, task notifications, and `vbounce tokens --sprint` output.
+
 ## [2.1.0] - 2026-03-22
 ### Added
 - **Product Graph** — `scripts/product_graph.mjs` scans product_plans/ and generates `.bounce/product-graph.json` with document nodes and dependency edges. `scripts/product_impact.mjs` runs BFS traversal for "what's affected by X?" queries. New `skills/product-graph/SKILL.md` with three-tier loading protocol.

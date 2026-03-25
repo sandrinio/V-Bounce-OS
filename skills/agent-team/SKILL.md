@@ -212,7 +212,13 @@ Examples:
    - Verify `.gitignore` includes `.worktrees/`
    If any check fails, fix before spawning parallel stories. Intermittent test failures from worktree cross-contamination erode trust in the test suite fast.
 
-7. Update sprint-{XX}.md: Status → "Active"
+7. **Sprint Context File** — create `.bounce/sprint-context-S-{XX}.md` using the sprint context template (`templates/sprint_context.md`):
+   - Populate with cross-cutting rules that ALL agents must follow during this sprint
+   - Include: design tokens, UI conventions, shared patterns, locked dependency versions, any active LESSONS.md rules that apply broadly
+   - This file is included in EVERY agent task file for this sprint
+   - Update it when mid-sprint decisions affect all stories (e.g., "we decided to use X pattern everywhere")
+
+8. Update sprint-{XX}.md: Status → "Active"
 ```
 
 **Note:** Risk assessment, dependency checks, scope selection, and execution mode decisions all happen during Sprint Planning (Phase 2), not here. Step 0 executes the confirmed plan.
@@ -243,6 +249,7 @@ mkdir -p .worktrees/STORY-{ID}-{StoryName}/.bounce/{tasks,reports}
 - Check RISK_REGISTRY.md for risks tagged to this story or its Epic
 - If `vdocs/_manifest.json` exists, identify docs relevant to this story's scope (match against manifest descriptions/tags). Include relevant doc references in the task file so the Developer has product context.
 - **Adjacent implementation check:** For stories that modify or extend modules touched by earlier stories in this sprint, identify existing implementations the Developer should reuse. Add to the task file: `"Reuse these existing modules: {list with file paths and brief description of what each provides}"`. This prevents agents from independently re-implementing logic that already exists — a common source of duplication when stories run in parallel.
+- **Include Sprint Context:** Copy `.bounce/sprint-context-S-{XX}.md` into the task file or reference it. Every agent must read the sprint context before starting work.
 - Create task file in `.worktrees/STORY-{ID}-{StoryName}/.bounce/tasks/`
 - Update sprint-{XX}.md: V-Bounce State → "Bouncing"
 
@@ -343,6 +350,27 @@ After each story merge, before proceeding to the next story:
 4. Do NOT defer this to Step 7 — context decays fast
 ```
 
+### Step 5.7: User Walkthrough (Post-Delivery Review)
+After all stories are merged but BEFORE Sprint Integration Audit:
+```
+1. Present the user with a summary of what was built (from Dev reports)
+2. Ask the user to test the running app and provide feedback
+3. Track feedback as one of:
+   - "Review Feedback" — UI tweaks, copy changes, minor adjustments
+   - "Bug" — something broken that should have been caught
+4. Review Feedback items:
+   - Do NOT count toward Correction Tax — this is healthy iteration
+   - Create quick-fix tasks delegated to Developer on the sprint branch
+   - Each fix gets a mini Dev→QA cycle (no Architect pass needed)
+5. Bug items:
+   - Count toward Correction Tax as "Bug Fix" sub-category
+   - Route through normal bounce flow (Dev→QA→Arch if needed)
+6. Log all walkthrough items in sprint-{XX}.md §4 Execution Log with event type `UR` (User Review)
+7. When user confirms "looks good" or no more feedback → proceed to Step 6
+```
+
+This phase gives ad-hoc post-delivery feedback a proper home. Without it, users give feedback after sprint close, which gets tracked as correction tax and skews metrics.
+
 ### Step 6: Sprint Integration Audit
 After ALL stories are merged into `sprint/S-01`:
 ```
@@ -360,11 +388,17 @@ After ALL stories are merged into `sprint/S-01`:
 ### Step 7: Sprint Consolidation
 ```
 1. Read all archived reports in .bounce/archive/S-{XX}/
-2. **Sum the `tokens_used` field** from every agent report to calculate the sprint's total resource cost.
+2. **Aggregate token usage** from every agent report:
+   - Sum `input_tokens`, `output_tokens`, and `total_tokens` fields separately from all agent report YAML frontmatter.
+   - If an agent report has `total_tokens: 0` (script failed), use the task notification `total_tokens` from when that agent completed. Task notification totals are the authoritative LLM usage numbers. Note: task notifications only provide a single total — record it as `total_tokens` with input/output marked as "unknown".
+   - Cross-check: if `count_tokens.mjs` totals and task notification totals diverge by >20%, prefer task notification totals (they reflect actual API consumption).
+   - Also run `vbounce tokens --sprint S-{XX} --json` to get per-story aggregates from story document Token Usage tables as a third data source.
 3. Generate Sprint Report to .bounce/sprint-report-S-{XX}.md:
    - Ensure the Sprint Report starts with a YAML frontmatter block containing:
      ```yaml
      ---
+     total_input_tokens: {sum of input tokens}
+     total_output_tokens: {sum of output tokens}
      total_tokens_used: {sum of all agent tokens}
      ---
      ```
@@ -389,9 +423,12 @@ After ALL stories are merged into `sprint/S-01`:
 7. **Framework Self-Assessment** (aggregated from agent reports):
    - Collect all `## Process Feedback` sections from agent reports in `.bounce/archive/S-{XX}/`
    - Populate §5 Framework Self-Assessment tables in the Sprint Report by category
-   - If this is the 2nd or 3rd consecutive sprint, or if any Blocker-severity findings exist:
-     - Offer to run the `improve` skill to propose framework changes
-     - If user approves → read `skills/improve/SKILL.md` and execute the improvement process
+   - **Always run** `suggest_improvements.mjs` — every sprint, unconditionally. First sprints generate the most friction.
+   - **Verbally present** the top improvement suggestions to the user. Do NOT just embed them in the report — tell the user directly:
+     - Summarize each P0/P1 suggestion in plain language (what's broken, why it matters, what to change)
+     - For P2/P3 suggestions, give a brief list and note they're in `.bounce/improvement-suggestions.md`
+     - Ask the user: *"Want me to run `/improve` to apply any of these?"*
+   - If user approves → read `skills/improve/SKILL.md` and execute the improvement process
 8. Product Documentation check (runs on `main` after sprint merge):
    a. **Staleness Detection** — run `./scripts/vdoc_staleness.mjs S-{XX}`
       - Cross-references all Dev Reports' `files_modified` against manifest key files

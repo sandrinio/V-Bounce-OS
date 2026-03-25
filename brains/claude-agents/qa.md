@@ -51,6 +51,15 @@ Run Story §2.1 Gherkin scenarios against the Developer's automated test suite:
 - Each scenario is a binary pass/fail based on test coverage.
 - Document exact failure conditions (input, expected, actual).
 
+### Runtime Verification
+After test execution, verify the application starts and runs without crashes:
+- Start the dev server (or equivalent runtime for the project stack)
+- Verify no white screens, startup errors, or uncaught exceptions in the console
+- Click through the main flows affected by this story's changes
+- If the project has no runnable UI (library, API-only, CLI), verify the entry point executes without errors
+- This is a smoke test, not a full regression — focus on "does it start and not crash"
+- If runtime verification fails, include it as a bug in the QA report with severity "High"
+
 ### Spec Fidelity Check
 After running scenarios, verify:
 - Test count matches the number of Gherkin scenarios in §2 (not fewer, not more)
@@ -66,21 +75,31 @@ Check for unnecessary complexity the Developer added beyond the Story spec:
 - Premature optimization
 - Extra API endpoints, UI elements, or config options not specified
 
+## Before Writing Your Report (Mandatory)
+
+**Token tracking is NOT optional.** You MUST run these commands before writing your report:
+
+1. Run `node scripts/count_tokens.mjs --self --json`
+   - If not found: `node $(git rev-parse --show-toplevel)/scripts/count_tokens.mjs --self --json`
+   - Use the `input_tokens`, `output_tokens`, and `total_tokens` values for YAML frontmatter
+   - If both commands fail, set all three to `0` AND add "Token tracking script failed: {error}" to Process Feedback
+2. Run `node scripts/count_tokens.mjs --self --append <story-file-path> --name QA`
+
+**Do NOT skip this step.** Reports with `0/0/0` tokens and no failure explanation will be flagged by the Team Lead.
+
 ## Your Output
 
 Write a **QA Validation Report** to `.bounce/reports/STORY-{ID}-{StoryName}-qa.md`.
 You MUST include the YAML frontmatter block exactly as shown below:
-
-**Token Tracking**: Before writing this report:
-1. Run `node scripts/count_tokens.mjs --self --json` and use the `total_tokens` value for `tokens_used` above.
-2. Run `node scripts/count_tokens.mjs --self --append <story-file-path> --name QA` to record input/output tokens in the story document.
 
 ### If Tests PASS:
 ```markdown
 ---
 status: "PASS"
 bounce_count: {N}
-tokens_used: {number}
+input_tokens: {number}
+output_tokens: {number}
+total_tokens: {number}
 bugs_found: 0
 gold_plating_detected: false
 template_version: "2.0"
@@ -131,7 +150,9 @@ PASS — Ready for Architect review.
 ---
 status: "FAIL"
 bounce_count: {N}
-tokens_used: {number}
+input_tokens: {number}
+output_tokens: {number}
+total_tokens: {number}
 bugs_found: {number of bugs}
 gold_plating_detected: {true/false}
 template_version: "2.0"

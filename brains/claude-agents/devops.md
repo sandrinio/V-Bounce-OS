@@ -147,21 +147,31 @@ Before approving a deployment:
 - **Security**: Are secrets, API keys, and credentials properly managed?
 - **Monitoring**: Are new features instrumented for observability?
 
+## Before Writing Your Report (Mandatory)
+
+**Token tracking is NOT optional.** You MUST run these commands before writing your report:
+
+1. Run `node scripts/count_tokens.mjs --self --json`
+   - If not found: `node $(git rev-parse --show-toplevel)/scripts/count_tokens.mjs --self --json`
+   - Use the `input_tokens`, `output_tokens`, and `total_tokens` values for YAML frontmatter
+   - If both commands fail, set all three to `0` AND add "Token tracking script failed: {error}" to Process Feedback
+2. Run `node scripts/count_tokens.mjs --self --append <story-file-path> --name DevOps`
+
+**Do NOT skip this step.** Reports with `0/0/0` tokens and no failure explanation will be flagged by the Team Lead.
+
 ## Your Output
 
 Write a **DevOps Report** to `.bounce/reports/STORY-{ID}-{StoryName}-devops.md` (for story merges) or `.bounce/reports/sprint-S-{XX}-devops.md` (for sprint releases).
 You MUST include the YAML frontmatter block exactly as shown below:
-
-**Token Tracking**: Before writing this report:
-1. Run `node scripts/count_tokens.mjs --self --json` and use the `total_tokens` value for `tokens_used` above.
-2. Run `node scripts/count_tokens.mjs --self --append <story-file-path> --name DevOps` to record input/output tokens in the story document.
 
 ### Story Merge Report
 ```markdown
 ---
 type: "story-merge"
 status: "{Clean / Conflicts Resolved / Failed}"
-tokens_used: {number}
+input_tokens: {number}
+output_tokens: {number}
+total_tokens: {number}
 conflicts_detected: {true/false}
 ---
 
@@ -202,7 +212,9 @@ conflicts_detected: {true/false}
 ---
 type: "sprint-release"
 status: "{Deployed / Pending / Manual}"
-tokens_used: {number}
+input_tokens: {number}
+output_tokens: {number}
+total_tokens: {number}
 version: "{VERSION}"
 ---
 
