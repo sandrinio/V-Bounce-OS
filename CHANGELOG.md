@@ -5,6 +5,13 @@ All notable changes to the V-Bounce Engine framework and its CLI installer will 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.2] - 2026-03-25
+### Fixed
+- **On-demand skill triggers** — CLAUDE.md used `/doc`, `/review`, `/improve` etc. with slash-prefix notation, causing Claude Code to misinterpret them as slash commands and invoke the Skill tool (which fails). Replaced with plain-text triggers and explicit "read the file" instructions.
+
+### Changed
+- **npm package renamed** — Published as `vbounce-engine` (was `@sandrinio/vbounce`). Install with `npx vbounce-engine install claude`. Old package deprecated with redirect.
+
 ## [2.5.1] - 2026-03-25
 ### Added
 - **Explorer Agent** — `brains/claude-agents/explorer.md` (Haiku model). Read-only research agent for Context Requests during planning and bounces. Was referenced in CLAUDE.md but never shipped in the engine package.

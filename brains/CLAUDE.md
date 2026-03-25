@@ -58,12 +58,12 @@ Determine which phase you're in from what the human is asking, then load the rig
 > - **Planning (Phase 1 & 2):** Load `@.vbounce/skills/doc-manager/SKILL.md` + `@.vbounce/skills/product-graph/SKILL.md`
 > - **Execution (Phase 3):** Load `@.vbounce/skills/agent-team/SKILL.md`
 
-> **On-demand skills:**
-> - `/doc` → `@.vbounce/skills/doc-manager/SKILL.md`
-> - `/review` → `@.vbounce/skills/vibe-code-review/SKILL.md` — code review
-> - `/write-skill` → `@.vbounce/skills/write-skill/SKILL.md` — skill authoring
-> - `/improve` → `@.vbounce/skills/improve/SKILL.md` — framework improvement
-> - `/react` → `@.vbounce/skills/react-best-practices/SKILL.md` — frontend patterns
+> **On-demand skills** (read the file directly when the user asks — these are NOT slash commands):
+> - "doc" → read `@.vbounce/skills/doc-manager/SKILL.md`
+> - "review" → read `@.vbounce/skills/vibe-code-review/SKILL.md` — code review
+> - "write-skill" → read `@.vbounce/skills/write-skill/SKILL.md` — skill authoring
+> - "improve" → read `@.vbounce/skills/improve/SKILL.md` — framework improvement
+> - "react" → read `@.vbounce/skills/react-best-practices/SKILL.md` — frontend patterns
 
 ## Subagents
 
