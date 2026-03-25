@@ -20,7 +20,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../..');
 
 const sprintId = process.argv[2];
 if (!sprintId || !/^S-\d{2}$/.test(sprintId)) {
@@ -399,7 +399,7 @@ function generateAutomationDetail(lesson) {
       };
     case 'agent_config':
       return {
-        action: 'Graduate to agent brain config (brains/claude-agents/*.md)',
+        action: 'Graduate to agent brain config (.claude/agents/*.md)',
         rationale: `Lesson has been active ${lesson.ageSprints}+ sprints — promote to permanent rule`,
         effort: 'Low',
       };

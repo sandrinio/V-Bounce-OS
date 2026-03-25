@@ -100,6 +100,7 @@ bounce_count: {N}
 input_tokens: {number}
 output_tokens: {number}
 total_tokens: {number}
+tokens_used: <int>
 bugs_found: 0
 gold_plating_detected: false
 template_version: "2.0"
@@ -153,6 +154,7 @@ bounce_count: {N}
 input_tokens: {number}
 output_tokens: {number}
 total_tokens: {number}
+tokens_used: <int>
 bugs_found: {number of bugs}
 gold_plating_detected: {true/false}
 template_version: "2.0"

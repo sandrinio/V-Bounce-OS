@@ -12,7 +12,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const AGENTS_DIR = path.join(process.cwd(), 'brains', 'claude-agents');
+const AGENTS_DIR = path.join(process.cwd(), '.claude', 'agents');
 
 // The exact substring signatures that MUST exist in the agent instructions
 // to ensure the LLM knows to output the correct YAML schema.
@@ -110,7 +110,7 @@ function main() {
     if (hasErrors) {
         console.error("❌ INTEGRITY CHECK FAILED.");
         console.error("Agent prompts have drifted from the validate_report.mjs schema.");
-        console.error("Please fix the agent templates in brains/claude-agents/ to restore pipeline integrity.");
+        console.error("Please fix the agent templates in .claude/agents/ to restore pipeline integrity.");
         process.exit(1);
     } else {
         console.log("✅ INTEGRITY CHECK PASSED.");

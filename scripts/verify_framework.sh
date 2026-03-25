@@ -5,7 +5,7 @@
 # Wrapper script to execute the Framework Integrity Check.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
-ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+ROOT_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
 cd "$ROOT_DIR" || exit 1
 

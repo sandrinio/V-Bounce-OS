@@ -11,7 +11,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../..');
 
 const checks = [];
 let issueCount = 0;
@@ -38,13 +38,13 @@ if (fs.existsSync(path.join(ROOT, 'LESSONS.md'))) {
 
 // Check templates
 const requiredTemplates = ['sprint.md', 'delivery_plan.md', 'sprint_report.md', 'story.md', 'epic.md', 'charter.md', 'roadmap.md', 'risk_registry.md'];
-const templatesDir = path.join(ROOT, 'templates');
+const templatesDir = path.join(ROOT, '.vbounce', 'templates');
 let templateCount = 0;
 for (const t of requiredTemplates) {
   if (fs.existsSync(path.join(templatesDir, t))) templateCount++;
-  else fail(`templates/${t} missing`, `Create from V-Bounce Engine template`);
+  else fail(`.vbounce/templates/${t} missing`, `Create from V-Bounce Engine template`);
 }
-if (templateCount === requiredTemplates.length) pass(`templates/ complete (${templateCount}/${requiredTemplates.length})`);
+if (templateCount === requiredTemplates.length) pass(`.vbounce/templates/ complete (${templateCount}/${requiredTemplates.length})`);
 
 // Check .bounce directory
 if (fs.existsSync(path.join(ROOT, '.vbounce'))) {
@@ -66,21 +66,21 @@ if (fs.existsSync(path.join(ROOT, '.vbounce'))) {
   warn('.vbounce/ directory missing — run: vbounce sprint init S-XX D-XX');
 }
 
-// Check brain files
+// Check brain files (deployed to project root)
 const brainFiles = [
-  ['brains/CLAUDE.md', 'Tier 1 (Claude Code)'],
-  ['brains/GEMINI.md', 'Tier 2 (Gemini CLI)'],
-  ['brains/AGENTS.md', 'Tier 2 (Codex CLI)'],
+  ['CLAUDE.md', 'claude', 'Tier 1 (Claude Code)'],
+  ['GEMINI.md', 'gemini', 'Tier 2 (Gemini CLI)'],
+  ['AGENTS.md', 'codex', 'Tier 2 (Codex CLI)'],
 ];
-for (const [f, tier] of brainFiles) {
+for (const [f, tool, tier] of brainFiles) {
   if (fs.existsSync(path.join(ROOT, f))) pass(`Brain file: ${f} (${tier})`);
-  else fail(`Brain file: ${f} missing`, `Run: vbounce init --tool ${f.includes('GEMINI') ? 'gemini' : f.includes('AGENTS') ? 'codex' : 'claude'}`);
+  else fail(`Brain file: ${f} missing`, `Run: vbounce init --tool ${tool}`);
 }
 
 // Check optional brain files
 const optionalBrains = [
-  ['brains/copilot/copilot-instructions.md', 'copilot'],
-  ['brains/windsurf/.windsurfrules', 'windsurf'],
+  ['.github/copilot-instructions.md', 'copilot'],
+  ['.windsurfrules', 'windsurf'],
 ];
 for (const [f, tool] of optionalBrains) {
   if (fs.existsSync(path.join(ROOT, f))) pass(`Brain file: ${f} (Tier 4)`);
@@ -89,12 +89,12 @@ for (const [f, tool] of optionalBrains) {
 
 // Check skills
 const requiredSkills = ['agent-team', 'doc-manager', 'lesson', 'vibe-code-review', 'react-best-practices', 'write-skill', 'improve'];
-const skillsDir = path.join(ROOT, 'skills');
+const skillsDir = path.join(ROOT, '.vbounce', 'skills');
 let skillCount = 0;
 for (const s of requiredSkills) {
   const skillFile = path.join(skillsDir, s, 'SKILL.md');
   if (fs.existsSync(skillFile)) skillCount++;
-  else fail(`skills/${s}/SKILL.md missing`);
+  else fail(`.vbounce/skills/${s}/SKILL.md missing`);
 }
 if (skillCount === requiredSkills.length) pass(`Skills: ${skillCount}/${requiredSkills.length} installed`);
 
@@ -107,11 +107,11 @@ const requiredScripts = [
   'prep_sprint_summary.mjs', 'sprint_trends.mjs', 'suggest_improvements.mjs',
   'hotfix_manager.sh'
 ];
-const scriptsDir = path.join(ROOT, 'scripts');
+const scriptsDir = path.join(ROOT, '.vbounce', 'scripts');
 let scriptCount = 0;
 for (const s of requiredScripts) {
   if (fs.existsSync(path.join(scriptsDir, s))) scriptCount++;
-  else fail(`scripts/${s} missing`);
+  else fail(`.vbounce/scripts/${s} missing`);
 }
 if (scriptCount === requiredScripts.length) pass(`Scripts: ${scriptCount}/${requiredScripts.length} available`);
 

@@ -107,7 +107,7 @@ Lessons are classified by automation potential:
 | **gate_check** | Rules with "Always check...", "Never use...", "Must have..." | `.vbounce/gate-checks.json` or `pre_gate_runner.sh` |
 | **script** | Rules with "Run X before Y", "Use X instead of Y" | `.vbounce/scripts/` |
 | **template_field** | Rules with "Include X in...", "Add X to the story/epic/template" | `.vbounce/templates/*.md` |
-| **agent_config** | General behavioral rules proven over 3+ sprints | `brains/claude-agents/*.md` |
+| **agent_config** | General behavioral rules proven over 3+ sprints | `.claude/agents/*.md` |
 
 **Key insight:** Lessons tell you WHAT to enforce. Sprint retro tells you WHERE the framework is weak. Together they drive targeted improvements.
 
@@ -216,7 +216,7 @@ When a lesson has been active 3+ sprints and is classified as `agent_config`:
 **Impact:** P2 — proven rule ready for permanent enforcement
 **Active since:** {date} ({N} sprints)
 **Rule:** {the lesson's rule}
-**Target agent config:** `brains/claude-agents/{agent}.md`
+**Target agent config:** `.claude/agents/{agent}.md`
 **Action:** Add rule to agent's Critical Rules section. Archive lesson from LESSONS.md.
 ```
 
@@ -233,7 +233,7 @@ Present ALL proposals as a numbered list, grouped by impact level. The human can
 For each approved proposal:
 1. Edit the affected file(s)
 2. If brain files are affected, ensure ALL brain surfaces stay in sync (CLAUDE.md, GEMINI.md, AGENTS.md, cursor-rules/)
-3. Log the change in `brains/CHANGELOG.md`
+3. Log the change in `.vbounce/CHANGELOG.md`
 4. If skills were modified, update skill descriptions in all brain files that reference them
 5. Record in `.vbounce/improvement-log.md` under "Applied" with the impact level
 
@@ -268,7 +268,7 @@ After all changes are applied:
 The improve skill produces:
 1. The list of proposals presented to the human (inline during the conversation)
 2. The applied changes to framework files
-3. The `brains/CHANGELOG.md` entries documenting what changed and why
+3. The `.vbounce/CHANGELOG.md` entries documenting what changed and why
 4. Updates to `.vbounce/improvement-log.md` tracking approved/rejected/deferred items
 
 ## Tracking Improvement Velocity
@@ -283,7 +283,7 @@ The Team Lead should note in the Sprint Report whether the previous improvement 
 
 - **Never change the framework without human approval.** Propose, don't impose.
 - **Keep all brain surfaces in sync.** A change to CLAUDE.md must be reflected in GEMINI.md, AGENTS.md, and cursor-rules/.
-- **Log everything.** Every change goes in `brains/CHANGELOG.md` with the finding that motivated it.
+- **Log everything.** Every change goes in `.vbounce/CHANGELOG.md` with the finding that motivated it.
 - **Run `vbounce doctor` after changes.** Verify framework integrity after applying improvements.
 - **Don't over-engineer.** Fix the actual problem reported by agents. Don't add speculative improvements.
 - **Respect the hierarchy.** Template changes are low-risk. Process flow changes are high-risk. Scope accordingly.

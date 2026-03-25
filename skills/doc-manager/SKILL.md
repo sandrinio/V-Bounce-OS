@@ -133,32 +133,31 @@ product_plans/
 ### V-Bounce Engine Framework Structure
 
 ```
-V-Bounce Engine/
-├── brains/          — Agent brain files for each AI coding tool
-│   ├── CLAUDE.md        — Claude Code brain
-│   ├── AGENTS.md        — Codex CLI brain
-│   ├── GEMINI.md        — Gemini CLI / Antigravity brain
-│   ├── cursor-rules/    — Cursor modular .mdc rules
-│   └── SETUP.md         — Deployment guide
+Project Root/
+├── CLAUDE.md            — Claude Code brain (deployed to root)
+├── AGENTS.md            — Codex CLI brain (deployed to root)
+├── GEMINI.md            — Gemini CLI brain (deployed to root)
+├── .claude/agents/      — Claude Code subagent configs
 ├── .vbounce/templates/  — Document templates (immutable during execution)
 ├── .vbounce/skills/     — Agent skills (SKILL.md files + references)
 ├── .vbounce/scripts/    — Automation scripts (e.g., hotfix_manager.sh)
-└── docs/            — Reference docs (e.g., HOTFIX_EDGE_CASES.md)
+├── .vbounce/CHANGELOG.md — Framework modification log
+└── VBOUNCE_MANIFEST.md  — Framework file registry
 ```
 
 ### Brain File Deployment
 
 When initializing a new project, deploy the correct brain file for the AI coding tool in use:
 
-| Tool | Source | Deploy To |
-|------|--------|-----------|
-| Claude Code | `brains/CLAUDE.md` | Project root as `CLAUDE.md` |
-| Codex CLI | `brains/AGENTS.md` | Project root as `AGENTS.md` |
-| Cursor | `brains/cursor-rules/*.mdc` | `.cursor/rules/` |
-| Gemini CLI | `brains/GEMINI.md` | Project root as `GEMINI.md` |
-| Antigravity | `brains/GEMINI.md` | Project root + copy `.vbounce/skills/` to `.agents/skills/` |
+| Tool | Installed Location |
+|------|-------------------|
+| Claude Code | `CLAUDE.md` (project root) + `.claude/agents/` (subagents) |
+| Codex CLI | `AGENTS.md` (project root) |
+| Cursor | `.cursor/rules/*.mdc` |
+| Gemini CLI | `GEMINI.md` (project root) |
+| Antigravity | `GEMINI.md` (project root) + `.agents/skills/` |
 
-Brain files contain the V-Bounce process, critical rules, and skill references. Each tool's brain file is self-contained and authoritative. When updating V-Bounce Engine rules, update each brain file directly and keep them in sync.
+Brain files contain the V-Bounce process, critical rules, and skill references. Each tool's brain file is self-contained and authoritative. When updating V-Bounce Engine rules, update each brain file and keep them in sync. Log changes to `.vbounce/CHANGELOG.md`.
 
 ## Document Operations
 

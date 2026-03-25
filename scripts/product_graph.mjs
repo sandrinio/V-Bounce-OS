@@ -26,7 +26,7 @@ try {
 }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../..');
 
 const SCAN_DIRS = ['strategy', 'backlog', 'sprints', 'hotfixes'];
 const PRODUCT_PLANS = path.join(ROOT, 'product_plans');

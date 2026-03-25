@@ -14,7 +14,7 @@ import { fileURLToPath } from 'url';
 import { spawnSync } from 'child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../..');
 
 const args = process.argv.slice(2);
 
@@ -82,7 +82,7 @@ fs.mkdirSync(sprintDir, { recursive: true });
 const sprintPlanFile = path.join(sprintDir, `sprint-${sprintNum}.md`);
 if (!fs.existsSync(sprintPlanFile)) {
   // Copy from template
-  const templateFile = path.join(ROOT, 'templates', 'sprint.md');
+  const templateFile = path.join(ROOT, '.vbounce', 'templates', 'sprint.md');
   if (fs.existsSync(templateFile)) {
     let content = fs.readFileSync(templateFile, 'utf8');
     // Replace placeholders

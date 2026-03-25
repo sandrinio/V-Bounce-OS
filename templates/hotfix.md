@@ -53,6 +53,6 @@ complexity_label: "L1 (Trivial)"
 
 - [ ] {Simple step, e.g., "Open the settings modal and verify the button is aligned."}
 - [ ] Automated tests still pass (`npm test`).
-- [ ] **Framework Integrity**: If `brains/` or `skills/` were modified, log to `brains/CHANGELOG.md`.
+- [ ] **Framework Integrity**: If `.claude/agents/` or `.vbounce/skills/` were modified, log to `.vbounce/CHANGELOG.md`.
 - [ ] **Post-Fix Action**: Run `./.vbounce/scripts/hotfix_manager.sh ledger "HOTFIX: {Name}" "{Brief Fix Description}"`
 - [ ] **Token Tracking**: Run `node .vbounce/scripts/count_tokens.mjs --self --append <this-file> --name Developer`

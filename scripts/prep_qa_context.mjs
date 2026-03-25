@@ -17,7 +17,7 @@ import { execSync } from 'child_process';
 import yaml from 'js-yaml';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../..');
 
 const storyId = process.argv[2];
 if (!storyId) {

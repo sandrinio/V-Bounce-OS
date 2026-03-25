@@ -21,7 +21,7 @@ import { fileURLToPath } from 'url';
 import { spawnSync } from 'child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../..');
 
 const sprintId = process.argv[2];
 if (!sprintId) {
@@ -253,7 +253,7 @@ if (oldLessons.length > 0) {
       impact: { level: 'P2', label: 'Medium' },
       title: `${notRejected.length} lesson(s) older than 90 days — graduation candidates`,
       detail: notRejected.map(l => `  - ${l}`).join('\n'),
-      target: 'LESSONS.md → brains/claude-agents/',
+      target: 'LESSONS.md → .claude/agents/',
       effort: 'Low',
     });
   }
@@ -277,7 +277,7 @@ suggestions.push({
 function mapAreaToTarget(area) {
   const map = {
     'Templates': 'templates/*.md',
-    'Agent Handoffs': 'brains/claude-agents/*.md',
+    'Agent Handoffs': '.claude/agents/*.md',
     'RAG Pipeline': '.vbounce/scripts/prep_*.mjs',
     'Skills': 'skills/*/SKILL.md',
     'Process Flow': '.vbounce/skills/agent-team/SKILL.md',
@@ -291,7 +291,7 @@ function mapAutomationTypeToTarget(type) {
     'gate_check': '.vbounce/gate-checks.json OR .vbounce/scripts/pre_gate_runner.sh',
     'script': 'scripts/',
     'template_field': 'templates/*.md',
-    'agent_config': 'brains/claude-agents/*.md',
+    'agent_config': '.claude/agents/*.md',
   };
   return map[type] || type;
 }
@@ -353,7 +353,7 @@ const output = [
   `- **Reject** → Record in \`.vbounce/improvement-log.md\` under Rejected with reason`,
   `- **Defer** → Record in \`.vbounce/improvement-log.md\` under Deferred`,
   '',
-  `> Framework changes (brains/, skills/, templates/) are applied at sprint boundaries only — never mid-sprint.`,
+  `> Framework changes (.claude/agents/, .vbounce/skills/, .vbounce/templates/) are applied at sprint boundaries only — never mid-sprint.`,
   `> Use \`/improve\` skill to have the Team Lead apply approved changes with brain-file sync.`,
 ].join('\n');
 

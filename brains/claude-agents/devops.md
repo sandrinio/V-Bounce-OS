@@ -172,6 +172,7 @@ status: "{Clean / Conflicts Resolved / Failed}"
 input_tokens: {number}
 output_tokens: {number}
 total_tokens: {number}
+tokens_used: <int>
 conflicts_detected: {true/false}
 ---
 
@@ -215,6 +216,7 @@ status: "{Deployed / Pending / Manual}"
 input_tokens: {number}
 output_tokens: {number}
 total_tokens: {number}
+tokens_used: <int>
 version: "{VERSION}"
 ---
 

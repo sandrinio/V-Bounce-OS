@@ -5,6 +5,23 @@ All notable changes to the V-Bounce Engine framework and its CLI installer will 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.1] - 2026-03-25
+### Added
+- **Explorer Agent** — `brains/claude-agents/explorer.md` (Haiku model). Read-only research agent for Context Requests during planning and bounces. Was referenced in CLAUDE.md but never shipped in the engine package.
+- **Regression Test Suite** — `tests/` directory with 841 automated tests across 8 suites. Validates install integrity, stale path detection, script execution, agent brain contracts, manifest completeness, template/skill cross-references, and a full lifecycle simulation (init → bounce → close → analytics). Run with `node tests/run.mjs`.
+
+### Fixed
+- **ROOT path resolution** — All 19 `.mjs` scripts and `verify_framework.sh` resolved `ROOT` one level too high after the v2.5.0 directory restructure (`..` → `../..`).
+- **37 stale path references** — `brains/claude-agents/` → `.claude/agents/`, `brains/CHANGELOG.md` → `.vbounce/CHANGELOG.md`, `templates/` → `.vbounce/templates/` across 15 files (brains, skills, templates, scripts, manifest).
+- **`validate_state.mjs` CLI guard** — Script silently exited 0 on macOS when `state.json` was missing due to `/var` → `/private/var` symlink mismatch. Fixed with `realpathSync`.
+- **`init_sprint.mjs` template path** — Referenced `templates/sprint.md` instead of `.vbounce/templates/sprint.md`.
+- **`tokens_used:` schema drift** — All 5 execution agent brains (developer, qa, architect, devops, scribe) were missing the `tokens_used:` field in their report YAML templates, causing `verify_framework.mjs` to fail.
+- **`verify_framework.mjs` agents directory** — Looked for `brains/claude-agents` instead of `.claude/agents`.
+
+### Changed
+- **VBOUNCE_MANIFEST.md** — Added Explorer agent to subagent table, updated subagent count from 5 to 6.
+- **`package.json`** — Added `test` script (`node tests/run.mjs`).
+
 ## [2.5.0] - 2026-03-25
 ### Added
 - **`.vbounce/` directory consolidation** — Framework files (`skills/`, `templates/`, `scripts/`) now deploy under `.vbounce/` instead of project root. Reduces root clutter from 7+3 items to 2+2. Runtime files (`.bounce/`) merged into same directory with nested `.gitignore` for committed/ignored separation.

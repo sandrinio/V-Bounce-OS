@@ -16,7 +16,7 @@ import { fileURLToPath } from 'url';
 import yaml from 'js-yaml';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../..');
 
 const archiveBase = path.join(ROOT, '.vbounce', 'archive');
 

@@ -48,7 +48,7 @@ Determine which phase you're in from what the human is asking, then load the rig
 11. **One source of truth**. Reference upstream documents, don't duplicate.
 12. **Change Logs are mandatory** on every document modification.
 13. **Agent Reports MUST use YAML Frontmatter**. Every `.vbounce/report/` file starts with strict YAML.
-14. **Framework Integrity**. Any modification to `brains/`, `skills/`, `templates/`, or `scripts/` MUST be recorded in `brains/CHANGELOG.md` and reflected in `VBOUNCE_MANIFEST.md`.
+14. **Framework Integrity**. Any modification to `.claude/agents/`, `.vbounce/skills/`, `.vbounce/templates/`, or `.vbounce/scripts/` MUST be recorded in `.vbounce/CHANGELOG.md` and reflected in `VBOUNCE_MANIFEST.md`.
 
 ## Skills
 

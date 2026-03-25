@@ -12,7 +12,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../..');
 const STATE_FILE = path.join(ROOT, '.vbounce', 'state.json');
 
 const VALID_STATES = [
@@ -72,7 +72,7 @@ export function validateState(state) {
 }
 
 // CLI entry point
-if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+if (process.argv[1] && fs.realpathSync(fileURLToPath(import.meta.url)) === fs.realpathSync(path.resolve(process.argv[1]))) {
   if (!fs.existsSync(STATE_FILE)) {
     console.error(`ERROR: ${STATE_FILE} not found. Run: vbounce sprint init S-XX D-XX`);
     process.exit(1);

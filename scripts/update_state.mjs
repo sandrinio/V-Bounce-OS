@@ -18,7 +18,7 @@ import { fileURLToPath } from 'url';
 import { validateState } from './validate_state.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../..');
 const STATE_FILE = path.join(ROOT, '.vbounce', 'state.json');
 
 const VALID_STATES = [

@@ -1,10 +1,10 @@
 # V-Bounce Engine — Framework Manifest
 
 > **Internal map for AI agents and framework maintainers.**
-> Any modification to `brains/`, `.vbounce/skills/`, `.vbounce/templates/`, or `.vbounce/scripts/` MUST also update this file.
+> Any modification to `.claude/agents/`, `.vbounce/skills/`, `.vbounce/templates/`, or `.vbounce/scripts/` MUST also update this file.
 > Run `vbounce doctor` to validate file existence against this manifest.
 
-**Version:** 2.5.0
+**Version:** 2.5.1
 **Last updated:** 2026-03-25
 
 ---
@@ -73,33 +73,33 @@ Brains configure AI tools to follow the V-Bounce process. Each brain contains id
 
 ### Main Brain Files
 
-| File | Tool | Tier | Subagents? |
-|------|------|------|-----------|
-| `brains/CLAUDE.md` | Claude Code | 1 | Yes — spawns 5 subagents |
-| `brains/AGENTS.md` | Codex CLI (OpenAI) | 2 | No — file-based handoffs |
-| `brains/GEMINI.md` | Gemini CLI / Antigravity | 2 | No — file-based handoffs |
-| `brains/cursor-rules/vbounce-process.mdc` | Cursor | 3 | No — context injection |
-| `brains/cursor-rules/vbounce-rules.mdc` | Cursor | 3 | No — context injection |
-| `brains/cursor-rules/vbounce-docs.mdc` | Cursor | 3 | No — context injection |
-| `brains/copilot/copilot-instructions.md` | GitHub Copilot | 4 | No — awareness mode |
-| `brains/windsurf/.windsurfrules` | Windsurf | 4 | No — awareness mode |
+| Installed Location | Tool | Tier | Subagents? |
+|-------------------|------|------|-----------|
+| `CLAUDE.md` (project root) | Claude Code | 1 | Yes — spawns 6 subagents |
+| `AGENTS.md` (project root) | Codex CLI (OpenAI) | 2 | No — file-based handoffs |
+| `GEMINI.md` (project root) | Gemini CLI / Antigravity | 2 | No — file-based handoffs |
+| `.cursor/rules/vbounce-process.mdc` | Cursor | 3 | No — context injection |
+| `.cursor/rules/vbounce-rules.mdc` | Cursor | 3 | No — context injection |
+| `.cursor/rules/vbounce-docs.mdc` | Cursor | 3 | No — context injection |
+| `.github/copilot-instructions.md` | GitHub Copilot | 4 | No — awareness mode |
+| `.windsurfrules` | Windsurf | 4 | No — awareness mode |
 
 ### Support Files
 
 | File | Purpose |
 |------|---------|
-| `brains/SETUP.md` | Step-by-step deployment guide for adding V-Bounce to any repo |
-| `brains/CHANGELOG.md` | Framework modification log (separate from root CHANGELOG.md) |
+| `.vbounce/CHANGELOG.md` | Framework modification log |
 
-### Subagent Configs (Claude Code only, deploy to `.claude/agents/`)
+### Subagent Configs (Claude Code only)
 
-| File | Agent | Tools | Reads | Writes |
-|------|-------|-------|-------|--------|
-| `brains/claude-agents/developer.md` | Developer | Read, Edit, Write, Bash, Glob, Grep | Story §1+§3, LESSONS.md, ADRs, react-best-practices | Implementation Report, Checkpoint |
-| `brains/claude-agents/qa.md` | QA | Read, Bash, Glob, Grep | Story §2, Dev Report, LESSONS.md, pre-gate scan | QA Validation Report |
-| `brains/claude-agents/architect.md` | Architect | Read, Glob, Grep, Bash | Full Story, all reports, Roadmap §3 ADRs, Risk Registry | Architectural Audit Report |
-| `brains/claude-agents/devops.md` | DevOps | Read, Edit, Write, Bash, Glob, Grep | Gate reports, Delivery Plan, LESSONS.md | DevOps Merge/Release Report |
-| `brains/claude-agents/scribe.md` | Scribe | Read, Write, Bash, Glob, Grep | Sprint Report, Dev Reports, codebase, _manifest.json | Product docs, Scribe Report |
+| Installed Location | Agent | Tools | Reads | Writes |
+|-------------------|-------|-------|-------|--------|
+| `.claude/agents/explorer.md` | Explorer | Read, Glob, Grep, Bash | Product plans, state.json, codebase structure | Context Pack (read-only research) |
+| `.claude/agents/developer.md` | Developer | Read, Edit, Write, Bash, Glob, Grep | Story §1+§3, LESSONS.md, ADRs, react-best-practices | Implementation Report, Checkpoint |
+| `.claude/agents/qa.md` | QA | Read, Bash, Glob, Grep | Story §2, Dev Report, LESSONS.md, pre-gate scan | QA Validation Report |
+| `.claude/agents/architect.md` | Architect | Read, Glob, Grep, Bash | Full Story, all reports, Roadmap §3 ADRs, Risk Registry | Architectural Audit Report |
+| `.claude/agents/devops.md` | DevOps | Read, Edit, Write, Bash, Glob, Grep | Gate reports, Delivery Plan, LESSONS.md | DevOps Merge/Release Report |
+| `.claude/agents/scribe.md` | Scribe | Read, Write, Bash, Glob, Grep | Sprint Report, Dev Reports, codebase, _manifest.json | Product docs, Scribe Report |
 
 ---
 
@@ -304,7 +304,7 @@ Human reviews → Scribe updates docs → Improvement pipeline runs
 | Epic §2 (Scope) | All child Stories §1 |
 | Epic §4 (Technical Context) | All child Stories §3 |
 | Spike §4/§5 (Findings/Decision) | Epic §4, Epic §8, Risk Registry |
-| Any `brains/` or `skills/` file | `brains/CHANGELOG.md` + this manifest |
+| Any `.claude/agents/` or `.vbounce/skills/` file | `.vbounce/CHANGELOG.md` + this manifest |
 
 ---
 
@@ -358,7 +358,28 @@ These directories are created during project execution, not part of the framewor
 
 ---
 
-## 11. CLI Entry Point
+## 11. Test Suite
+
+Regression suite for validating the engine after any path, script, or template change. Run: `node tests/run.mjs`
+
+| File | Suite | What it checks |
+|------|-------|----------------|
+| `tests/harness.mjs` | — | Test primitives: `suite()`, `record()`, `assertFileExists()`, `assertNoMatch()`, `assertScriptRuns()`, `generateReport()` |
+| `tests/run.mjs` | — | Main runner: installs to temp dir, runs all suites, generates JSON + Markdown reports |
+| `tests/suites/install.mjs` | Install Integrity | 76+ file existence checks across all installed components |
+| `tests/suites/paths.mjs` | Path Integrity | 500+ stale path pattern scans across all shipped `.md`/`.mjs` files |
+| `tests/suites/doctor.mjs` | Doctor Accuracy | False positive and false negative detection |
+| `tests/suites/scripts.mjs` | Script Validation | Import checks, functional tests, ROOT resolution for all 22 `.mjs` scripts |
+| `tests/suites/brains.mjs` | Agent Contracts | Frontmatter, report YAML signatures, CLAUDE.md ↔ agents consistency |
+| `tests/suites/manifest.mjs` | Manifest Completeness | All backtick paths resolve, orphan file detection |
+| `tests/suites/templates.mjs` | Template/Skill Integrity | Structure validation, stale paths, CLAUDE.md ↔ skills cross-reference |
+| `tests/suites/lifecycle.mjs` | Full Lifecycle | 41-test simulation: fixtures → init → transitions → context prep → complete → close → analytics → edge cases |
+
+Reports output to `tests/reports/report-{timestamp}.{json,md}`.
+
+---
+
+## 12. CLI Entry Point
 
 | File | Purpose |
 |------|---------|
@@ -371,12 +392,13 @@ These directories are created during project execution, not part of the framewor
 | Category | Count |
 |----------|-------|
 | Root files (core) | 8 |
-| Brain files | 15 |
+| Brain files | 16 |
 | Templates | 13 |
 | Skills (SKILL.md + references) | 26 |
 | React rules | 57 |
 | Scripts | 27 |
+| Test suite | 10 |
 | Diagrams | 6 |
 | Docs + Visual Assets | 6 + ~15 icons/images |
 | CLI | 1 |
-| **Total** | **~174** |
+| **Total** | **~185** |

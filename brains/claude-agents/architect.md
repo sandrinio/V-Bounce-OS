@@ -103,6 +103,7 @@ safe_zone_score: {SCORE}
 input_tokens: {number}
 output_tokens: {number}
 total_tokens: {number}
+tokens_used: <int>
 ai_isms_detected: {count}
 regression_risk: "{Low/Medium/High}"
 template_version: "2.0"
@@ -159,6 +160,7 @@ bounce_count: {N}
 input_tokens: {number}
 output_tokens: {number}
 total_tokens: {number}
+tokens_used: <int>
 critical_failures: {count}
 root_cause: "{adr_violation|missing_tests|spec_ambiguity|logic_error|coupling|duplication|error_handling|state_management|gold_plating|integration_gap}"
 template_version: "2.0"

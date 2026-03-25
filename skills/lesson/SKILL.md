@@ -127,7 +127,7 @@ Accelerated candidates are flagged by `suggest_improvements.mjs` with impact lev
 
 1. `.vbounce/scripts/suggest_improvements.mjs` flags graduation candidates in improvement suggestions
 2. Human approves graduation
-3. Lead adds the rule to the relevant agent config (`brains/claude-agents/developer.md`, etc.)
+3. Lead adds the rule to the relevant agent config (`.claude/agents/developer.md`, etc.)
 4. Lead removes or archives the lesson from `LESSONS.md` with a note: `[Graduated to {agent} config on {date}]`
 5. Record in `.vbounce/improvement-log.md` under "Applied"
 

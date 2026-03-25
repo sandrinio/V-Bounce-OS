@@ -14,7 +14,7 @@ import { fileURLToPath } from 'url';
 import yaml from 'js-yaml';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../..');
 
 const filePath = process.argv[2];
 if (!filePath) {

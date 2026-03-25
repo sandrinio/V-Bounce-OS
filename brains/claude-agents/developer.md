@@ -64,6 +64,7 @@ correction_tax: {X}
 input_tokens: {number}
 output_tokens: {number}
 total_tokens: {number}
+tokens_used: <int>
 tests_written: {number of tests generated}
 files_modified:
   - "path/to/file.ts"

@@ -118,6 +118,7 @@ mode: "{init / audit / create}"
 input_tokens: {number}
 output_tokens: {number}
 total_tokens: {number}
+tokens_used: <int>
 docs_created: {count}
 docs_updated: {count}
 docs_removed: {count}

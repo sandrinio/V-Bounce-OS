@@ -182,7 +182,7 @@ Feature: {Story Name}
 - [ ] LESSONS.md + Sprint Context consulted before implementation.
 - [ ] No violations of Roadmap ADRs.
 - [ ] Environment prerequisites (§3.0) verified before starting.
-- [ ] **Framework Integrity**: If `brains/`, `skills/`, `templates/`, or `scripts/` were modified, log to `brains/CHANGELOG.md`.
+- [ ] **Framework Integrity**: If `.claude/agents/`, `.vbounce/skills/`, `.vbounce/templates/`, or `.vbounce/scripts/` were modified, log to `.vbounce/CHANGELOG.md`.
 
 ---
 

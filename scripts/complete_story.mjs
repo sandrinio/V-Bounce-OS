@@ -14,7 +14,7 @@ import { fileURLToPath } from 'url';
 import { spawnSync } from 'child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '../..');
 
 function parseArgs(argv) {
   const result = { storyId: null, qaBounces: 0, archBounces: 0, correctionTax: '0%', notes: '' };
