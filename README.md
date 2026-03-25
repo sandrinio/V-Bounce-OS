@@ -5,7 +5,7 @@
 
   <p>
     <a href="https://github.com/sandrinio/v-bounce-engine/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
-    <a href="https://www.npmjs.com/package/@sandrinio/vbounce"><img alt="NPM Version" src="https://img.shields.io/npm/v/%40sandrinio%2Fvbounce"></a>
+    <a href="https://www.npmjs.com/package/vbounce-engine"><img alt="NPM Version" src="https://img.shields.io/npm/v/vbounce-engine"></a>
   </p>
   
   <p>
@@ -21,14 +21,14 @@ Get your new AI team up and running in seconds. No complex setup, no vector data
 
 ```bash
 # 1. Install the framework for your platform of choice
-npx @sandrinio/vbounce install claude    # Claude Code (Full Orchestration)
-# Or: npx @sandrinio/vbounce install cursor|gemini|codex|vscode
+npx vbounce-engine install claude    # Claude Code (Full Orchestration)
+# Or: npx vbounce-engine install cursor|gemini|codex|vscode
 
 # 2. Verify your installation
-npx vbounce doctor
+npx vbounce-engine doctor
 
 # 3. Initialize your first sprint!
-npx vbounce sprint init S-01 D-01
+npx vbounce-engine sprint init S-01 D-01
 ```
 
 > **Requirements**: Node.js and a project directory. That's it. One person to set the vision, the AI handles the execution.
