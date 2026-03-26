@@ -185,6 +185,16 @@ Skills are modular instructions loaded by agents. Located in `.vbounce/skills/`.
 
 Scripts automate framework operations. Located in `.vbounce/scripts/`.
 
+### Script Execution Wrapper
+| Script | When | Input | Output |
+|--------|------|-------|--------|
+| `.vbounce/scripts/run_script.sh` | **Every script invocation** | Script name + args | Passthrough stdout/stderr, pre-flight checks, structured diagnostics on failure |
+
+### Shared Constants
+| Script | When | Input | Output |
+|--------|------|-------|--------|
+| `.vbounce/scripts/constants.mjs` | Imported by lifecycle scripts | — | `VALID_STATES`, `TERMINAL_STATES` (single source of truth) |
+
 ### Sprint Lifecycle
 | Script | When | Input | Output |
 |--------|------|-------|--------|
@@ -364,16 +374,21 @@ Regression suite for validating the engine after any path, script, or template c
 
 | File | Suite | What it checks |
 |------|-------|----------------|
-| `tests/harness.mjs` | — | Test primitives: `suite()`, `record()`, `assertFileExists()`, `assertNoMatch()`, `assertScriptRuns()`, `generateReport()` |
-| `tests/run.mjs` | — | Main runner: installs to temp dir, runs all suites, generates JSON + Markdown reports |
+| `tests/harness.mjs` | — | Test primitives: `suite()`, `record()`, `assertFileExists()`, `assertNoMatch()`, `assertScriptRuns()`, `assertBashRuns()`, `generateReport()` |
+| `tests/fixtures.mjs` | — | Shared fixture generator: `createSprintFixtures()`, `createSyntheticReport()`, `removeSprintFixtures()` |
+| `tests/run.mjs` | — | Main runner: installs to temp dir, runs all 12 suites, generates JSON + Markdown reports |
 | `tests/suites/install.mjs` | Install Integrity | 76+ file existence checks across all installed components |
 | `tests/suites/paths.mjs` | Path Integrity | 500+ stale path pattern scans across all shipped `.md`/`.mjs` files |
 | `tests/suites/doctor.mjs` | Doctor Accuracy | False positive and false negative detection |
-| `tests/suites/scripts.mjs` | Script Validation | Import checks, functional tests, ROOT resolution for all 22 `.mjs` scripts |
+| `tests/suites/scripts.mjs` | Script Validation | Import checks, functional tests, ROOT resolution for all `.mjs` scripts |
 | `tests/suites/brains.mjs` | Agent Contracts | Frontmatter, report YAML signatures, CLAUDE.md ↔ agents consistency |
 | `tests/suites/manifest.mjs` | Manifest Completeness | All backtick paths resolve, orphan file detection |
 | `tests/suites/templates.mjs` | Template/Skill Integrity | Structure validation, stale paths, CLAUDE.md ↔ skills cross-reference |
 | `tests/suites/lifecycle.mjs` | Full Lifecycle | 41-test simulation: fixtures → init → transitions → context prep → complete → close → analytics → edge cases |
+| `tests/suites/agent-errors.mjs` | Agent Error Paths | Scripts called in wrong order, wrong state, wrong/missing args — verifies actionable errors, not raw crashes |
+| `tests/suites/run-script-wrapper.mjs` | Script Wrapper | `run_script.sh` pre-flight checks, diagnostic block output, success/failure passthrough, bash script support |
+| `tests/suites/parallel-stories.mjs` | Parallel Stories | Concurrent state management: 3 stories transition independently, bounce counts isolated, re-init behavior |
+| `tests/suites/report-parsing.mjs` | Report Parsing | Malformed agent reports (no frontmatter, empty, truncated YAML, missing fields) handled gracefully |
 
 Reports output to `tests/reports/report-{timestamp}.{json,md}`.
 
@@ -396,9 +411,9 @@ Reports output to `tests/reports/report-{timestamp}.{json,md}`.
 | Templates | 13 |
 | Skills (SKILL.md + references) | 26 |
 | React rules | 57 |
-| Scripts | 27 |
-| Test suite | 10 |
+| Scripts | 29 |
+| Test suite | 16 |
 | Diagrams | 6 |
 | Docs + Visual Assets | 6 + ~15 icons/images |
 | CLI | 1 |
-| **Total** | **~185** |
+| **Total** | **~193** |
