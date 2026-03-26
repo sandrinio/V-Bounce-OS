@@ -4,8 +4,8 @@
 > Any modification to `.claude/agents/`, `.vbounce/skills/`, `.vbounce/templates/`, or `.vbounce/scripts/` MUST also update this file.
 > Run `vbounce doctor` to validate file existence against this manifest.
 
-**Version:** 2.5.2
-**Last updated:** 2026-03-25
+**Version:** 2.5.3
+**Last updated:** 2026-03-26
 
 ---
 

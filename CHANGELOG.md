@@ -5,6 +5,23 @@ All notable changes to the V-Bounce Engine framework and its CLI installer will 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.3] - 2026-03-26
+### Added
+- **Script Execution Protocol** — `run_script.sh` wrapper that all agents must use for script invocations. Captures exit codes, runs pre-flight checks (state.json existence, valid JSON), prints structured diagnostic blocks on failure with root cause and fix commands.
+- **Shared constants** — `constants.mjs` exports `VALID_STATES` and `TERMINAL_STATES` as single source of truth. All lifecycle scripts import from it instead of hardcoding.
+- **Mandatory `init_sprint.mjs` in Step 0** — Agent-team skill now requires state.json initialization before any sprint work. Prevents the S-12 gap where Sprint Monitor had no data.
+- **Gate report existence check** — DevOps Step 5 now verifies Dev, QA, and Architect reports exist before merging. Added `check_gate_reports_exist()` to `pre_gate_common.sh`.
+- **4 agent-perspective test suites** — `agent-errors.mjs` (wrong order/args/state), `run-script-wrapper.mjs` (wrapper behavior), `parallel-stories.mjs` (concurrent state management), `report-parsing.mjs` (malformed reports). Test count: 846 → 931.
+- **Shared test fixtures** — `tests/fixtures.mjs` with `createSprintFixtures()`, `createSyntheticReport()`, `removeSprintFixtures()`.
+- **`assertBashRuns()`** — New harness helper for testing shell scripts through the test framework.
+
+### Fixed
+- **Missing JSON.parse guards** — `close_sprint.mjs` and `complete_story.mjs` now wrap `JSON.parse` in try/catch with actionable error messages (previously crashed with raw Node.js errors on corrupted state.json).
+
+### Changed
+- **All script invocations in agent-team skill** now use `run_script.sh` wrapper (8 call sites updated).
+- **`doctor.mjs`** — Added `run_script.sh` to required scripts list.
+
 ## [2.5.2] - 2026-03-25
 ### Fixed
 - **On-demand skill triggers** — CLAUDE.md used `/doc`, `/review`, `/improve` etc. with slash-prefix notation, causing Claude Code to misinterpret them as slash commands and invoke the Skill tool (which fails). Replaced with plain-text triggers and explicit "read the file" instructions.
