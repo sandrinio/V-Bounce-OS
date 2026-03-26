@@ -184,6 +184,14 @@ Examples:
    git checkout -b sprint/S-01 main
    mkdir -p .vbounce/archive
 
+1b. Initialize sprint state (MANDATORY):
+   ./.vbounce/scripts/run_script.sh init_sprint.mjs S-{XX} D-{NN} --stories STORY-ID1,STORY-ID2,...
+   - Extract story IDs and delivery ID from the confirmed Sprint Plan §1 table
+   - This creates .vbounce/state.json — required by all downstream scripts
+   - If state.json already exists for this sprint, the script will warn and overwrite
+   - Verify success: run_script.sh validate_state.mjs
+   - If this step fails, DO NOT proceed — no scripts will work without state.json
+
 2. Verify Sprint Plan:
    - Sprint Plan status must be "Confirmed" (human-approved in Phase 2)
    - §0 Sprint Readiness Gate must be fully checked
@@ -197,13 +205,13 @@ Examples:
 4. **Hotfix Path** (L1 Trivial tasks only — triaged during Phase 1):
    a. Create `HOTFIX-{Date}-{Name}.md` using the template.
    b. Delegate to Developer (no worktree needed if acting on active branch).
-   c. Developer runs `hotfix_manager.sh ledger "{Title}" "{Description}"` after implementation.
+   c. Developer runs `run_script.sh hotfix_manager.sh ledger "{Title}" "{Description}"` after implementation.
    d. Human/Lead verifies manually.
-   e. DevOps runs `hotfix_manager.sh sync` to update any active story worktrees.
+   e. DevOps runs `run_script.sh hotfix_manager.sh sync` to update any active story worktrees.
    f. Update Delivery Plan Status to "Done".
 
 5. **Gate Config Check**:
-   - If `.vbounce/gate-checks.json` does not exist, run `./.vbounce/scripts/init_gate_config.sh` to auto-detect the project stack and generate default gate checks.
+   - If `.vbounce/gate-checks.json` does not exist, run `./.vbounce/scripts/run_script.sh init_gate_config.sh` to auto-detect the project stack and generate default gate checks.
    - If it exists, verify it's current (stack detection may have changed).
 
 6. **Parallel Readiness Check** (before bouncing multiple stories simultaneously):
@@ -267,7 +275,7 @@ mkdir -p .worktrees/STORY-{ID}-{StoryName}/.vbounce/{tasks,reports}
 ### Step 3: QA Pass
 ```
 0. Run pre-QA gate scan:
-   ./.vbounce/scripts/pre_gate_runner.sh qa .worktrees/STORY-{ID}-{StoryName}/ sprint/S-{XX}
+   ./.vbounce/scripts/run_script.sh pre_gate_runner.sh qa .worktrees/STORY-{ID}-{StoryName}/ sprint/S-{XX}
    - If scan FAILS on trivial issues (debug statements, missing JSDoc, TODOs):
      Return to Developer for quick fix. Do NOT spawn QA for mechanical failures.
      If pre-gate scan fails 3+ times → Escalate: present failures to human with options:
@@ -293,7 +301,7 @@ mkdir -p .worktrees/STORY-{ID}-{StoryName}/.vbounce/{tasks,reports}
 ### Step 4: Architect Pass
 ```
 0. Run pre-Architect gate scan:
-   ./.vbounce/scripts/pre_gate_runner.sh arch .worktrees/STORY-{ID}-{StoryName}/ sprint/S-{XX}
+   ./.vbounce/scripts/run_script.sh pre_gate_runner.sh arch .worktrees/STORY-{ID}-{StoryName}/ sprint/S-{XX}
    - If scan reveals new dependencies or structural violations:
      Return to Developer for resolution. Do NOT spawn Architect for mechanical failures.
      If pre-gate scan fails 3+ times → Escalate to human (same options as pre-QA escalation).
@@ -315,6 +323,13 @@ mkdir -p .worktrees/STORY-{ID}-{StoryName}/.vbounce/{tasks,reports}
 
 ### Step 5: Story Merge (DevOps)
 ```
+0. Verify gate reports exist (MANDATORY before merge):
+   - Dev report:  .worktrees/STORY-{ID}-{StoryName}/.vbounce/reports/STORY-{ID}-{StoryName}-dev*.md
+   - QA report:   .worktrees/STORY-{ID}-{StoryName}/.vbounce/reports/STORY-{ID}-{StoryName}-qa*.md
+   - Arch report: .worktrees/STORY-{ID}-{StoryName}/.vbounce/reports/STORY-{ID}-{StoryName}-arch*.md
+   If ANY report is missing, DO NOT proceed with merge.
+   Return to Lead with: which reports are missing and which agents need to re-run.
+   (Fast Track stories skip QA/Arch — only Dev report required.)
 1. Spawn devops subagent with:
    - Story ID and sprint branch name
    - All gate reports (QA PASS + Architect PASS)
@@ -375,7 +390,7 @@ This phase gives ad-hoc post-delivery feedback a proper home. Without it, users 
 After ALL stories are merged into `sprint/S-01`:
 ```
 1. Spawn architect subagent on sprint/S-01 branch
-2. First, Architect runs `./.vbounce/scripts/hotfix_manager.sh audit` to check for hotfix drift. If it fails, perform deep audit on flagged files.
+2. First, Architect runs `./.vbounce/scripts/run_script.sh hotfix_manager.sh audit` to check for hotfix drift. If it fails, perform deep audit on flagged files.
 3. Run Sprint Integration Audit — Deep Audit on combined changes
 4. Check for: duplicate routes, competing state, overlapping migrations
 5. If issues found:
@@ -423,14 +438,14 @@ After ALL stories are merged into `sprint/S-01`:
 7. **Framework Self-Assessment** (aggregated from agent reports):
    - Collect all `## Process Feedback` sections from agent reports in `.vbounce/archive/S-{XX}/`
    - Populate §5 Framework Self-Assessment tables in the Sprint Report by category
-   - **Always run** `suggest_improvements.mjs` — every sprint, unconditionally. First sprints generate the most friction.
+   - **Always run** `run_script.sh suggest_improvements.mjs` — every sprint, unconditionally. First sprints generate the most friction.
    - **Verbally present** the top improvement suggestions to the user. Do NOT just embed them in the report — tell the user directly:
      - Summarize each P0/P1 suggestion in plain language (what's broken, why it matters, what to change)
      - For P2/P3 suggestions, give a brief list and note they're in `.vbounce/improvement-suggestions.md`
      - Ask the user: *"Want me to run `/improve` to apply any of these?"*
    - If user approves → read `.vbounce/skills/improve/SKILL.md` and execute the improvement process
 8. Product Documentation check (runs on `main` after sprint merge):
-   a. **Staleness Detection** — run `./.vbounce/scripts/vdoc_staleness.mjs S-{XX}`
+   a. **Staleness Detection** — run `./.vbounce/scripts/run_script.sh vdoc_staleness.mjs S-{XX}`
       - Cross-references all Dev Reports' `files_modified` against manifest key files
       - Generates `.vbounce/scribe-task-S-{XX}.md` with targeted list of stale docs
       - Populates Sprint Report §1 "Product Docs Affected" table
@@ -558,8 +573,50 @@ If merging story branch into sprint branch creates conflicts:
 
 ---
 
+## Script Execution Protocol
+
+**All `.vbounce/scripts/*` invocations MUST go through the wrapper:**
+
+```bash
+./.vbounce/scripts/run_script.sh <script-name> [args...]
+```
+
+**Never call scripts directly.** The wrapper captures exit codes, stdout, and stderr separately, runs pre-flight checks (e.g. state.json existence), and on failure prints a structured diagnostic block with root cause and suggested fix.
+
+### When a Script Fails
+
+1. **Stop the current step.** Do not retry blindly or continue as if the script succeeded.
+2. **Read the diagnostic block.** The wrapper prints the exit code, stderr, root cause, and a suggested fix.
+3. **Attempt self-repair (once).** If the fix is within the agent's capability:
+   - Missing `state.json` → run `run_script.sh init_sprint.mjs S-{XX} D-{XX} --stories {IDS}`
+   - Invalid JSON → run `run_script.sh validate_state.mjs`, repair, retry
+   - Missing file/directory → run `run_script.sh doctor.mjs`, fix what's reported, retry
+   - Permission denied → `chmod +x` the script, retry
+4. **Re-run through the wrapper.** If the retry succeeds, continue the step. Log the failure and fix in the agent report under `## Script Incidents`.
+5. **Escalate if retry fails.** Write a **Script Failure Report** in the agent report and return it to the Lead:
+
+```markdown
+## Script Incidents
+
+### [FAIL] {script_name} {args}
+- **Exit code:** {N}
+- **Stderr:** {first 10 lines}
+- **Root cause:** {from diagnostic block or agent analysis}
+- **Self-repair attempted:** {what was tried}
+- **Status:** Resolved / Escalated
+- **Suggested fix:** {if escalated — what the Lead or human should do}
+```
+
+6. **Lead routes escalated failures:**
+   - Infrastructure issue (missing state, corrupt config) → Lead fixes and re-delegates
+   - Script bug → Lead presents to human with the Script Failure Report and the diagnostic output
+   - Repeated failure (same script fails 3+ times across stories) → Flag in Sprint Report §5 Framework Self-Assessment as a **Blocker**
+
+---
+
 ## Critical Rules
 
+- **All scripts go through run_script.sh.** Never invoke `.vbounce/scripts/*.mjs` or `*.sh` directly. The wrapper provides error capture, pre-flight validation, and structured diagnostics that agents depend on for self-repair.
 - **The Lead never writes code.** It plans, delegates, monitors, and consolidates.
 - **Enforce Sequential Dependencies.** Never parallelize stories where one depends on the other. Wait for merge.
 - **One story = one worktree.** Never mix stories in a single worktree.

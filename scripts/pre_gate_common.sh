@@ -536,6 +536,53 @@ check_file_size_limit() {
   fi
 }
 
+# ── Pre-merge report verification ────────────────────────────────────
+
+check_gate_reports_exist() {
+  local dir="$1" story_id="$2"
+  local reports_dir="${dir}/.vbounce/reports"
+  local missing=0
+  local details=""
+
+  if [[ ! -d "$reports_dir" ]]; then
+    record_result "gate_reports" "FAIL" ".vbounce/reports/ directory not found in worktree"
+    record_result_plain "gate_reports" "FAIL" ".vbounce/reports/ directory not found in worktree"
+    return
+  fi
+
+  # Check for QA report (any bounce)
+  local qa_report
+  qa_report=$(find "$reports_dir" -name "${story_id}-qa*" -o -name "${story_id}*-qa*" 2>/dev/null | head -1)
+  if [[ -z "$qa_report" ]]; then
+    missing=$((missing + 1))
+    details="${details}QA report missing. "
+  fi
+
+  # Check for Architect report (any bounce)
+  local arch_report
+  arch_report=$(find "$reports_dir" -name "${story_id}-arch*" -o -name "${story_id}*-arch*" 2>/dev/null | head -1)
+  if [[ -z "$arch_report" ]]; then
+    missing=$((missing + 1))
+    details="${details}Architect report missing. "
+  fi
+
+  # Check for Dev report
+  local dev_report
+  dev_report=$(find "$reports_dir" -name "${story_id}-dev*" -o -name "${story_id}*-dev*" 2>/dev/null | head -1)
+  if [[ -z "$dev_report" ]]; then
+    missing=$((missing + 1))
+    details="${details}Dev report missing. "
+  fi
+
+  if [[ $missing -eq 0 ]]; then
+    record_result "gate_reports" "PASS" "Dev, QA, and Architect reports present"
+    record_result_plain "gate_reports" "PASS" "Dev, QA, and Architect reports present"
+  else
+    record_result "gate_reports" "FAIL" "${details}"
+    record_result_plain "gate_reports" "FAIL" "${details}"
+  fi
+}
+
 # ── Custom check runner ──────────────────────────────────────────────
 
 run_custom_check() {

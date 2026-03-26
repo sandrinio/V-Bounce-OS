@@ -16,15 +16,11 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { validateState } from './validate_state.mjs';
+import { VALID_STATES } from './constants.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
 const STATE_FILE = path.join(ROOT, '.vbounce', 'state.json');
-
-const VALID_STATES = [
-  'Draft', 'Refinement', 'Ready to Bounce', 'Bouncing',
-  'QA Passed', 'Architect Passed', 'Done', 'Escalated', 'Parking Lot'
-];
 
 function readState() {
   if (!fs.existsSync(STATE_FILE)) {

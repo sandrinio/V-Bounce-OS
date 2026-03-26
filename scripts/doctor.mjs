@@ -100,6 +100,7 @@ if (skillCount === requiredSkills.length) pass(`Skills: ${skillCount}/${required
 
 // Check scripts
 const requiredScripts = [
+  'run_script.sh',
   'validate_report.mjs', 'update_state.mjs', 'validate_state.mjs',
   'validate_sprint_plan.mjs', 'validate_bounce_readiness.mjs',
   'init_sprint.mjs', 'close_sprint.mjs', 'complete_story.mjs',

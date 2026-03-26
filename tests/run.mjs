@@ -27,6 +27,10 @@ import runBrainsSuite from './suites/brains.mjs';
 import runManifestSuite from './suites/manifest.mjs';
 import runLifecycleSuite from './suites/lifecycle.mjs';
 import runTemplatesSuite from './suites/templates.mjs';
+import runAgentErrorsSuite from './suites/agent-errors.mjs';
+import runRunScriptWrapperSuite from './suites/run-script-wrapper.mjs';
+import runParallelStoriesSuite from './suites/parallel-stories.mjs';
+import runReportParsingSuite from './suites/report-parsing.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ENGINE_ROOT = path.resolve(__dirname, '..');
@@ -99,6 +103,10 @@ try { runBrainsSuite(installDir); } catch (e) { console.error(`Brains suite erro
 try { runManifestSuite(installDir); } catch (e) { console.error(`Manifest suite error: ${e.message}`); }
 try { runTemplatesSuite(installDir); } catch (e) { console.error(`Templates suite error: ${e.message}`); }
 try { runLifecycleSuite(installDir); } catch (e) { console.error(`Lifecycle suite error: ${e.message}`); }
+try { runAgentErrorsSuite(installDir); } catch (e) { console.error(`Agent errors suite error: ${e.message}`); }
+try { runRunScriptWrapperSuite(installDir); } catch (e) { console.error(`Run-script wrapper suite error: ${e.message}`); }
+try { runParallelStoriesSuite(installDir); } catch (e) { console.error(`Parallel stories suite error: ${e.message}`); }
+try { runReportParsingSuite(installDir); } catch (e) { console.error(`Report parsing suite error: ${e.message}`); }
 
 // ─── Report ──────────────────────────────────────────────────────────────────
 

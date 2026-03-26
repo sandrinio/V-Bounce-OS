@@ -162,6 +162,42 @@ export function assertScriptRuns(scriptPath, args, component, opts = {}) {
   return { stdout, stderr, exitCode, passed };
 }
 
+export function assertBashRuns(scriptPath, args, component, opts = {}) {
+  const start = Date.now();
+  let stdout, stderr, exitCode;
+  try {
+    stdout = execSync(`bash "${scriptPath}" ${args || ''}`, {
+      cwd: opts.cwd || path.dirname(scriptPath),
+      timeout: opts.timeout || 10000,
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+      env: { ...process.env, ...(opts.env || {}) },
+    });
+    exitCode = 0;
+  } catch (e) {
+    stdout = e.stdout || '';
+    stderr = e.stderr || '';
+    exitCode = e.status ?? 1;
+  }
+  const duration = Date.now() - start;
+
+  const expectedExit = opts.expectExit === null ? null : (opts.expectExit ?? 0);
+  const passed = expectedExit === null ? true : (exitCode === expectedExit);
+  if (expectedExit !== null) {
+    record({
+      name: `Bash: ${path.basename(scriptPath)} ${args || ''}`.trim(),
+      component,
+      input: `bash ${scriptPath} ${args || ''}`,
+      output: `exit ${exitCode}${stderr ? ` — ${stderr.slice(0, 200)}` : ''}`,
+      expected: `exit ${expectedExit}`,
+      verdict: passed ? PASS : FAIL,
+      duration_ms: duration,
+      note: opts.note,
+    });
+  }
+  return { stdout, stderr, exitCode, passed };
+}
+
 // ─── Report Generation ──────────────────────────────────────────────────────
 
 export function getResults() {

@@ -12,6 +12,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { spawnSync } from 'child_process';
+import { TERMINAL_STATES } from './constants.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
@@ -37,7 +38,13 @@ if (!fs.existsSync(stateFile)) {
   process.exit(1);
 }
 
-const state = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
+let state;
+try {
+  state = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
+} catch (e) {
+  console.error(`ERROR: state.json is not valid JSON — ${e.message}`);
+  process.exit(1);
+}
 
 if (state.sprint_id !== sprintId) {
   console.error(`ERROR: state.json is for sprint ${state.sprint_id}, not ${sprintId}`);
@@ -46,7 +53,7 @@ if (state.sprint_id !== sprintId) {
 
 // 2. Check all stories are terminal
 const activeStories = Object.entries(state.stories || {}).filter(
-  ([, s]) => !['Done', 'Escalated', 'Parking Lot'].includes(s.state)
+  ([, s]) => !TERMINAL_STATES.includes(s.state)
 );
 
 if (activeStories.length > 0) {

@@ -42,7 +42,13 @@ if (!fs.existsSync(stateFile)) {
   console.error('ERROR: .vbounce/state.json not found');
   process.exit(1);
 }
-const state = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
+let state;
+try {
+  state = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
+} catch (e) {
+  console.error(`ERROR: state.json is not valid JSON — ${e.message}`);
+  process.exit(1);
+}
 if (!state.stories[storyId]) {
   console.error(`ERROR: Story "${storyId}" not found in state.json`);
   process.exit(1);
