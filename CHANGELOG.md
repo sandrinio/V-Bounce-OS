@@ -5,6 +5,12 @@ All notable changes to the V-Bounce Engine framework and its CLI installer will 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.1] - 2026-03-27
+### Added
+- **`vbounce update`** — New CLI command that checks installed version against npm latest and shows upgrade instructions.
+- **Version check in `vbounce doctor`** — Doctor health check now includes version comparison as part of its output.
+- **`check_update.mjs`** — New script with `--json` and `--quiet` modes for programmatic version checking.
+
 ## [2.6.0] - 2026-03-27
 
 ### Added

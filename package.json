@@ -1,6 +1,6 @@
 {
   "name": "vbounce-engine",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "V-Bounce Engine: Turn your AI coding assistant into a full engineering team through structured SDLC skills.",
   "type": "module",
   "bin": {
