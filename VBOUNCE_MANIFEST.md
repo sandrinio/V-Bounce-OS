@@ -223,6 +223,7 @@ Scripts automate framework operations. Located in `.vbounce/scripts/`.
 | `.vbounce/scripts/validate_sprint_plan.mjs` | Sprint setup | Sprint plan file | Structure validation |
 | `.vbounce/scripts/validate_bounce_readiness.mjs` | Before bounce | Story ID | Readiness check (spec, criteria, guide, ambiguity) |
 | `.vbounce/scripts/prefill_report.mjs` | Before agent spawn | Story ID, agent type | `.vbounce/reports/STORY-{ID}-{agent}.md` (pre-filled YAML frontmatter) |
+| `.vbounce/scripts/check_update.mjs` | `vbounce update` / `vbounce doctor` | --json, --quiet | Version comparison: installed vs npm latest |
 | `.vbounce/scripts/verify_framework.mjs` | On demand | — | Framework integrity check |
 | `.vbounce/scripts/verify_framework.sh` | On demand | — | Shell wrapper for above |
 | `.vbounce/scripts/doctor.mjs` | `vbounce doctor` | — | Health check (templates, skills, scripts, brains) |

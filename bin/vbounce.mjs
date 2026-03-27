@@ -94,6 +94,7 @@ Usage:
   vbounce trends                       Cross-sprint trend analysis
   vbounce suggest <sprintId>           Generate improvement suggestions
   vbounce improve <sprintId>           Run full self-improvement pipeline
+  vbounce update                        Check for engine updates
   vbounce doctor                       Validate all configs and state files
 
 Install Platforms:
@@ -255,6 +256,12 @@ if (command === 'docs') {
     console.error('Usage: vbounce docs match --story <ID> | vbounce docs check <sprintId>');
     process.exit(1);
   }
+}
+
+// -- update --
+if (command === 'update') {
+  rl.close();
+  runScript('check_update.mjs', args.slice(1));
 }
 
 // -- doctor --

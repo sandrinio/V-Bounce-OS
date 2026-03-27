@@ -9,6 +9,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
@@ -111,7 +112,8 @@ const requiredScripts = [
   'prep_qa_context.mjs', 'prep_arch_context.mjs', 'prep_sprint_context.mjs',
   'prep_sprint_summary.mjs', 'sprint_trends.mjs', 'suggest_improvements.mjs',
   'hotfix_manager.sh',
-  'prefill_report.mjs'
+  'prefill_report.mjs',
+  'check_update.mjs'
 ];
 const scriptsDir = path.join(ROOT, '.vbounce', 'scripts');
 let scriptCount = 0;
@@ -133,6 +135,26 @@ if (fs.existsSync(path.join(ROOT, 'vbounce.config.json'))) {
   pass('vbounce.config.json found');
 } else {
   warn('vbounce.config.json not found — using default context limits');
+}
+
+// Version check
+const checkUpdateScript = path.join(__dirname, 'check_update.mjs');
+if (fs.existsSync(checkUpdateScript)) {
+  try {
+    const result = execSync(`node "${checkUpdateScript}" --json`, {
+      encoding: 'utf8', timeout: 20000, stdio: ['pipe', 'pipe', 'pipe']
+    });
+    const info = JSON.parse(result.trim());
+    if (info.updateAvailable) {
+      warn(`Update available: ${info.installed} → ${info.latest} (${info.updateType})\n    → Run: npx vbounce-engine@latest install claude`);
+    } else if (info.installed) {
+      pass(`Version ${info.installed} (up to date)`);
+    }
+  } catch {
+    warn('Version check: could not reach npm registry');
+  }
+} else {
+  warn('Version check: check_update.mjs not found');
 }
 
 // Print results
