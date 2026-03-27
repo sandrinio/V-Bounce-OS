@@ -195,7 +195,7 @@ Scripts automate framework operations. Located in `.vbounce/scripts/`.
 ### Sprint Lifecycle
 | Script | When | Input | Output |
 |--------|------|-------|--------|
-| `.vbounce/scripts/init_sprint.mjs` | Sprint setup | Sprint ID, Delivery ID | `.vbounce/state.json`, sprint plan directory |
+| `.vbounce/scripts/init_sprint.mjs` | Sprint setup | Sprint ID, --stories | `.vbounce/state.json`, sprint plan directory |
 | `.vbounce/scripts/close_sprint.mjs` | Sprint end | Sprint ID | Archives reports, triggers improvement pipeline |
 | `.vbounce/scripts/complete_story.mjs` | Story merge | Story ID, metrics | Updates state.json + sprint plan §4 Execution Log |
 | `.vbounce/scripts/update_state.mjs` | Any state change | Story ID, new state | Atomic state.json update |
@@ -222,6 +222,7 @@ Scripts automate framework operations. Located in `.vbounce/scripts/`.
 | `.vbounce/scripts/validate_state.mjs` | State changes | state.json | Schema validation |
 | `.vbounce/scripts/validate_sprint_plan.mjs` | Sprint setup | Sprint plan file | Structure validation |
 | `.vbounce/scripts/validate_bounce_readiness.mjs` | Before bounce | Story ID | Readiness check (spec, criteria, guide, ambiguity) |
+| `.vbounce/scripts/prefill_report.mjs` | Before agent spawn | Story ID, agent type | `.vbounce/reports/STORY-{ID}-{agent}.md` (pre-filled YAML frontmatter) |
 | `.vbounce/scripts/verify_framework.mjs` | On demand | — | Framework integrity check |
 | `.vbounce/scripts/verify_framework.sh` | On demand | — | Shell wrapper for above |
 | `.vbounce/scripts/doctor.mjs` | `vbounce doctor` | — | Health check (templates, skills, scripts, brains) |
