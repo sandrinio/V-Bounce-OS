@@ -8,18 +8,17 @@ import path from 'path';
 import { execSync } from 'child_process';
 
 /**
- * Create a full sprint fixture set: charter, delivery plan, risk registry,
- * epic, story specs, sprint plan, LESSONS.md, and state.json.
+ * Create a full sprint fixture set: charter, roadmap, risk registry,
+ * epic, story specs, sprint plan, FLASHCARDS.md, and state.json.
  *
  * @param {string} installDir - Root of the V-Bounce install
  * @param {object} opts
  * @param {string} opts.sprintId - e.g. "S-98"
- * @param {string} opts.deliveryId - e.g. "D-98"
  * @param {string[]} opts.storyIds - e.g. ["STORY-T98-01", "STORY-T98-02"]
  * @param {string} opts.epicId - e.g. "EPIC-T98"
  * @returns {{ statePath: string, sprintPlanDir: string, reportsDir: string }}
  */
-export function createSprintFixtures(installDir, { sprintId, deliveryId, storyIds, epicId }) {
+export function createSprintFixtures(installDir, { sprintId, releaseId, storyIds, epicId } = {}) {
   const sprintNum = sprintId.replace('S-', '');
   const vbounceDir = path.join(installDir, '.vbounce');
   const scriptsDir = path.join(vbounceDir, 'scripts');
@@ -48,18 +47,19 @@ status: "Approved"
 Automated test fixtures for ${sprintId}.
 `);
 
-  // Delivery Plan
-  fs.writeFileSync(path.join(strategyDir, `${deliveryId}_DELIVERY_PLAN.md`), `---
-delivery_id: "${deliveryId}"
-title: "Test Delivery Plan"
+  // Roadmap (minimal fixture)
+  if (!fs.existsSync(path.join(strategyDir, 'roadmap.md'))) {
+    fs.writeFileSync(path.join(strategyDir, 'roadmap.md'), `---
+title: "Roadmap"
 status: "Active"
 ---
 
-# ${deliveryId} — Test Delivery Plan
+# Roadmap
 
-## Scope
-Sprint ${sprintId} test.
+## 2. Releases
+- Sprint ${sprintId} test.
 `);
+  }
 
   // Risk Registry
   if (!fs.existsSync(path.join(strategyDir, 'RISK_REGISTRY.md'))) {
@@ -124,7 +124,6 @@ sprint_id: "${sprintId}"
 sprint_goal: "Test sprint ${sprintId}"
 dates: "03/25 - 03/31"
 status: "Active"
-delivery: "${deliveryId}"
 ---
 
 # Sprint ${sprintId} Plan
@@ -165,9 +164,9 @@ ${storyRows}
 <!-- EXECUTION_LOG_END -->
 `);
 
-  // LESSONS.md
-  if (!fs.existsSync(path.join(installDir, 'LESSONS.md'))) {
-    fs.writeFileSync(path.join(installDir, 'LESSONS.md'), `# Lessons Learned
+  // FLASHCARDS.md
+  if (!fs.existsSync(path.join(installDir, 'FLASHCARDS.md'))) {
+    fs.writeFileSync(path.join(installDir, 'FLASHCARDS.md'), `# Flashcards
 
 ## Sprint Lessons
 - Fixture-generated for testing.
@@ -177,7 +176,7 @@ ${storyRows}
   // Initialize state.json via init_sprint.mjs
   try {
     execSync(
-      `node "${path.join(scriptsDir, 'init_sprint.mjs')}" ${sprintId} ${deliveryId} --stories ${storyIds.join(',')}`,
+      `node "${path.join(scriptsDir, 'init_sprint.mjs')}" ${sprintId} --stories ${storyIds.join(',')}`,
       { cwd: installDir, timeout: 10000, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }
     );
   } catch (e) {
@@ -286,7 +285,7 @@ Low.
  * @param {string} installDir
  * @param {object} opts - Same shape as createSprintFixtures
  */
-export function removeSprintFixtures(installDir, { sprintId, deliveryId, storyIds, epicId }) {
+export function removeSprintFixtures(installDir, { sprintId, storyIds, epicId } = {}) {
   const sprintNum = sprintId.replace('S-', '');
   const vbounceDir = path.join(installDir, '.vbounce');
 

@@ -12,7 +12,7 @@ You are an AI coding agent operating within **V-Bounce Engine** — a structured
 
 ### Phase 1: Verification (Planning)
 Documents are created in strict hierarchy — no level can be skipped:
-Charter (why) → Roadmap (strategic what/when) → Epic (detailed what) → Story (how) → Delivery Plan (execution) → Risk Registry (risks)
+Charter (why) → Roadmap (strategic what/when) → Epic (detailed what) → Story (how) (+ Risk Registry cross-cutting)
 
 ### Pre-Bounce Checks
 Before sprints: Lead triages request (L1 Trivial → Hotfix Path. L2-L4 → Epic Path). Determines Execution Mode (Full Bounce vs Fast Track). Enforces sequential dependency order for stories with `Depends On:`. Reads RISK_REGISTRY.md (flag blocking risks), `sprint-{XX}.md` §2 Sprint Open Questions (resolve before bouncing), and vdocs/_manifest.json (know what's documented). Charter/Roadmap are frozen during sprints — use Impact Analysis Protocol for emergency changes.
@@ -21,7 +21,7 @@ Before sprints: Lead triages request (L1 Trivial → Hotfix Path. L2-L4 → Epic
 **Standard Path (L2-L4):**
 0. Team Lead reads `.vbounce/state.json` (`vbounce state show`) and runs `vbounce prep sprint S-{XX}` for a fresh context pack.
 1. Team Lead sends Story context pack to Developer.
-2. Developer reads LESSONS.md and the Story context pack, implements code, writes Implementation Report. CLI Orchestrator must run `./.vbounce/scripts/validate_report.mjs` on the report to enforce YAML strictness.
+2. Developer reads FLASHCARDS.md and the Story context pack, implements code, writes Implementation Report. CLI Orchestrator must run `./.vbounce/scripts/validate_report.mjs` on the report to enforce YAML strictness.
 3. Pre-QA Gate Scan: `./.vbounce/scripts/pre_gate_runner.sh qa` catches mechanical failures before spawning QA. Trivial issues → return to Dev.
 4. QA validates against Story §2 The Truth (skipping pre-scanned checks). If fail → Bug Report to Dev.
 5. Dev fixes and resubmits. 3+ failures → Escalated.
@@ -32,17 +32,17 @@ Before sprints: Lead triages request (L1 Trivial → Hotfix Path. L2-L4 → Epic
 
 **Hotfix Path (L1 Trivial Task):**
 1. Team Lead evaluates request and creates `HOTFIX-{Date}-{Name}.md`.
-2. Developer reads LESSONS.md and Hotfix spec, makes targeted change (max 1-2 files).
+2. Developer reads FLASHCARDS.md and Hotfix spec, makes targeted change (max 1-2 files).
 3. Developer runs `./.vbounce/scripts/hotfix_manager.sh ledger "{Title}" "{Description}"`.
 4. Human/Team Lead manually verifies the fix. QA/Architect loops bypassed.
 5. Hotfix is merged directly into the active branch.
 6. DevOps (or Team Lead) runs `./.vbounce/scripts/hotfix_manager.sh sync` to update active worktrees.
 
 ### Phase 3: Review
-Sprint Report → Human review → Delivery Plan updated → Lessons recorded. If new features delivered → spawn Scribe agent to generate/update vdocs/.
+Sprint Report → Human review → Roadmap Delivery Log updated → Lessons recorded. If new features delivered → spawn Scribe agent to generate/update vdocs/.
 
 **Self-Improvement Pipeline** (auto-runs on `vbounce sprint close`):
-Analyzes §5 retro tables + LESSONS.md automation candidates + recurring patterns → generates `.vbounce/improvement-suggestions.md` with impact levels (P0 Critical → P3 Low). Human approves/rejects/defers. Run `/improve` skill to apply. On-demand: `vbounce improve S-{XX}`.
+Analyzes §5 retro tables + FLASHCARDS.md automation candidates + recurring patterns → generates `.vbounce/improvement-suggestions.md` with impact levels (P0 Critical → P3 Low). Human approves/rejects/defers. Run `/improve` skill to apply. On-demand: `vbounce improve S-{XX}`.
 
 ### Story States
 Draft → Refinement → Ready to Bounce → Bouncing → QA Passed → Architect Passed → Sprint Review → Done

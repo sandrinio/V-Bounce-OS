@@ -4,8 +4,8 @@
 > Any modification to `.claude/agents/`, `.vbounce/skills/`, `.vbounce/templates/`, or `.vbounce/scripts/` MUST also update this file.
 > Run `vbounce doctor` to validate file existence against this manifest.
 
-**Version:** 2.5.3
-**Last updated:** 2026-03-26
+**Version:** 2.6.0
+**Last updated:** 2026-03-27
 
 ---
 
@@ -14,7 +14,7 @@
 ```
 Phase 1: PLANNING (AI + Human, no subagents)
   ├─ User talks about work → AI loads doc-manager + product-graph
-  ├─ Create/modify: Charter → Roadmap → Epic → Story → Delivery Plan → Risk Registry
+  ├─ Create/modify: Charter → Roadmap → Epic → Story → Risk Registry
   ├─ Codebase research mandatory for Epic §4 and Story decomposition
   ├─ AI surfaces ambiguity, risks, open questions collaboratively
   └─ Triage: L1 Trivial → Hotfix Path | Everything else → Standard Path
@@ -43,7 +43,6 @@ Phase 3: THE BOUNCE (Subagent orchestration)
 
 Phase 4: REVIEW
   ├─ Sprint Report → Human review
-  ├─ Delivery Plan updated (boundary only)
   ├─ Scribe generates/updates product docs
   └─ Self-Improvement Pipeline (UNCONDITIONAL): trends → suggest → verbally present P0/P1 → human approves → improve
 ```
@@ -95,10 +94,10 @@ Brains configure AI tools to follow the V-Bounce process. Each brain contains id
 | Installed Location | Agent | Tools | Reads | Writes |
 |-------------------|-------|-------|-------|--------|
 | `.claude/agents/explorer.md` | Explorer | Read, Glob, Grep, Bash | Product plans, state.json, codebase structure | Context Pack (read-only research) |
-| `.claude/agents/developer.md` | Developer | Read, Edit, Write, Bash, Glob, Grep | Story §1+§3, LESSONS.md, ADRs, react-best-practices | Implementation Report, Checkpoint |
-| `.claude/agents/qa.md` | QA | Read, Bash, Glob, Grep | Story §2, Dev Report, LESSONS.md, pre-gate scan | QA Validation Report |
+| `.claude/agents/developer.md` | Developer | Read, Edit, Write, Bash, Glob, Grep | Story §1+§3, FLASHCARDS.md, ADRs, react-best-practices | Implementation Report, Checkpoint |
+| `.claude/agents/qa.md` | QA | Read, Bash, Glob, Grep | Story §2, Dev Report, FLASHCARDS.md, pre-gate scan | QA Validation Report |
 | `.claude/agents/architect.md` | Architect | Read, Glob, Grep, Bash | Full Story, all reports, Roadmap §3 ADRs, Risk Registry | Architectural Audit Report |
-| `.claude/agents/devops.md` | DevOps | Read, Edit, Write, Bash, Glob, Grep | Gate reports, Delivery Plan, LESSONS.md | DevOps Merge/Release Report |
+| `.claude/agents/devops.md` | DevOps | Read, Edit, Write, Bash, Glob, Grep | Gate reports, Roadmap, FLASHCARDS.md | DevOps Merge/Release Report |
 | `.claude/agents/scribe.md` | Scribe | Read, Write, Bash, Glob, Grep | Sprint Report, Dev Reports, codebase, _manifest.json | Product docs, Scribe Report |
 
 ---
@@ -114,7 +113,6 @@ Templates are **immutable during execution**. Located in `.vbounce/templates/`.
 | `epic.md` | 3 | `product_plans/backlog/EPIC-{NNN}_{name}/EPIC-{NNN}_{name}.md` | §1 Problem & Value, §2 Scope Boundaries, §3 Context, §4 Technical Context (codebase research required), §5 Decomposition Guidance, §6 Risks, §7 Acceptance Criteria, §8 Open Questions, §9 Artifact Links |
 | `story.md` | 4 | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{Name}.md` | §1 The Spec (§1.1 User Story, §1.2 Detailed Requirements, §1.3 Out of Scope), §2 The Truth (Gherkin + Verification), §3 Implementation Guide (§3.0 Env Prerequisites, §3.1 Tests, §3.2 Context, §3.3 Logic, §3.4 API Contract), §4 Quality Gates (§4.1 Min Test Expectations, §4.2 Definition of Done) |
 | `spike.md` | 3.5 | `product_plans/backlog/EPIC-{NNN}_{name}/SPIKE-{EpicID}-{NNN}-{topic}.md` | §1 Question, §2 Context, §3 Approach, §4 Findings, §5 Decision, §6 Residual Risk, §7 Affected Documents |
-| `delivery_plan.md` | 4.5 | `product_plans/D-{NN}_{release}/D-{NN}_DELIVERY_PLAN.md` | §1 Project Window, §2 Epics, §3 Backlog, §4 Delivery Log, §8 Applied Hotfixes |
 | `sprint.md` | 4.5 | `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` | §0 Sprint Readiness Gate (mandatory confirmation), §1 Active Scope + Context Pack, §2 Execution Strategy (Shared File Map, Dependency Chain, Execution Mode, Risk Flags), §3 Open Questions, §4 Execution Log (with test counts) |
 | `sprint_report.md` | Output | `.vbounce/sprint-report-S-{XX}.md` | §1 What Was Delivered, §2 Story Results (with Tax Type), §3 Execution Metrics (Bug Fix Tax / Enhancement Tax split), §4 Lessons Learned (review, not gate), §5 Retrospective + Framework Self-Assessment |
 | `sprint_context.md` | Sprint | `.vbounce/sprint-context-S-{XX}.md` | Design tokens, shared patterns, locked deps, active lessons, sprint-specific rules |
@@ -147,7 +145,6 @@ Skills are modular instructions loaded by agents. Located in `.vbounce/skills/`.
 | File | Purpose |
 |------|---------|
 | `.vbounce/skills/agent-team/references/cleanup.md` | Post-sprint cleanup procedures |
-| `.vbounce/skills/agent-team/references/delivery-sync.md` | When to update Delivery Plan vs Sprint Plan |
 | `.vbounce/skills/agent-team/references/discovery.md` | Spike execution protocol for L4/🔴 stories |
 | `.vbounce/skills/agent-team/references/git-strategy.md` | Branch model and git commands |
 | `.vbounce/skills/agent-team/references/mid-sprint-triage.md` | Routing for mid-sprint changes — decision tree routes to bug.md, change_request.md, or hotfix.md |
@@ -233,7 +230,7 @@ Scripts automate framework operations. Located in `.vbounce/scripts/`.
 | Script | When | Input | Output |
 |--------|------|-------|--------|
 | `.vbounce/scripts/sprint_trends.mjs` | Sprint close | Archived reports | `.vbounce/trends.md` |
-| `.vbounce/scripts/post_sprint_improve.mjs` | Sprint close | Sprint Report, LESSONS.md, trends | `.vbounce/improvement-manifest.json` |
+| `.vbounce/scripts/post_sprint_improve.mjs` | Sprint close | Sprint Report, FLASHCARDS.md, trends | `.vbounce/improvement-manifest.json` |
 | `.vbounce/scripts/suggest_improvements.mjs` | Sprint close | Improvement manifest | `.vbounce/improvement-suggestions.md` |
 
 ### Product Graph
@@ -270,7 +267,7 @@ Charter §6 (Constraints) ───────→ Roadmap §5 (Strategic Constr
 Roadmap §2 (Release Plan) ──────→ Epic Metadata (Release field)
 Roadmap §3 (ADRs) ──────────────→ Story §3.2 (ADR References)
 Roadmap §4 (Dependencies) ──────→ Risk Registry §1 (Active Risks)
-Roadmap §5 (Constraints) ───────→ Delivery Plan (sprint capacity)
+Roadmap §5 (Constraints) ───────→ Sprint Plan (sprint capacity)
 
 Epic §2 (Scope Boundaries) ─────→ Story §1 (The Spec)
 Epic §4 (Technical Context) ────→ Story §3 (Implementation Guide)
@@ -309,7 +306,7 @@ Human reviews → Scribe updates docs → Improvement pipeline runs
 | Charter §1 (Identity) | Roadmap §1 |
 | Charter §2 (Design Principles) | Notify all agents |
 | Charter §3 (Tech Stack) | Roadmap §3 (ADRs) |
-| Roadmap §2 (Release Plan) | Delivery Plan sprint goals |
+| Roadmap §2 (Release Plan) | Sprint Plan goals |
 | Roadmap §3 (ADR) | All Stories referencing that ADR |
 | Epic §2 (Scope) | All child Stories §1 |
 | Epic §4 (Technical Context) | All child Stories §3 |
@@ -324,7 +321,7 @@ These directories are created during project execution, not part of the framewor
 
 | Directory | Purpose | Created By |
 |-----------|---------|-----------|
-| `product_plans/strategy/` | Charter, Roadmap, Risk Registry, Delivery Plan (frozen during sprints) | Phase 1 (Planning) |
+| `product_plans/strategy/` | Charter, Roadmap, Risk Registry (frozen during sprints) | Phase 1 (Planning) |
 | `product_plans/backlog/` | Epics and unassigned Stories | Phase 1 (Planning) |
 | `product_plans/sprints/` | Active sprint workspace | Phase 2 (Sprint Planning) |
 | `product_plans/hotfixes/` | Emergency L1 fixes | Phase 3 (Hotfix Path) |
@@ -370,27 +367,28 @@ These directories are created during project execution, not part of the framewor
 
 ## 11. Test Suite
 
-Regression suite for validating the engine after any path, script, or template change. Run: `node tests/run.mjs`
+Regression suite for validating the engine after any path, script, or template change. Run: `node vbounce-tests/run.mjs`
 
 | File | Suite | What it checks |
 |------|-------|----------------|
-| `tests/harness.mjs` | — | Test primitives: `suite()`, `record()`, `assertFileExists()`, `assertNoMatch()`, `assertScriptRuns()`, `assertBashRuns()`, `generateReport()` |
-| `tests/fixtures.mjs` | — | Shared fixture generator: `createSprintFixtures()`, `createSyntheticReport()`, `removeSprintFixtures()` |
-| `tests/run.mjs` | — | Main runner: installs to temp dir, runs all 12 suites, generates JSON + Markdown reports |
-| `tests/suites/install.mjs` | Install Integrity | 76+ file existence checks across all installed components |
-| `tests/suites/paths.mjs` | Path Integrity | 500+ stale path pattern scans across all shipped `.md`/`.mjs` files |
-| `tests/suites/doctor.mjs` | Doctor Accuracy | False positive and false negative detection |
-| `tests/suites/scripts.mjs` | Script Validation | Import checks, functional tests, ROOT resolution for all `.mjs` scripts |
-| `tests/suites/brains.mjs` | Agent Contracts | Frontmatter, report YAML signatures, CLAUDE.md ↔ agents consistency |
-| `tests/suites/manifest.mjs` | Manifest Completeness | All backtick paths resolve, orphan file detection |
-| `tests/suites/templates.mjs` | Template/Skill Integrity | Structure validation, stale paths, CLAUDE.md ↔ skills cross-reference |
-| `tests/suites/lifecycle.mjs` | Full Lifecycle | 41-test simulation: fixtures → init → transitions → context prep → complete → close → analytics → edge cases |
-| `tests/suites/agent-errors.mjs` | Agent Error Paths | Scripts called in wrong order, wrong state, wrong/missing args — verifies actionable errors, not raw crashes |
-| `tests/suites/run-script-wrapper.mjs` | Script Wrapper | `run_script.sh` pre-flight checks, diagnostic block output, success/failure passthrough, bash script support |
-| `tests/suites/parallel-stories.mjs` | Parallel Stories | Concurrent state management: 3 stories transition independently, bounce counts isolated, re-init behavior |
-| `tests/suites/report-parsing.mjs` | Report Parsing | Malformed agent reports (no frontmatter, empty, truncated YAML, missing fields) handled gracefully |
+| `vbounce-tests/harness.mjs` | — | Test primitives: `suite()`, `record()`, `assertFileExists()`, `assertNoMatch()`, `assertScriptRuns()`, `assertBashRuns()`, `generateReport()` |
+| `vbounce-tests/fixtures.mjs` | — | Shared fixture generator: `createSprintFixtures()`, `createSyntheticReport()`, `removeSprintFixtures()` |
+| `vbounce-tests/run.mjs` | — | Main runner: installs to temp dir, runs all 13 suites, generates JSON + Markdown reports |
+| `vbounce-tests/suites/VBOUNCE_install.mjs` | Install Integrity | 76+ file existence checks across all installed components |
+| `vbounce-tests/suites/VBOUNCE_paths.mjs` | Path Integrity | 500+ stale path pattern scans across all shipped `.md`/`.mjs` files |
+| `vbounce-tests/suites/VBOUNCE_doctor.mjs` | Doctor Accuracy | False positive and false negative detection |
+| `vbounce-tests/suites/VBOUNCE_scripts.mjs` | Script Validation | Import checks, functional tests, ROOT resolution for all `.mjs` scripts |
+| `vbounce-tests/suites/VBOUNCE_brains.mjs` | Agent Contracts | Frontmatter, report YAML signatures, CLAUDE.md ↔ agents consistency |
+| `vbounce-tests/suites/VBOUNCE_manifest.mjs` | Manifest Completeness | All backtick paths resolve, orphan file detection |
+| `vbounce-tests/suites/VBOUNCE_templates.mjs` | Template/Skill Integrity | Structure validation, stale paths, CLAUDE.md ↔ skills cross-reference |
+| `vbounce-tests/suites/VBOUNCE_lifecycle.mjs` | Full Lifecycle | 41-test simulation: fixtures → init → transitions → context prep → complete → close → analytics → edge cases |
+| `vbounce-tests/suites/VBOUNCE_agent-errors.mjs` | Agent Error Paths | Scripts called in wrong order, wrong state, wrong/missing args — verifies actionable errors, not raw crashes |
+| `vbounce-tests/suites/VBOUNCE_run-script-wrapper.mjs` | Script Wrapper | `run_script.sh` pre-flight checks, diagnostic block output, success/failure passthrough, bash script support |
+| `vbounce-tests/suites/VBOUNCE_parallel-stories.mjs` | Parallel Stories | Concurrent state management: 3 stories transition independently, bounce counts isolated, re-init behavior |
+| `vbounce-tests/suites/VBOUNCE_report-parsing.mjs` | Report Parsing | Malformed agent reports (no frontmatter, empty, truncated YAML, missing fields) handled gracefully |
+| `vbounce-tests/suites/VBOUNCE_prefill-report.mjs` | Report Pre-Fill | Pre-filled YAML frontmatter generation, bounce count injection, validation round-trip |
 
-Reports output to `tests/reports/report-{timestamp}.{json,md}`.
+Reports output to `vbounce-tests/reports/report-{timestamp}.{json,md}`.
 
 ---
 
@@ -408,7 +406,7 @@ Reports output to `tests/reports/report-{timestamp}.{json,md}`.
 |----------|-------|
 | Root files (core) | 8 |
 | Brain files | 16 |
-| Templates | 13 |
+| Templates | 12 |
 | Skills (SKILL.md + references) | 26 |
 | React rules | 57 |
 | Scripts | 29 |
@@ -416,4 +414,4 @@ Reports output to `tests/reports/report-{timestamp}.{json,md}`.
 | Diagrams | 6 |
 | Docs + Visual Assets | 6 + ~15 icons/images |
 | CLI | 1 |
-| **Total** | **~193** |
+| **Total** | **~192** |

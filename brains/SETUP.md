@@ -75,8 +75,7 @@ The document hierarchy builds from there:
 2. Roadmap (releases, ADRs, constraints)
 3. Epics (feature scope)
 4. Stories (implementation contracts)
-5. Delivery Plan (sprint execution)
-6. Risk Registry (cross-cutting risks)
+5. Risk Registry (cross-cutting risks)
 
 ## Step 4: Set Up Git Infrastructure
 
@@ -95,12 +94,12 @@ The `.worktrees/` directory holds isolated worktrees during bouncing — these a
 
 The `.vbounce/archive/` directory is **committed to git** — it contains the full history of every sprint: all agent reports, sprint reports, escalation reports, and merge reports. This is your audit trail.
 
-## Step 5: Create LESSONS.md
+## Step 5: Create FLASHCARDS.md
 
 Create an empty lessons file at the project root:
 
 ```bash
-touch LESSONS.md
+touch FLASHCARDS.md
 ```
 
 Every agent reads this before doing work. It accumulates project-specific rules, gotchas, and constraints discovered during sprints.
@@ -123,7 +122,7 @@ Once installed, start your first sprint:
 
 ```bash
 # Create state.json + sprint plan directory
-vbounce sprint init S-01 D-01
+vbounce sprint init S-01 --stories STORY-001-01
 
 # Verify everything is in order
 vbounce doctor
@@ -132,14 +131,14 @@ vbounce doctor
 vbounce prep sprint S-01
 ```
 
-Context packs are generated on-demand before each bounce. Agents read `LESSONS.md`, the sprint plan, and relevant story specs directly — no embedding or sync step required.
+Context packs are generated on-demand before each bounce. Agents read `FLASHCARDS.md`, the sprint plan, and relevant story specs directly — no embedding or sync step required.
 
 ## Folder Structure After Setup
 
 ```
 your-project/
 ├── CLAUDE.md                  ← brain file (or AGENTS.md / GEMINI.md)
-├── LESSONS.md                 ← project-specific rules (grows over time)
+├── FLASHCARDS.md                 ← project-specific rules (grows over time)
 ├── .claude/agents/            ← subagent configs (Claude Code only)
 ├── .vbounce/skills/           ← V-Bounce Engine skills
 │   ├── agent-team/
@@ -150,7 +149,7 @@ your-project/
 │   └── write-skill/
 ├── .vbounce/templates/        ← document templates
 ├── product_plans/             ← planning documents (state-based)
-│   ├── strategy/              ← charter, roadmap, risk registry, delivery plan
+│   ├── strategy/              ← charter, roadmap, risk registry
 │   ├── backlog/               ← epics and unassigned stories
 │   ├── sprints/               ← active sprint execution workspace
 │   ├── hotfixes/              ← L1 emergency tasks

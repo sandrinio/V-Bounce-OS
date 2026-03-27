@@ -28,13 +28,13 @@ vbounce improve S-XX          # run self-improvement pipeline
 
 ## Self-Improvement
 
-After sprint close, V-Bounce automatically analyzes retro findings, LESSONS.md, and cross-sprint patterns to generate improvement suggestions with impact levels (P0 Critical → P3 Low). See `.vbounce/improvement-suggestions.md` after running `vbounce sprint close` or `vbounce improve S-XX`.
+After sprint close, V-Bounce automatically analyzes retro findings, FLASHCARDS.md, and cross-sprint patterns to generate improvement suggestions with impact levels (P0 Critical → P3 Low). See `.vbounce/improvement-suggestions.md` after running `vbounce sprint close` or `vbounce improve S-XX`.
 
 ## Document Hierarchy
 
-Charter → Roadmap → Epic → Story → Sprint Plan → Delivery Plan
+Charter → Roadmap → Epic → Story (+ Risk Registry cross-cutting)
 
-Never skip levels. Stories must trace back to an Epic. Sprints must reference a Delivery Plan.
+Never skip levels. Stories must trace back to an Epic.
 
 ## Report Format
 
@@ -49,6 +49,6 @@ tokens_used: {number}
 
 ## Critical Rules
 
-- Read `LESSONS.md` before modifying code in this project
+- Read `FLASHCARDS.md` before modifying code in this project
 - No gold-plating — implement exactly what the Story specifies
 - Follow the Safe Zone — no new patterns without Architect approval

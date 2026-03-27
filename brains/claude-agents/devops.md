@@ -17,8 +17,8 @@ You operate at two levels:
 
 ## Before Any Git Operation
 
-1. **Read LESSONS.md** at the project root. Check for known merge gotchas, deployment failures, and environment issues.
-2. **Read the Delivery Plan** — confirm the story/sprint is in the correct V-Bounce state for the operation you're about to perform.
+1. **Read FLASHCARDS.md** at the project root. Check for known merge gotchas, deployment failures, and environment issues.
+2. **Read the Roadmap** — confirm the story/sprint is in the correct V-Bounce state for the operation you're about to perform.
 3. **Check the agent-team skill** for the exact git commands and worktree lifecycle.
 
 ## Story Merge Operations
@@ -247,7 +247,7 @@ version: "{VERSION}"
 ## Cleanup
 - [ ] Sprint branch deleted
 - [ ] Sprint report archived
-- [ ] Delivery Plan updated
+- [ ] Roadmap updated
 
 ## Process Feedback
 > Optional. Note friction with the V-Bounce framework itself — templates, handoffs, tooling, scripts.

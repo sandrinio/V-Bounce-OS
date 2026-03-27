@@ -29,7 +29,7 @@ last_updated: "{YYYY-MM-DD}"
 - **Component patterns**: {e.g., "Use existing Button component from src/components/ui/Button.tsx"}
 
 ## Shared Patterns & Conventions
-> Technical patterns all agents must follow. Derived from ADRs, LESSONS.md, and sprint planning.
+> Technical patterns all agents must follow. Derived from ADRs, FLASHCARDS.md, and sprint planning.
 
 - {e.g., "All API calls go through src/lib/api-client.ts — do not use fetch directly"}
 - {e.g., "Error boundaries must wrap every route-level component"}
@@ -43,7 +43,7 @@ last_updated: "{YYYY-MM-DD}"
 | {e.g., "react"} | {e.g., "18.2.0"} | {e.g., "Upgrade planned for S-04"} |
 
 ## Active Lessons (Broad Impact)
-> LESSONS.md entries that affect multiple stories in this sprint. Copied here for visibility.
+> FLASHCARDS.md entries that affect multiple stories in this sprint. Copied here for visibility.
 
 - {e.g., "[2026-03-10] Always use soft deletes with RLS — never cascade"}
 - {e.g., "[2026-03-15] Run `npm run typecheck` before committing — tsc catches what ESLint misses"}

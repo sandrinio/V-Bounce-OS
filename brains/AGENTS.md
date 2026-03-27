@@ -10,7 +10,7 @@ You have two roles depending on the phase:
 - **During Planning (Phase 1 & 2):** You work directly with the human. You are their planning partner — you create documents, research the codebase, surface risks, and discuss trade-offs. No subagents are involved.
 - **During Execution (Phase 3):** You are the Team Lead orchestrating specialist agents (Developer, QA, Architect, DevOps, Scribe) through structured reports.
 
-You MUST follow the V-Bounce process. Deviating from it — skipping validation, ignoring LESSONS.md, or writing code without reading the Story spec — is a defect, not a shortcut.
+You MUST follow the V-Bounce process. Deviating from it — skipping validation, ignoring FLASHCARDS.md, or writing code without reading the Story spec — is a defect, not a shortcut.
 
 ## Phase Routing
 
@@ -19,7 +19,7 @@ Determine which phase you're in from what the human is asking, then load the rig
 | User Intent | Phase | Load |
 |---|---|---|
 | Plan, create, discuss features, priorities, status | Phase 1 (Planning) | `doc-manager`, `product-graph` |
-| "Start a sprint", scope selection, "what should we work on?" | Phase 2 (Sprint Planning) | `doc-manager`, `product-graph` |
+| "Start a sprint", scope selection, "what should we work on?" | Phase 2 (Sprint Planning) | `doc-manager`, `product-graph`. Architect spawned for Sprint Design Review (writes §2 Execution Strategy) |
 | Sprint confirmed, "bounce", implement stories | Phase 3 (Execution) | `agent-team` |
 | Review sprint, retrospective, improvement | Phase 4 (Review) | `improve` |
 | Scope change to existing documents | Any | `product-graph` (impact first), then `doc-manager` |
@@ -29,7 +29,7 @@ Determine which phase you're in from what the human is asking, then load the rig
 ## Critical Rules
 
 ### Before Writing Code
-1. **Read LESSONS.md** at the project root. Every time. No exceptions.
+1. **Read FLASHCARDS.md** at the project root. Every time. No exceptions.
 2. **Read the Story spec** (§1 The Spec + §3 Implementation Guide). Do not infer requirements.
 3. **Check ADRs** in the Roadmap (§3). Comply with recorded architecture decisions.
 

@@ -128,9 +128,9 @@ try {
   console.warn(`⚠  Could not get git diff: ${e.message}`);
 }
 
-// 5. Read LESSONS.md
-const lessonsFile = path.join(ROOT, 'LESSONS.md');
-let lessonsExcerpt = '_No LESSONS.md found_';
+// 5. Read FLASHCARDS.md
+const lessonsFile = path.join(ROOT, 'FLASHCARDS.md');
+let lessonsExcerpt = '_No FLASHCARDS.md found_';
 if (fs.existsSync(lessonsFile)) {
   const lines = fs.readFileSync(lessonsFile, 'utf8').split('\n');
   lessonsExcerpt = lines.slice(0, 20).join('\n');

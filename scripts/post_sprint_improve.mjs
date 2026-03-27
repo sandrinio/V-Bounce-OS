@@ -5,7 +5,7 @@
  * Post-sprint self-improvement analyzer.
  *
  * Parses sprint report §5 Framework Self-Assessment tables, cross-references
- * LESSONS.md for automation candidates, and checks archived sprint reports
+ * FLASHCARDS.md for automation candidates, and checks archived sprint reports
  * for recurring patterns. Outputs a structured improvement manifest.
  *
  * Usage:
@@ -104,11 +104,11 @@ function parseRetroFindings(reportPath, reportSprintId) {
 }
 
 // ---------------------------------------------------------------------------
-// 2. Parse LESSONS.md for automation candidates
+// 2. Parse FLASHCARDS.md for automation candidates
 // ---------------------------------------------------------------------------
 
 /**
- * Parse LESSONS.md and classify each lesson by automation potential.
+ * Parse FLASHCARDS.md and classify each lesson by automation potential.
  * Returns array of { date, title, whatHappened, rule, age, automationType, impact }
  */
 function parseLessons(lessonsPath) {
@@ -414,7 +414,7 @@ function generateAutomationDetail(lesson) {
 
 const today = new Date().toISOString().split('T')[0];
 const archiveDir = path.join(ROOT, '.vbounce', 'archive');
-const lessonsPath = path.join(ROOT, 'LESSONS.md');
+const lessonsPath = path.join(ROOT, 'FLASHCARDS.md');
 const improvementLogPath = path.join(ROOT, '.vbounce', 'improvement-log.md');
 
 // Current sprint report
@@ -428,7 +428,7 @@ console.log(`  Retro findings from ${sprintId}: ${currentFindings.length}`);
 
 // 2. Parse lessons
 const lessons = parseLessons(lessonsPath);
-console.log(`  Lessons in LESSONS.md: ${lessons.length}`);
+console.log(`  Lessons in FLASHCARDS.md: ${lessons.length}`);
 
 // 3. Cross-reference archived reports
 const patterns = findRecurringPatterns(archiveDir, currentFindings);

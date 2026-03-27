@@ -36,7 +36,6 @@
 
 ## After Delivery Completes (Team Lead)
 
-1. Verify all stories in delivery are "Done" in Delivery Plan §4
-2. Move delivery folder: `mv product_plans/D-{NN}_{name}/ product_plans/archive/D-{NN}_{name}/`
-3. Add Delivery Log entry to Roadmap §7
-4. Update Roadmap §2 Release Plan: status → "Delivered"
+1. Verify all stories in the release are "Done" in Roadmap §2 Release Plan
+2. Add Delivery Log entry to Roadmap §7
+3. Update Roadmap §2 Release Plan: status → "Delivered"

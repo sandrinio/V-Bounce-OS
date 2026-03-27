@@ -80,25 +80,39 @@ V-Bounce State: Draft / Refinement / Ready to Bounce
 ---
 
 ## 2. Execution Strategy
-> Written during sprint planning. Guides the Lead's delegation order.
+> Written by Architect during Sprint Design Review. Team Lead may adjust after human feedback.
 
 ### Phase Plan
 - **Phase 1 (parallel)**: {Story IDs that can run simultaneously}
 - **Phase 2 (sequential)**: {Story IDs with dependencies — run in order}
 
+### Merge Ordering
+> Sequential merge order for stories with shared file surfaces. Architect recommends based on §3.2 overlap analysis.
+
+| Order | Story | Reason |
+|-------|-------|--------|
+| 1 | STORY-XXX-YY | {No dependencies — merges first} |
+| 2 | STORY-XXX-YY | {Shared surface with above — merges after} |
+
+### Shared Surface Warnings
+> Files referenced by 2+ stories. High-risk surfaces require sequential merge ordering above.
+
+| File / Module | Stories Touching It | Risk |
+|---------------|--------------------:|------|
+| `{src/path/file.ts}` | STORY-A, STORY-B | {Low / Medium / High — reason} |
+
 ### Execution Mode
 > L1 → Fast Track (Dev → DevOps, skip QA/Arch). L2 → Fast Track only with human approval below. L3/L4 → Full Bounce always.
+> Architect Override column: Architect may recommend a different mode based on architectural analysis.
 
-| Story | Label | Mode | Human Approved? |
-|-------|-------|------|-----------------|
-| STORY-XXX-YY | L2 | Full Bounce / Fast Track | — / Yes |
+| Story | Label | Mode | Architect Override? | Reason |
+|-------|-------|------|---------------------|--------|
+| STORY-XXX-YY | L2 | Full Bounce / Fast Track | — / Yes | {e.g., "Touches auth layer with 3 ADR refs"} |
 
-### Shared File Map
-> Stories touching the same files MUST merge sequentially (first-in wins). Flag these during planning.
+### ADR Compliance Notes
+> Flags from Architect Sprint Design Review. Any story §3 approach that conflicts with Roadmap §3 ADRs.
 
-| File / Module | Stories Touching It | Merge Order |
-|---------------|--------------------:|-------------|
-| `{src/path/file.ts}` | STORY-A, STORY-B | A before B |
+- {STORY-XXX-YY: §3 proposes X but ADR-NNN requires Y — recommend adjustment before bouncing}
 
 ### Dependency Chain
 > Stories that MUST run sequentially (depends_on OR shared files).
@@ -108,6 +122,7 @@ V-Bounce State: Draft / Refinement / Ready to Bounce
 | STORY-XXX-YY | STORY-XXX-YY | {depends_on / shared file / data dependency} |
 
 ### Risk Flags
+- {Sprint-level risks identified during Architect design review}
 - {Sprint-specific risks pulled from Risk Registry}
 - {External dependency risks}
 

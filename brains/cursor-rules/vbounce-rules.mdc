@@ -7,7 +7,7 @@ alwaysApply: true
 # V-Bounce Engine — Critical Rules
 
 ## Before Writing Code
-1. **Read LESSONS.md** at the project root. Every time. No exceptions.
+1. **Read FLASHCARDS.md** at the project root. Every time. No exceptions.
 2. **Read the Story spec** (§1 The Spec + §3 Implementation Guide). Do not infer requirements.
 3. **Check ADRs** in the Roadmap (§3). Comply with recorded architecture decisions.
 

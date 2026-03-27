@@ -3,7 +3,7 @@
  * Validates that scripts called in the wrong order, wrong state, or with
  * wrong arguments produce actionable errors — not raw Node.js crashes.
  *
- * Uses sprint S-98, delivery D-98, epic EPIC-T98.
+ * Uses sprint S-98, release AgentErrTest, epic EPIC-T98.
  */
 
 import fs from 'fs';
@@ -12,7 +12,6 @@ import { suite, record, assertScriptRuns, PASS, FAIL, WARN } from '../harness.mj
 import { createSprintFixtures, createSyntheticReport, removeSprintFixtures } from '../fixtures.mjs';
 
 const SPRINT_ID = 'S-98';
-const DELIVERY_ID = 'D-98';
 const EPIC_ID = 'EPIC-T98';
 const STORY_A = 'STORY-T98-01';
 const STORY_B = 'STORY-T98-02';
@@ -54,7 +53,7 @@ function checkActionable(result, name, component) {
 
 export default function runAgentErrorsSuite(installDir) {
   const scriptsDir = path.join(installDir, '.vbounce', 'scripts');
-  const config = { sprintId: SPRINT_ID, deliveryId: DELIVERY_ID, storyIds: [STORY_A, STORY_B], epicId: EPIC_ID };
+  const config = { sprintId: SPRINT_ID, storyIds: [STORY_A, STORY_B], epicId: EPIC_ID };
 
   // ── Setup ──
   createSprintFixtures(installDir, config);
@@ -351,15 +350,8 @@ export default function runAgentErrorsSuite(installDir) {
   // 22. init_sprint bad sprint format
   assertScriptRuns(
     path.join(scriptsDir, 'init_sprint.mjs'),
-    'BADFORMAT D-98', 'agent-error',
+    'BADFORMAT', 'agent-error',
     { cwd: installDir, expectExit: 1, note: 'bad sprint ID format' }
-  );
-
-  // 23. init_sprint bad delivery format
-  assertScriptRuns(
-    path.join(scriptsDir, 'init_sprint.mjs'),
-    'S-98 BADFORMAT', 'agent-error',
-    { cwd: installDir, expectExit: 1, note: 'bad delivery ID format' }
   );
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -370,7 +362,7 @@ export default function runAgentErrorsSuite(installDir) {
   // 24. Re-init when state.json already exists
   const r24 = assertScriptRuns(
     path.join(scriptsDir, 'init_sprint.mjs'),
-    `${SPRINT_ID} ${DELIVERY_ID} --stories ${STORY_A}`, 'agent-error',
+    `${SPRINT_ID} --stories ${STORY_A}`, 'agent-error',
     { cwd: installDir, expectExit: 0, note: 'init when state exists (overwrite)' }
   );
   const r24out = (r24.stdout || '') + (r24.stderr || '');

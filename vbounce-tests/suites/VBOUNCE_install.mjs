@@ -47,7 +47,7 @@ export default function runInstallSuite(installDir) {
   // ── 2. Core file structure ──
   const requiredFiles = [
     ['CLAUDE.md', 'brain'],
-    ['LESSONS.md', 'install'],
+    ['FLASHCARDS.md', 'install'],
     ['.vbounce/VBOUNCE_MANIFEST.md', 'manifest'],
     ['.vbounce/.gitignore', 'install'],
   ];
@@ -63,7 +63,7 @@ export default function runInstallSuite(installDir) {
 
   // ── 4. Templates ──
   const requiredTemplates = [
-    'sprint.md', 'delivery_plan.md', 'sprint_report.md', 'story.md',
+    'sprint.md', 'sprint_report.md', 'story.md',
     'epic.md', 'charter.md', 'roadmap.md', 'risk_registry.md',
     'bug.md', 'change_request.md', 'hotfix.md', 'spike.md', 'sprint_context.md',
   ];
@@ -100,7 +100,6 @@ export default function runInstallSuite(installDir) {
   // ── 7. Skill reference files ──
   const skillRefs = [
     'agent-team/references/cleanup.md',
-    'agent-team/references/delivery-sync.md',
     'agent-team/references/discovery.md',
     'agent-team/references/git-strategy.md',
     'agent-team/references/mid-sprint-triage.md',

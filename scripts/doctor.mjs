@@ -29,15 +29,19 @@ function warn(msg) {
   checks.push(`  ⚠ ${msg}`);
 }
 
-// Check LESSONS.md
-if (fs.existsSync(path.join(ROOT, 'LESSONS.md'))) {
-  pass('LESSONS.md exists');
+// Check FLASHCARDS.md
+if (fs.existsSync(path.join(ROOT, 'FLASHCARDS.md'))) {
+  pass('FLASHCARDS.md exists');
 } else {
-  fail('LESSONS.md missing', 'Create LESSONS.md at project root');
+  if (fs.existsSync(path.join(ROOT, 'LESSONS.md'))) {
+    fail('FLASHCARDS.md missing', 'LESSONS.md found — rename to FLASHCARDS.md\n    → Run: mv LESSONS.md FLASHCARDS.md');
+  } else {
+    fail('FLASHCARDS.md missing', 'Create FLASHCARDS.md at project root');
+  }
 }
 
 // Check templates
-const requiredTemplates = ['sprint.md', 'delivery_plan.md', 'sprint_report.md', 'story.md', 'epic.md', 'charter.md', 'roadmap.md', 'risk_registry.md'];
+const requiredTemplates = ['sprint.md', 'sprint_report.md', 'story.md', 'epic.md', 'charter.md', 'roadmap.md', 'risk_registry.md'];
 const templatesDir = path.join(ROOT, '.vbounce', 'templates');
 let templateCount = 0;
 for (const t of requiredTemplates) {
@@ -60,10 +64,10 @@ if (fs.existsSync(path.join(ROOT, '.vbounce'))) {
       fail('state.json exists but is invalid JSON', 'Run: vbounce validate state');
     }
   } else {
-    warn('state.json not found — run: vbounce sprint init S-XX D-XX');
+    warn('state.json not found — run: vbounce sprint init S-XX --stories STORY-IDS');
   }
 } else {
-  warn('.vbounce/ directory missing — run: vbounce sprint init S-XX D-XX');
+  warn('.vbounce/ directory missing — run: vbounce sprint init S-XX --stories STORY-IDS');
 }
 
 // Check brain files (deployed to project root)
@@ -106,7 +110,8 @@ const requiredScripts = [
   'init_sprint.mjs', 'close_sprint.mjs', 'complete_story.mjs',
   'prep_qa_context.mjs', 'prep_arch_context.mjs', 'prep_sprint_context.mjs',
   'prep_sprint_summary.mjs', 'sprint_trends.mjs', 'suggest_improvements.mjs',
-  'hotfix_manager.sh'
+  'hotfix_manager.sh',
+  'prefill_report.mjs'
 ];
 const scriptsDir = path.join(ROOT, '.vbounce', 'scripts');
 let scriptCount = 0;

@@ -7,9 +7,9 @@
  * observable JSON + Markdown reports.
  *
  * Usage:
- *   node tests/run.mjs                    # Fresh install to temp dir
- *   node tests/run.mjs --install-dir /x   # Test an existing install
- *   node tests/run.mjs --skip-install     # Use existing temp dir from last run
+ *   node vbounce-tests/run.mjs                    # Fresh install to temp dir
+ *   node vbounce-tests/run.mjs --install-dir /x   # Test an existing install
+ *   node vbounce-tests/run.mjs --skip-install     # Use existing temp dir from last run
  */
 
 import fs from 'fs';
@@ -19,18 +19,19 @@ import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
 import { generateReport, getResults } from './harness.mjs';
-import runInstallSuite from './suites/install.mjs';
-import runPathsSuite from './suites/paths.mjs';
-import runDoctorSuite from './suites/doctor.mjs';
-import runScriptsSuite from './suites/scripts.mjs';
-import runBrainsSuite from './suites/brains.mjs';
-import runManifestSuite from './suites/manifest.mjs';
-import runLifecycleSuite from './suites/lifecycle.mjs';
-import runTemplatesSuite from './suites/templates.mjs';
-import runAgentErrorsSuite from './suites/agent-errors.mjs';
-import runRunScriptWrapperSuite from './suites/run-script-wrapper.mjs';
-import runParallelStoriesSuite from './suites/parallel-stories.mjs';
-import runReportParsingSuite from './suites/report-parsing.mjs';
+import runInstallSuite from './suites/VBOUNCE_install.mjs';
+import runPathsSuite from './suites/VBOUNCE_paths.mjs';
+import runDoctorSuite from './suites/VBOUNCE_doctor.mjs';
+import runScriptsSuite from './suites/VBOUNCE_scripts.mjs';
+import runBrainsSuite from './suites/VBOUNCE_brains.mjs';
+import runManifestSuite from './suites/VBOUNCE_manifest.mjs';
+import runLifecycleSuite from './suites/VBOUNCE_lifecycle.mjs';
+import runTemplatesSuite from './suites/VBOUNCE_templates.mjs';
+import runAgentErrorsSuite from './suites/VBOUNCE_agent-errors.mjs';
+import runRunScriptWrapperSuite from './suites/VBOUNCE_run-script-wrapper.mjs';
+import runParallelStoriesSuite from './suites/VBOUNCE_parallel-stories.mjs';
+import runReportParsingSuite from './suites/VBOUNCE_report-parsing.mjs';
+import runPrefillReportSuite from './suites/VBOUNCE_prefill-report.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ENGINE_ROOT = path.resolve(__dirname, '..');
@@ -107,6 +108,7 @@ try { runAgentErrorsSuite(installDir); } catch (e) { console.error(`Agent errors
 try { runRunScriptWrapperSuite(installDir); } catch (e) { console.error(`Run-script wrapper suite error: ${e.message}`); }
 try { runParallelStoriesSuite(installDir); } catch (e) { console.error(`Parallel stories suite error: ${e.message}`); }
 try { runReportParsingSuite(installDir); } catch (e) { console.error(`Report parsing suite error: ${e.message}`); }
+try { runPrefillReportSuite(installDir); } catch (e) { console.error(`Prefill report suite error: ${e.message}`); }
 
 // ─── Report ──────────────────────────────────────────────────────────────────
 

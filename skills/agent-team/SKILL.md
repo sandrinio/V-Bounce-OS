@@ -175,6 +175,35 @@ Examples:
 
 ## The Bounce Sequence
 
+### Architect Sprint Design Review (Phase 2 → Phase 3 transition)
+
+After doc-manager refines all stories (§1, §2, §3 complete) and BEFORE human confirms Sprint Plan:
+
+1. **Check for Explorer context pack:**
+   - If `.vbounce/context-packs/sprint-design-review-S-{XX}-*.md` exists, provide it to the Architect
+   - Otherwise, the Architect will read the codebase directly (more tokens, same result)
+
+2. **Spawn Architect subagent** with:
+   - All candidate stories' §3 Implementation Guides
+   - Roadmap §3 ADRs
+   - FLASHCARDS.md
+   - Risk Registry
+   - Explorer context pack (if available)
+   - Sprint Plan file path (for writing §2)
+   - Task instruction: "SPRINT DESIGN REVIEW — Write Sprint Plan §2 Execution Strategy. You have WRITE ACCESS to Sprint Plan §2 ONLY."
+
+3. **Architect writes Sprint Plan §2** with:
+   - Phase Plan (parallel/sequential grouping)
+   - Merge Ordering (based on shared file surface analysis)
+   - Shared Surface Warnings (files touched by multiple stories)
+   - Execution Mode Recommendations (overrides from default labels)
+   - ADR Compliance Notes (flags for story approaches conflicting with ADRs)
+   - Risk Flags
+
+4. **Team Lead verifies** §2 was written, then proceeds to human confirmation.
+
+*(Skip this step for sprints with only L1/Fast Track stories.)*
+
 ### Step 0: Sprint Setup
 
 **Prerequisite:** Sprint Planning (Phase 2) must be complete. The Sprint Plan must be in "Confirmed" status with human approval before proceeding.
@@ -185,8 +214,8 @@ Examples:
    mkdir -p .vbounce/archive
 
 1b. Initialize sprint state (MANDATORY):
-   ./.vbounce/scripts/run_script.sh init_sprint.mjs S-{XX} D-{NN} --stories STORY-ID1,STORY-ID2,...
-   - Extract story IDs and delivery ID from the confirmed Sprint Plan §1 table
+   ./.vbounce/scripts/run_script.sh init_sprint.mjs S-{XX} --stories STORY-ID1,STORY-ID2,...
+   - Extract story IDs from the confirmed Sprint Plan §1 table
    - This creates .vbounce/state.json — required by all downstream scripts
    - If state.json already exists for this sprint, the script will warn and overwrite
    - Verify success: run_script.sh validate_state.mjs
@@ -208,7 +237,7 @@ Examples:
    c. Developer runs `run_script.sh hotfix_manager.sh ledger "{Title}" "{Description}"` after implementation.
    d. Human/Lead verifies manually.
    e. DevOps runs `run_script.sh hotfix_manager.sh sync` to update any active story worktrees.
-   f. Update Delivery Plan Status to "Done".
+   f. Update Sprint Plan status to "Done".
 
 5. **Gate Config Check**:
    - If `.vbounce/gate-checks.json` does not exist, run `./.vbounce/scripts/run_script.sh init_gate_config.sh` to auto-detect the project stack and generate default gate checks.
@@ -222,7 +251,7 @@ Examples:
 
 7. **Sprint Context File** — create `.vbounce/sprint-context-S-{XX}.md` using the sprint context template (`.vbounce/templates/sprint_context.md`):
    - Populate with cross-cutting rules that ALL agents must follow during this sprint
-   - Include: design tokens, UI conventions, shared patterns, locked dependency versions, any active LESSONS.md rules that apply broadly
+   - Include: design tokens, UI conventions, shared patterns, locked dependency versions, any active FLASHCARDS.md rules that apply broadly
    - This file is included in EVERY agent task file for this sprint
    - Update it when mid-sprint decisions affect all stories (e.g., "we decided to use X pattern everywhere")
 
@@ -253,7 +282,7 @@ git worktree add .worktrees/STORY-{ID}-{StoryName} -b story/STORY-{ID}-{StoryNam
 mkdir -p .worktrees/STORY-{ID}-{StoryName}/.vbounce/{tasks,reports}
 ```
 - Read the full Story spec
-- Read LESSONS.md
+- Read FLASHCARDS.md
 - Check RISK_REGISTRY.md for risks tagged to this story or its Epic
 - If `vdocs/_manifest.json` exists, identify docs relevant to this story's scope (match against manifest descriptions/tags). Include relevant doc references in the task file so the Developer has product context.
 - **Adjacent implementation check:** For stories that modify or extend modules touched by earlier stories in this sprint, identify existing implementations the Developer should reuse. Add to the task file: `"Reuse these existing modules: {list with file paths and brief description of what each provides}"`. This prevents agents from independently re-implementing logic that already exists — a common source of duplication when stories run in parallel.
@@ -262,12 +291,54 @@ mkdir -p .worktrees/STORY-{ID}-{StoryName}/.vbounce/{tasks,reports}
 - Update sprint-{XX}.md: V-Bounce State → "Bouncing"
 
 ### Step 2: Developer Pass
+
+#### 2a. Check TDD Applicability
+Read the story's TDD Red Phase declaration (below §1.3 Out of Scope).
+- If "TDD Red Phase: No" → skip to Step 2d (single-pass implementation)
+- If "TDD Red Phase: Yes" → proceed to Step 2b
+
+#### 2b. Red Phase (Tests Only)
+```
+1. Spawn developer subagent in .worktrees/STORY-{ID}-{StoryName}/ with:
+   - Story §1 The Spec + §2 The Truth + §3 Implementation Guide
+   - FLASHCARDS.md
+   - Relevant react-best-practices rules
+   - Adjacent module references (if any)
+   - Task instruction: "RED PHASE — Write tests ONLY. Do NOT write implementation code.
+     Cover all Gherkin scenarios from §2.1. Write both unit and acceptance/E2E tests.
+     Exit when tests are written."
+2. After Developer exits:
+   - Read Developer's output to identify test file paths
+   - Run the test suite in the worktree
+   - Verify tests FAIL (expected — no implementation yet)
+   - If tests PASS: note as concern in Green phase task (tests may be testing existing behavior)
+```
+
+#### 2c. Green Phase (Implementation)
 ```
 1. Spawn developer subagent in .worktrees/STORY-{ID}-{StoryName}/ with:
    - Story §1 The Spec + §3 Implementation Guide
-   - LESSONS.md
+   - FLASHCARDS.md
    - Relevant react-best-practices rules
-   - Adjacent module references (if any — "reuse src/core/X.ts for Y")
+   - Adjacent module references (if any)
+   - Task instruction: "GREEN PHASE — Implement code to make these tests pass.
+     Test files written during Red phase:
+     - {file paths from 2b}
+     Test run result: {N} tests, 0 passed, {N} failed (as expected)
+     Read the test files from disk. Write minimum code to make them pass.
+     Then REFACTOR for readability/architecture without breaking tests."
+2. Developer writes code and Implementation Report to .vbounce/reports/
+3. Lead reads report, verifies completeness
+```
+
+#### 2d. Single-Pass (Non-TDD Stories)
+For stories declaring "TDD Red Phase: No":
+```
+1. Spawn developer subagent in .worktrees/STORY-{ID}-{StoryName}/ with:
+   - Story §1 The Spec + §3 Implementation Guide
+   - FLASHCARDS.md
+   - Relevant react-best-practices rules
+   - Adjacent module references (if any)
 2. Developer writes code and Implementation Report to .vbounce/reports/
 3. Lead reads report, verifies completeness
 ```
@@ -285,7 +356,7 @@ mkdir -p .worktrees/STORY-{ID}-{StoryName}/.vbounce/{tasks,reports}
    - Developer Implementation Report
    - Pre-QA scan results (.vbounce/reports/pre-qa-scan.txt)
    - Story §2 The Truth (acceptance criteria)
-   - LESSONS.md
+   - FLASHCARDS.md
 2. QA validates against Gherkin scenarios, runs vibe-code-review
    (skipping checks already covered by pre-qa-scan.txt)
 3. If FAIL:
@@ -310,7 +381,7 @@ mkdir -p .worktrees/STORY-{ID}-{StoryName}/.vbounce/{tasks,reports}
    - All reports for this story
    - Pre-Architect scan results (.vbounce/reports/pre-arch-scan.txt)
    - Full Story spec + Roadmap §3 ADRs
-   - LESSONS.md
+   - FLASHCARDS.md
 2. If FAIL:
    - Increment Architect bounce counter
    - If Architect bounce count >= 3 → V-Bounce State → "Escalated", STOP
@@ -333,7 +404,7 @@ mkdir -p .worktrees/STORY-{ID}-{StoryName}/.vbounce/{tasks,reports}
 1. Spawn devops subagent with:
    - Story ID and sprint branch name
    - All gate reports (QA PASS + Architect PASS)
-   - LESSONS.md
+   - FLASHCARDS.md
 2. DevOps performs:
    - Pre-merge checks (worktree clean, gate reports verified)
    - Archive reports to .vbounce/archive/S-{XX}/STORY-{ID}-{StoryName}/
@@ -360,7 +431,7 @@ After each story merge, before proceeding to the next story:
 2. Read QA report — check for lessons flagged during validation
 3. For each flagged lesson:
    - Present to the human for approval
-   - If approved → record to LESSONS.md immediately (follow lesson skill format)
+   - If approved → record to FLASHCARDS.md immediately (follow lesson skill format)
    - If rejected → note as "No" in Sprint Report §4
 4. Do NOT defer this to Step 7 — context decays fast
 ```
@@ -420,7 +491,7 @@ After ALL stories are merged into `sprint/S-01`:
 4. V-Bounce State → "Sprint Review" for all stories
 4. Present Sprint Report to human
 5. **Lesson Review (non-blocking):**
-   Most lessons should already be recorded to LESSONS.md during Step 5.5.
+   Most lessons should already be recorded to FLASHCARDS.md during Step 5.5.
    Review §4 of the Sprint Report — confirm all flagged lessons have a status.
    If any lessons were missed during Step 5.5, present them now and record approved ones.
    This is a review step, not a first-time approval gate.
@@ -434,7 +505,7 @@ After ALL stories are merged into `sprint/S-01`:
 6. Lead finalizes:
    - Move sprint-report-S-{XX}.md to .vbounce/archive/S-{XX}/
    - Record lessons (with user approval)
-   - Update delivery_plan.md to reflect the completed sprint.
+   - Update Roadmap §7 Delivery Log to reflect the completed sprint.
 7. **Framework Self-Assessment** (aggregated from agent reports):
    - Collect all `## Process Feedback` sections from agent reports in `.vbounce/archive/S-{XX}/`
    - Populate §5 Framework Self-Assessment tables in the Sprint Report by category
@@ -486,23 +557,19 @@ After ALL stories are merged into `sprint/S-01`:
 6. Write Sprint Release Report
 7. Lead archives the sprint folder to `archive/` according to doc-manager physical move rules.
 
-### After Delivery Completes (Team Lead handles)
-When ALL sprints in a delivery (release) are done:
-1. Verify all stories in the delivery are "Done" in the Delivery Plan
-2. Move the entire delivery folder to archive:
-   ```bash
-   mv product_plans/D-{NN}_{release_name}/ product_plans/archive/D-{NN}_{release_name}/
-   ```
-3. Add a **Delivery Log** entry to the Roadmap (§7):
-   - Delivery ID, date, release tag
-   - Release Notes — summarize all sprint reports from this delivery
+### After Release Completes (Team Lead handles)
+When ALL sprints in a release are done:
+1. Verify all stories in the release are "Done" in the Roadmap §2 Release Plan
+2. Add a **Delivery Log** entry to the Roadmap (§7):
+   - Release name, date, release tag
+   - Release Notes — summarize all sprint reports from this release
    - Key metrics (stories delivered, bounce ratio, correction tax averages)
-4. Update Roadmap §2 Release Plan: set the release status to "Delivered"
+3. Update Roadmap §2 Release Plan: set the release status to "Delivered"
 
 ### Retention
 - `.vbounce/archive/` is **committed to git** — full sprint history, all agent reports, audit trail
 - `.vbounce/reports/` and `.vbounce/sprint-report.md` are **gitignored** — active working files only
-- `product_plans/archive/` retains completed deliveries with all their epics, stories, and delivery plans
+- `product_plans/archive/` retains completed sprints and epics
 - `.worktrees/` is **gitignored** — ephemeral, exists only during active bouncing
 - Story branches are deleted after merge
 - Sprint branches are deleted after merge to main
@@ -513,18 +580,17 @@ When ALL sprints in a delivery (release) are done:
 
 The Team Lead MUST update the active `sprint-{XX}.md` at every state transition. This is the source of truth for execution.
 
-| Action | Sprint Plan Update | Delivery Plan Update |
-|--------|-------------------|--------------------|
-| Worktree created | §1: V-Bounce State → "Bouncing" | **Nothing** — Sprint Plan is source of truth |
-| Dev report written | No update (still "Bouncing") | **Nothing** |
-| QA passes | §1: V-Bounce State → "QA Passed" | **Nothing** |
-| Architect passes | §1: V-Bounce State → "Architect Passed" | **Nothing** |
-| DevOps merges story | §1: V-Bounce State → "Done". §4: Add Execution Log row (via `vbounce story complete`) | **Nothing** |
-| Escalated | §1: Move story to Escalated section | **Nothing** |
-| Sprint CLOSES | Status → "Completed" in frontmatter | §2: sprint → Completed. §4: add summary. §3: remove delivered stories. **This is the ONLY time Delivery Plan updates.** |
+| Action | Sprint Plan Update |
+|--------|-------------------|
+| Worktree created | §1: V-Bounce State → "Bouncing" |
+| Dev report written | No update (still "Bouncing") |
+| QA passes | §1: V-Bounce State → "QA Passed" |
+| Architect passes | §1: V-Bounce State → "Architect Passed" |
+| DevOps merges story | §1: V-Bounce State → "Done". §4: Add Execution Log row (via `vbounce story complete`) |
+| Escalated | §1: Move story to Escalated section |
+| Sprint CLOSES | Status → "Completed" in frontmatter. Roadmap §7: add Delivery Log entry. |
 
-> **Key rule**: The Delivery Plan is updated ONLY at sprint close, never during active bouncing.
-> See `.vbounce/skills/agent-team/references/delivery-sync.md` for full sync rules.
+> **Key rule**: The Sprint Plan is the source of truth during active bouncing. The Roadmap Delivery Log is updated at sprint close only.
 
 ---
 
@@ -588,7 +654,7 @@ If merging story branch into sprint branch creates conflicts:
 1. **Stop the current step.** Do not retry blindly or continue as if the script succeeded.
 2. **Read the diagnostic block.** The wrapper prints the exit code, stderr, root cause, and a suggested fix.
 3. **Attempt self-repair (once).** If the fix is within the agent's capability:
-   - Missing `state.json` → run `run_script.sh init_sprint.mjs S-{XX} D-{XX} --stories {IDS}`
+   - Missing `state.json` → run `run_script.sh init_sprint.mjs S-{XX} --stories {IDS}`
    - Invalid JSON → run `run_script.sh validate_state.mjs`, repair, retry
    - Missing file/directory → run `run_script.sh doctor.mjs`, fix what's reported, retry
    - Permission denied → `chmod +x` the script, retry
@@ -623,7 +689,7 @@ If merging story branch into sprint branch creates conflicts:
 - **Reports are the only handoff.** No agent communicates with another directly.
 - **One bounce = one report.** Every agent pass produces exactly one report file.
 - **Archive before remove.** Always copy reports to shared archive before removing a worktree.
-- **Sync the Sprint Plan.** Update V-Bounce State in sprint-{XX}.md §1 at EVERY transition. The Sprint Plan is the source of truth DURING the sprint. The Delivery Plan is updated at sprint boundaries only — see `.vbounce/skills/agent-team/references/delivery-sync.md`.
+- **Sync the Sprint Plan.** Update V-Bounce State in sprint-{XX}.md §1 at EVERY transition. The Sprint Plan is the source of truth DURING the sprint. The Roadmap Delivery Log is updated at sprint close only.
 - **Track bounce counts.** QA and Architect bounces are tracked separately per story.
 - **Git tracking rules.** `.worktrees/`, `.vbounce/reports/`, and `.vbounce/sprint-report.md` are gitignored (ephemeral). `.vbounce/archive/` is **committed to git** (permanent audit trail).
 - **Check risks before bouncing.** Read RISK_REGISTRY.md at sprint start. Flag high-severity risks that affect planned stories.

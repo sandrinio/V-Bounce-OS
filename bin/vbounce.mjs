@@ -73,7 +73,7 @@ Usage:
   vbounce uninstall                    Remove V-Bounce Engine from a project
   vbounce state show                   Show current sprint state
   vbounce state update <storyId> <state|--qa-bounce>
-  vbounce sprint init <sprintId> <deliveryId> [--stories STORY-001,...]
+  vbounce sprint init <sprintId> [--stories STORY-001,...]
   vbounce sprint close <sprintId>
   vbounce story complete <storyId> [options]
   vbounce validate report <file>       Validate agent report YAML
@@ -140,7 +140,7 @@ if (command === 'sprint') {
     runScript('close_sprint.mjs', args.slice(2));
   } else {
     console.error(`Unknown sprint subcommand: ${sub}`);
-    console.error('Usage: vbounce sprint init <sprintId> <deliveryId> | vbounce sprint close <sprintId>');
+    console.error('Usage: vbounce sprint init <sprintId> [--stories ...] | vbounce sprint close <sprintId>');
     process.exit(1);
   }
 }
@@ -316,7 +316,8 @@ if (command === 'uninstall') {
 
   // User data that needs a prompt
   const userData = [];
-  if (fs.existsSync(path.join(CWD, 'LESSONS.md'))) userData.push('LESSONS.md');
+  if (fs.existsSync(path.join(CWD, 'FLASHCARDS.md'))) userData.push('FLASHCARDS.md');
+  if (fs.existsSync(path.join(CWD, 'LESSONS.md'))) userData.push('LESSONS.md (legacy)');
   if (fs.existsSync(path.join(CWD, 'product_plans'))) userData.push('product_plans/');
   if (fs.existsSync(path.join(CWD, '.vbounce', 'archive'))) userData.push('.vbounce/archive/');
   if (fs.existsSync(path.join(CWD, 'vdocs'))) userData.push('vdocs/');
@@ -356,7 +357,7 @@ if (command === 'uninstall') {
     if (userData.length > 0) {
       const rl2 = readline.createInterface({ input: process.stdin, output: process.stdout });
       const dataAnswer = await new Promise(resolve =>
-        rl2.question('\nAlso remove your project data (LESSONS.md, product_plans/, archive/, vdocs/)? [y/N] ', resolve)
+        rl2.question('\nAlso remove your project data (FLASHCARDS.md, product_plans/, archive/, vdocs/)? [y/N] ', resolve)
       );
       rl2.close();
 
@@ -788,11 +789,11 @@ if (command === 'install') {
       console.log(`  \x1b[32m✓\x1b[0m ${rule.dest}`);
     }
 
-    // Create LESSONS.md if missing
-    const lessonsPath = path.join(CWD, 'LESSONS.md');
-    if (!fs.existsSync(lessonsPath)) {
-      fs.writeFileSync(lessonsPath, '# Lessons Learned\n\nProject-specific lessons recorded after each story merge. Read this before writing code.\n');
-      console.log(`  \x1b[32m✓\x1b[0m LESSONS.md (created)`);
+    // Create FLASHCARDS.md if missing
+    const flashcardsPath = path.join(CWD, 'FLASHCARDS.md');
+    if (!fs.existsSync(flashcardsPath)) {
+      fs.writeFileSync(flashcardsPath, '# Flashcards\n\nProject-specific lessons recorded after each story merge. Read this before writing code.\n');
+      console.log(`  \x1b[32m✓\x1b[0m FLASHCARDS.md (created)`);
     }
 
     // Write install metadata

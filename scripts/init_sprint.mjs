@@ -5,7 +5,7 @@
  * Sprint setup automation — creates state.json, sprint plan dir, and prints git commands.
  *
  * Usage:
- *   ./.vbounce/scripts/init_sprint.mjs S-06 D-02 --stories STORY-011-05,STORY-005-01,STORY-005-02
+ *   ./.vbounce/scripts/init_sprint.mjs S-06 --stories STORY-011-05,STORY-005-01,STORY-005-02
  */
 
 import fs from 'fs';
@@ -18,20 +18,15 @@ const ROOT = path.resolve(__dirname, '../..');
 
 const args = process.argv.slice(2);
 
-if (args.length < 2) {
-  console.error('Usage: init_sprint.mjs S-XX D-NN [--stories STORY-ID1,STORY-ID2,...]');
+if (args.length < 1) {
+  console.error('Usage: init_sprint.mjs S-XX [--stories STORY-ID1,STORY-ID2,...]');
   process.exit(1);
 }
 
 const sprintId = args[0]; // e.g. S-06
-const deliveryId = args[1]; // e.g. D-02
 
 if (!/^S-\d{2}$/.test(sprintId)) {
   console.error(`ERROR: sprint_id "${sprintId}" must match S-XX format`);
-  process.exit(1);
-}
-if (!/^D-\d{2}$/.test(deliveryId)) {
-  console.error(`ERROR: delivery_id "${deliveryId}" must match D-NN format`);
   process.exit(1);
 }
 
@@ -63,9 +58,8 @@ for (const id of storyIds) {
 
 const state = {
   sprint_id: sprintId,
-  delivery_id: deliveryId,
   sprint_plan: `product_plans/sprints/sprint-${sprintNum}/sprint-${sprintNum}.md`,
-  delivery_plan: `product_plans/strategy/${deliveryId}_DELIVERY_PLAN.md`,
+  roadmap: `product_plans/strategy/roadmap.md`,
   stories,
   phase: 'Phase 1',
   last_action: `Sprint ${sprintId} initialized`,
@@ -88,7 +82,6 @@ if (!fs.existsSync(sprintPlanFile)) {
     // Replace placeholders
     content = content.replace(/sprint-\{XX\}/g, `sprint-${sprintNum}`);
     content = content.replace(/S-\{XX\}/g, sprintId);
-    content = content.replace(/D-\{NN\}/g, deliveryId);
     content = content.replace(/status: "Planning \/ Active \/ Completed"/, 'status: "Planning"');
     // Strip instructions block
     content = content.replace(/<instructions>[\s\S]*?<\/instructions>\n\n/, '');
@@ -96,7 +89,7 @@ if (!fs.existsSync(sprintPlanFile)) {
     console.log(`✓ Created product_plans/sprints/sprint-${sprintNum}/sprint-${sprintNum}.md`);
   } else {
     // Create minimal sprint plan
-    const minimal = `---\nsprint_id: "${sprintId}"\nsprint_goal: "TBD"\ndates: "TBD"\nstatus: "Planning"\ndelivery: "${deliveryId}"\n---\n\n# Sprint ${sprintId} Plan\n\n## 1. Active Scope\n\n| Priority | Story | Epic | Label | V-Bounce State | Blocker |\n|----------|-------|------|-------|----------------|---------|\n${storyIds.map((id, i) => `| ${i + 1} | ${id.trim()} | — | L2 | Draft | — |`).join('\n')}\n\n### Escalated / Parking Lot\n- (none)\n\n---\n\n## 2. Execution Strategy\n\n### Phase Plan\n- **Phase 1 (parallel)**: ${storyIds.join(', ')}\n\n### Risk Flags\n- (TBD)\n\n---\n\n## 3. Sprint Open Questions\n\n| Question | Options | Impact | Owner | Status |\n|----------|---------|--------|-------|--------|\n\n---\n\n<!-- EXECUTION_LOG_START -->\n## 4. Execution Log\n\n| Story | Final State | QA Bounces | Arch Bounces | Correction Tax | Notes |\n|-------|-------------|------------|--------------|----------------|-------|\n<!-- EXECUTION_LOG_END -->\n`;
+    const minimal = `---\nsprint_id: "${sprintId}"\nsprint_goal: "TBD"\ndates: "TBD"\nstatus: "Planning"\n---\n\n# Sprint ${sprintId} Plan\n\n## 1. Active Scope\n\n| Priority | Story | Epic | Label | V-Bounce State | Blocker |\n|----------|-------|------|-------|----------------|---------|\n${storyIds.map((id, i) => `| ${i + 1} | ${id.trim()} | — | L2 | Draft | — |`).join('\n')}\n\n### Escalated / Parking Lot\n- (none)\n\n---\n\n## 2. Execution Strategy\n\n### Phase Plan\n- **Phase 1 (parallel)**: ${storyIds.join(', ')}\n\n### Risk Flags\n- (TBD)\n\n---\n\n## 3. Sprint Open Questions\n\n| Question | Options | Impact | Owner | Status |\n|----------|---------|--------|-------|--------|\n\n---\n\n<!-- EXECUTION_LOG_START -->\n## 4. Execution Log\n\n| Story | Final State | QA Bounces | Arch Bounces | Correction Tax | Notes |\n|-------|-------------|------------|--------------|----------------|-------|\n<!-- EXECUTION_LOG_END -->\n`;
     fs.writeFileSync(sprintPlanFile, minimal);
     console.log(`✓ Created product_plans/sprints/sprint-${sprintNum}/sprint-${sprintNum}.md (minimal — template not found)`);
   }

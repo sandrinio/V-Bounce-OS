@@ -32,10 +32,6 @@ export function validateState(state) {
     errors.push(`sprint_id "${state.sprint_id}" must match S-XX format (e.g. S-05)`);
   }
 
-  if (!state.delivery_id || !/^D-\d{2}$/.test(state.delivery_id)) {
-    errors.push(`delivery_id "${state.delivery_id}" must match D-NN format (e.g. D-02)`);
-  }
-
   if (!state.stories || typeof state.stories !== 'object') {
     errors.push('stories field must be an object');
   } else {
@@ -70,7 +66,7 @@ export function validateState(state) {
 // CLI entry point
 if (process.argv[1] && fs.realpathSync(fileURLToPath(import.meta.url)) === fs.realpathSync(path.resolve(process.argv[1]))) {
   if (!fs.existsSync(STATE_FILE)) {
-    console.error(`ERROR: ${STATE_FILE} not found. Run: vbounce sprint init S-XX D-XX`);
+    console.error(`ERROR: ${STATE_FILE} not found. Run: vbounce sprint init S-XX --stories STORY-IDS`);
     process.exit(1);
   }
 

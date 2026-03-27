@@ -101,7 +101,7 @@ export default function runPathsSuite(installDir) {
       const content = fs.readFileSync(agentPath, 'utf8');
 
       // Extract backtick-quoted paths that look like file references
-      const pathPattern = /`(\.vbounce\/[^`]+|\.claude\/[^`]+|product_plans\/[^`]+|LESSONS\.md|VBOUNCE_MANIFEST\.md)`/g;
+      const pathPattern = /`(\.vbounce\/[^`]+|\.claude\/[^`]+|product_plans\/[^`]+|FLASHCARDS\.md|VBOUNCE_MANIFEST\.md)`/g;
       let pathMatch;
       const checkedPaths = new Set();
       while ((pathMatch = pathPattern.exec(content)) !== null) {

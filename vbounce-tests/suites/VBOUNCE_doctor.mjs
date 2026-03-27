@@ -25,7 +25,7 @@ export default function runDoctorSuite(installDir) {
   if (result.stdout) {
     // Check for false positives
     const falsePositives = [];
-    if (result.stdout.includes('LESSONS.md missing')) falsePositives.push('LESSONS.md false positive');
+    if (result.stdout.includes('FLASHCARDS.md missing')) falsePositives.push('FLASHCARDS.md false positive');
     if (result.stdout.includes('product_plans/ directory missing') && fs.existsSync(path.join(installDir, 'product_plans'))) {
       falsePositives.push('product_plans/ false positive');
     }
@@ -41,7 +41,7 @@ export default function runDoctorSuite(installDir) {
     });
 
     // Check that real checks pass
-    const expectedPasses = ['LESSONS.md exists', 'templates/', 'Skills:', 'Scripts:', 'CLAUDE.md'];
+    const expectedPasses = ['FLASHCARDS.md exists', 'templates/', 'Skills:', 'Scripts:', 'CLAUDE.md'];
     for (const check of expectedPasses) {
       const found = result.stdout.includes(`✓`) && result.stdout.includes(check);
       record({
@@ -58,13 +58,13 @@ export default function runDoctorSuite(installDir) {
   // ── 2. Doctor catches missing file ──
   suite('Doctor — False Negative Detection');
 
-  // Temporarily rename LESSONS.md to test detection
-  const lessonsPath = path.join(installDir, 'LESSONS.md');
-  const lessonsBackup = lessonsPath + '.bak';
+  // Temporarily rename FLASHCARDS.md to test detection
+  const flashcardsPath = path.join(installDir, 'FLASHCARDS.md');
+  const flashcardsBackup = flashcardsPath + '.bak';
   let canTestFalseNegative = false;
 
-  if (fs.existsSync(lessonsPath)) {
-    fs.renameSync(lessonsPath, lessonsBackup);
+  if (fs.existsSync(flashcardsPath)) {
+    fs.renameSync(flashcardsPath, flashcardsBackup);
     canTestFalseNegative = true;
   }
 
@@ -72,20 +72,20 @@ export default function runDoctorSuite(installDir) {
     const result2 = assertScriptRuns(doctorPath, '', 'doctor', {
       cwd: installDir,
       expectExit: 1,
-      note: 'LESSONS.md removed — should detect',
+      note: 'FLASHCARDS.md removed — should detect',
     });
 
-    const detected = result2.stdout?.includes('LESSONS.md missing') || result2.stderr?.includes('LESSONS.md missing');
+    const detected = result2.stdout?.includes('FLASHCARDS.md missing') || result2.stderr?.includes('FLASHCARDS.md missing');
     record({
-      name: 'Doctor detects missing LESSONS.md',
+      name: 'Doctor detects missing FLASHCARDS.md',
       component: 'doctor',
-      input: 'LESSONS.md removed from install',
+      input: 'FLASHCARDS.md removed from install',
       output: detected ? 'detected' : 'not detected',
       expected: 'detected',
       verdict: detected ? PASS : FAIL,
     });
 
     // Restore
-    fs.renameSync(lessonsBackup, lessonsPath);
+    fs.renameSync(flashcardsBackup, flashcardsPath);
   }
 }

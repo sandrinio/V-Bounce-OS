@@ -3,7 +3,7 @@
  * Validates the bash wrapper that all agents use to invoke scripts.
  * Tests pre-flight checks, diagnostic output, and passthrough behavior.
  *
- * Uses sprint S-97, delivery D-97, epic EPIC-T97.
+ * Uses sprint S-97, release WrapperTest, epic EPIC-T97.
  */
 
 import fs from 'fs';
@@ -11,7 +11,6 @@ import path from 'path';
 import { suite, record, assertBashRuns, PASS, FAIL, WARN } from '../harness.mjs';
 
 const SPRINT_ID = 'S-97';
-const DELIVERY_ID = 'D-97';
 const STORY_ID = 'STORY-T97-01';
 
 export default function runRunScriptWrapperSuite(installDir) {
@@ -177,7 +176,7 @@ export default function runRunScriptWrapperSuite(installDir) {
 
   // 6. Args pass through correctly
   fs.mkdirSync(path.join(installDir, 'product_plans', 'sprints'), { recursive: true });
-  const r6 = assertBashRuns(wrapperPath, `init_sprint.mjs ${SPRINT_ID} ${DELIVERY_ID} --stories ${STORY_ID}`, 'wrapper', {
+  const r6 = assertBashRuns(wrapperPath, `init_sprint.mjs ${SPRINT_ID} --stories ${STORY_ID}`, 'wrapper', {
     cwd: installDir,
     expectExit: 0,
     note: 'args pass through to inner script',
@@ -186,7 +185,7 @@ export default function runRunScriptWrapperSuite(installDir) {
   record({
     name: 'args pass through — state.json created',
     component: 'wrapper',
-    input: `run_script.sh init_sprint.mjs ${SPRINT_ID} ${DELIVERY_ID} --stories ${STORY_ID}`,
+    input: `run_script.sh init_sprint.mjs ${SPRINT_ID} --stories ${STORY_ID}`,
     output: r6out.includes('state.json') ? 'created' : 'not created',
     expected: 'Created .vbounce/state.json',
     verdict: r6out.includes('state.json') ? PASS : FAIL,

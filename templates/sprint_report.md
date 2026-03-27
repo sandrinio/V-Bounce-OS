@@ -28,8 +28,7 @@ status: "Achieved / Partially Achieved / Failed"
 total_input_tokens: {N}
 total_output_tokens: {N}
 total_tokens_used: {N}
-delivery_ref: "D-{NN}_{release_name}"
-delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
+roadmap_ref: "product_plans/strategy/roadmap.md"
 ---
 
 # Sprint Report: S-{XX}
@@ -137,7 +136,7 @@ delivery_plan_ref: "product_plans/{delivery}/DELIVERY_PLAN.md"
 
 ## 4. Lessons Learned
 
-> Lessons are recorded to LESSONS.md **immediately after each story merge** (Step 5.5), not deferred to sprint close. This table is a review of what was already captured.
+> Lessons are recorded to FLASHCARDS.md **immediately after each story merge** (Step 5.5), not deferred to sprint close. This table is a review of what was already captured.
 
 | Source | Lesson | Recorded? | When |
 |--------|--------|-----------|------|

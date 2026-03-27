@@ -40,7 +40,6 @@ function fileCreated(filePath, name, component, note) {
 
 const SPRINT_ID   = 'S-99';
 const SPRINT_NUM  = '99';
-const DELIVERY_ID = 'D-99';
 const EPIC_ID     = 'EPIC-T99';
 const STORY_ID    = 'STORY-T99-01-lifecycle_test';
 
@@ -83,17 +82,16 @@ Automated lifecycle simulation for V-Bounce engine testing.
 - Validate every engine script in a realistic sprint flow
 `);
 
-  // Delivery Plan
-  fs.writeFileSync(path.join(strategyDir, `${DELIVERY_ID}_DELIVERY_PLAN.md`), `---
-delivery_id: "${DELIVERY_ID}"
-title: "Test Delivery Plan"
+  // Roadmap (minimal fixture)
+  fs.writeFileSync(path.join(strategyDir, 'roadmap.md'), `---
+title: "Roadmap"
 status: "Active"
 ---
 
-# ${DELIVERY_ID} — Test Delivery Plan
+# Roadmap
 
-## Scope
-Sprint ${SPRINT_ID} lifecycle test.
+## 2. Releases
+- Sprint ${SPRINT_ID} lifecycle test.
 `);
 
   // Risk Registry
@@ -154,7 +152,6 @@ sprint_id: "${SPRINT_ID}"
 sprint_goal: "Lifecycle test sprint"
 dates: "03/25 - 03/31"
 status: "Active"
-delivery: "${DELIVERY_ID}"
 ---
 
 # Sprint ${SPRINT_ID} Plan
@@ -195,9 +192,9 @@ delivery: "${DELIVERY_ID}"
 <!-- EXECUTION_LOG_END -->
 `);
 
-  // LESSONS.md
-  if (!fs.existsSync(path.join(installDir, 'LESSONS.md'))) {
-    fs.writeFileSync(path.join(installDir, 'LESSONS.md'), `# Lessons Learned
+  // FLASHCARDS.md
+  if (!fs.existsSync(path.join(installDir, 'FLASHCARDS.md'))) {
+    fs.writeFileSync(path.join(installDir, 'FLASHCARDS.md'), `# Flashcards
 
 ## Sprint Lessons
 - Always validate fixtures before running lifecycle tests.
@@ -207,7 +204,7 @@ delivery: "${DELIVERY_ID}"
   record({
     name: 'Fixtures created',
     component: 'lifecycle',
-    input: 'charter, delivery plan, risk registry, epic, story, sprint plan, LESSONS.md',
+    input: 'charter, roadmap, risk registry, epic, story, sprint plan, FLASHCARDS.md',
     output: 'all created',
     expected: 'fixtures ready',
     verdict: PASS,
@@ -220,7 +217,7 @@ delivery: "${DELIVERY_ID}"
 
   const initResult = assertScriptRuns(
     path.join(scriptsDir, 'init_sprint.mjs'),
-    `${SPRINT_ID} ${DELIVERY_ID} --stories ${STORY_ID}`,
+    `${SPRINT_ID} --stories ${STORY_ID}`,
     'lifecycle',
     { cwd: installDir, expectExit: 0, note: 'initialize sprint' }
   );
@@ -238,15 +235,6 @@ delivery: "${DELIVERY_ID}"
       output: `sprint_id=${state.sprint_id}`,
       expected: `sprint_id=${SPRINT_ID}`,
       verdict: state.sprint_id === SPRINT_ID ? PASS : FAIL,
-    });
-
-    record({
-      name: 'state.json delivery_id',
-      component: 'lifecycle',
-      input: 'state.json',
-      output: `delivery_id=${state.delivery_id}`,
-      expected: `delivery_id=${DELIVERY_ID}`,
-      verdict: state.delivery_id === DELIVERY_ID ? PASS : FAIL,
     });
 
     record({
@@ -585,7 +573,6 @@ Low — isolated test fixtures with no production dependencies.
   const sprintReportPath = path.join(vbounceDir, `sprint-report-${SPRINT_ID}.md`);
   fs.writeFileSync(sprintReportPath, `---
 sprint_id: "${SPRINT_ID}"
-delivery_id: "${DELIVERY_ID}"
 status: "Completed"
 stories_completed: 1
 total_bounces: 3
@@ -844,7 +831,7 @@ None encountered.
   // init_sprint with bad format
   assertScriptRuns(
     path.join(scriptsDir, 'init_sprint.mjs'),
-    'BADFORMAT D-99', 'lifecycle',
+    'BADFORMAT', 'lifecycle',
     { cwd: installDir, expectExit: 1, note: 'invalid sprint ID format should fail' }
   );
 

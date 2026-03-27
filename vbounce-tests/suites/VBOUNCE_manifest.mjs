@@ -27,14 +27,14 @@ export default function runManifestSuite(installDir) {
   const content = fs.readFileSync(manifestPath, 'utf8');
 
   // Extract all backtick-quoted paths from the manifest
-  const pathPattern = /`(\.vbounce\/[^`*{]+|\.claude\/agents\/[^`*{]+|CLAUDE\.md|AGENTS\.md|GEMINI\.md|LESSONS\.md|product_plans\/[^`*{]+)`/g;
+  const pathPattern = /`(\.vbounce\/[^`*{]+|\.claude\/agents\/[^`*{]+|CLAUDE\.md|AGENTS\.md|GEMINI\.md|FLASHCARDS\.md|product_plans\/[^`*{]+)`/g;
   let match;
   const manifestPaths = new Map(); // path → line number
   const lines = content.split('\n');
 
   for (let i = 0; i < lines.length; i++) {
     let m;
-    const linePathPattern = /`(\.vbounce\/[^`*{]+|\.claude\/agents\/[^`*{]+|CLAUDE\.md|AGENTS\.md|GEMINI\.md|LESSONS\.md)`/g;
+    const linePathPattern = /`(\.vbounce\/[^`*{]+|\.claude\/agents\/[^`*{]+|CLAUDE\.md|AGENTS\.md|GEMINI\.md|FLASHCARDS\.md)`/g;
     while ((m = linePathPattern.exec(lines[i])) !== null) {
       const p = m[1];
       if (!manifestPaths.has(p)) manifestPaths.set(p, i + 1);

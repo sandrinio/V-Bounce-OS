@@ -5,7 +5,7 @@
  * Generates human-readable improvement suggestions from:
  *   1. Improvement manifest (post_sprint_improve.mjs output)
  *   2. Sprint trends
- *   3. LESSONS.md
+ *   3. FLASHCARDS.md
  *
  * Overwrites (not appends) to prevent stale suggestion accumulation.
  *
@@ -73,10 +73,10 @@ if (fs.existsSync(trendsFile)) {
 }
 
 // ---------------------------------------------------------------------------
-// 3. Read LESSONS.md
+// 3. Read FLASHCARDS.md
 // ---------------------------------------------------------------------------
 
-const lessonsFile = path.join(ROOT, 'LESSONS.md');
+const lessonsFile = path.join(ROOT, 'FLASHCARDS.md');
 let lessonCount = 0;
 let oldLessons = [];
 if (fs.existsSync(lessonsFile)) {
@@ -253,7 +253,7 @@ if (oldLessons.length > 0) {
       impact: { level: 'P2', label: 'Medium' },
       title: `${notRejected.length} lesson(s) older than 90 days — graduation candidates`,
       detail: notRejected.map(l => `  - ${l}`).join('\n'),
-      target: 'LESSONS.md → .claude/agents/',
+      target: 'FLASHCARDS.md → .claude/agents/',
       effort: 'Low',
     });
   }

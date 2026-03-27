@@ -3,7 +3,7 @@
  * Validates that context prep scripts and report validators handle
  * malformed agent reports gracefully — no raw crashes.
  *
- * Uses sprint S-95, delivery D-95, epic EPIC-T95.
+ * Uses sprint S-95, release ParseTest, epic EPIC-T95.
  */
 
 import fs from 'fs';
@@ -12,7 +12,6 @@ import { suite, record, assertScriptRuns, PASS, FAIL, WARN } from '../harness.mj
 import { createSprintFixtures, createSyntheticReport, removeSprintFixtures } from '../fixtures.mjs';
 
 const SPRINT_ID = 'S-95';
-const DELIVERY_ID = 'D-95';
 const EPIC_ID = 'EPIC-T95';
 const STORY_ID = 'STORY-T95-01';
 
@@ -38,7 +37,7 @@ function noCrash(result, name) {
 
 export default function runReportParsingSuite(installDir) {
   const scriptsDir = path.join(installDir, '.vbounce', 'scripts');
-  const config = { sprintId: SPRINT_ID, deliveryId: DELIVERY_ID, storyIds: [STORY_ID], epicId: EPIC_ID };
+  const config = { sprintId: SPRINT_ID, storyIds: [STORY_ID], epicId: EPIC_ID };
 
   // ── Setup ──
   createSprintFixtures(installDir, config);

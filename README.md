@@ -28,7 +28,7 @@ npx vbounce-engine install claude    # Claude Code (Full Orchestration)
 npx vbounce-engine doctor
 
 # 3. Initialize your first sprint!
-npx vbounce-engine sprint init S-01 D-01
+npx vbounce-engine sprint init S-01 --stories STORY-001-01
 ```
 
 > **Requirements**: Node.js and a project directory. That's it. One person to set the vision, the AI handles the execution.
@@ -55,7 +55,7 @@ V-Bounce wraps your AI agents in the same discipline that makes human engineerin
 | **QA Quality Gates** | **Missed Requirements.** Code is validated against Acceptance Criteria *before* merge. |
 | **Architect Audits** | **Drift.** Blocks the AI from hallucinating new dependencies or breaking patterns. |
 | **3-Bounce Escalation** | **Infinite Loops.** After 3 failed attempts, the AI surfaces the root cause to you. |
-| **Persistent Lessons** | **Goldfish Memory.** The AI logs mistakes in `LESSONS.md` and reads them next sprint. |
+| **Persistent Lessons** | **Goldfish Memory.** The AI logs mistakes in `FLASHCARDS.md` and reads them next sprint. |
 
 ---
 

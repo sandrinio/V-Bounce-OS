@@ -3,7 +3,7 @@
  * Validates that state management is correct when multiple stories
  * exist concurrently — transitions on one don't corrupt another.
  *
- * Uses sprint S-96, delivery D-96, epic EPIC-T96.
+ * Uses sprint S-96, release ParallelTest, epic EPIC-T96.
  */
 
 import fs from 'fs';
@@ -12,7 +12,6 @@ import { suite, record, assertScriptRuns, PASS, FAIL, WARN } from '../harness.mj
 import { createSprintFixtures, removeSprintFixtures } from '../fixtures.mjs';
 
 const SPRINT_ID = 'S-96';
-const DELIVERY_ID = 'D-96';
 const EPIC_ID = 'EPIC-T96';
 const STORY_A = 'STORY-T96-01';
 const STORY_B = 'STORY-T96-02';
@@ -34,7 +33,7 @@ function storyBounces(statePath, storyId) {
 export default function runParallelStoriesSuite(installDir) {
   const scriptsDir = path.join(installDir, '.vbounce', 'scripts');
   const statePath = path.join(installDir, '.vbounce', 'state.json');
-  const config = { sprintId: SPRINT_ID, deliveryId: DELIVERY_ID, storyIds: [STORY_A, STORY_B, STORY_C], epicId: EPIC_ID };
+  const config = { sprintId: SPRINT_ID, storyIds: [STORY_A, STORY_B, STORY_C], epicId: EPIC_ID };
 
   // ── Setup ──
   suite('Parallel Stories — Init');
@@ -193,7 +192,7 @@ export default function runParallelStoriesSuite(installDir) {
   // 9. Re-init overwrites cleanly
   assertScriptRuns(
     path.join(scriptsDir, 'init_sprint.mjs'),
-    `${SPRINT_ID} ${DELIVERY_ID} --stories STORY-NEW-01`, 'parallel',
+    `${SPRINT_ID} --stories STORY-NEW-01`, 'parallel',
     { cwd: installDir, expectExit: 0, note: 're-init with new story' }
   );
   const state9 = readState(statePath);
@@ -202,7 +201,7 @@ export default function runParallelStoriesSuite(installDir) {
   record({
     name: 're-init — old stories gone, new story present',
     component: 'parallel',
-    input: `init_sprint.mjs ${SPRINT_ID} ${DELIVERY_ID} --stories STORY-NEW-01`,
+    input: `init_sprint.mjs ${SPRINT_ID} --stories STORY-NEW-01`,
     output: `new=${hasNewStory}, old_gone=${oldStoriesGone}`,
     expected: 'new=true, old_gone=true',
     verdict: hasNewStory && oldStoriesGone ? PASS : FAIL,

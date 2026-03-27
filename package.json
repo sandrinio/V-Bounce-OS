@@ -1,13 +1,13 @@
 {
   "name": "vbounce-engine",
-  "version": "2.5.3",
+  "version": "2.6.0",
   "description": "V-Bounce Engine: Turn your AI coding assistant into a full engineering team through structured SDLC skills.",
   "type": "module",
   "bin": {
     "vbounce": "bin/vbounce.mjs"
   },
   "scripts": {
-    "test": "node tests/run.mjs"
+    "test": "node vbounce-tests/run.mjs"
   },
   "repository": {
     "type": "git",

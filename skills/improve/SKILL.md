@@ -1,6 +1,6 @@
 ---
 name: improve
-description: "Use when the V-Bounce Engine framework needs to evolve based on accumulated agent feedback. Activates after sprint retros, when recurring friction patterns emerge, or when the user explicitly asks to improve the framework. Reads Process Feedback from sprint reports, analyzes LESSONS.md for automation candidates, identifies patterns, proposes specific changes to templates, skills, brain files, scripts, and agent configs with impact levels, and applies approved changes. This is the system's self-improvement loop."
+description: "Use when the V-Bounce Engine framework needs to evolve based on accumulated agent feedback. Activates after sprint retros, when recurring friction patterns emerge, or when the user explicitly asks to improve the framework. Reads Process Feedback from sprint reports, analyzes FLASHCARDS.md for automation candidates, identifies patterns, proposes specific changes to templates, skills, brain files, scripts, and agent configs with impact levels, and applies approved changes. This is the system's self-improvement loop."
 ---
 
 # Framework Self-Improvement
@@ -45,7 +45,7 @@ Every improvement proposal is classified by impact to help the human prioritize:
 - When the same Process Feedback appears across multiple sprint reports
 - When the user explicitly asks to improve templates, skills, or process
 - When a sprint's Framework Self-Assessment reveals Blocker-severity findings
-- When LESSONS.md contains 3+ entries pointing to the same process gap
+- When FLASHCARDS.md contains 3+ entries pointing to the same process gap
 
 ## Trigger
 
@@ -66,7 +66,7 @@ vbounce sprint close S-XX
   │
   ├── .vbounce/scripts/post_sprint_improve.mjs    → .vbounce/improvement-manifest.json
   │   ├── Parse Sprint Report §5 Framework Self-Assessment tables
-  │   ├── Parse LESSONS.md for automation candidates
+  │   ├── Parse FLASHCARDS.md for automation candidates
   │   ├── Cross-reference archived sprint reports for recurring patterns
   │   └── Check if previous improvements resolved their findings
   │
@@ -99,7 +99,7 @@ The structured retro tables are the richest human-authored source. Each row has:
 - Severity (Friction vs Blocker)
 - Suggested Fix (agent's proposal)
 
-### 3. LESSONS.md — Automation Candidates
+### 3. FLASHCARDS.md — Automation Candidates
 Lessons are classified by automation potential:
 
 | Automation Type | What to Look For | Target |
@@ -217,7 +217,7 @@ When a lesson has been active 3+ sprints and is classified as `agent_config`:
 **Active since:** {date} ({N} sprints)
 **Rule:** {the lesson's rule}
 **Target agent config:** `.claude/agents/{agent}.md`
-**Action:** Add rule to agent's Critical Rules section. Archive lesson from LESSONS.md.
+**Action:** Add rule to agent's Critical Rules section. Archive lesson from FLASHCARDS.md.
 ```
 
 ### Step 5: Present to Human

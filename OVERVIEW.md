@@ -16,7 +16,7 @@ flowchart LR
     P1 -->|"Hotfix Path"| P3
     P2 -->|"All stories pass\ngates"| P3
     P3 -->|"Next sprint"| P2
-    P3 -.->|"New delivery"| P1
+    P3 -.->|"New release"| P1
 ```
 
 **Phase 1** produces the planning documents. **Phase 2** is the bounce loop — agents implement, test, and audit each story. **Phase 3** is human review, release, and lessons learned.
@@ -30,17 +30,16 @@ Every document inherits from the level above. No level can be skipped.
 ```mermaid
 flowchart TB
     C["📋 Charter\nWHY — vision, principles, stack"]
-    R["🗺️ Roadmap\nWHAT/WHEN — releases, ADRs"]
+    R["🗺️ Roadmap\nWHAT/WHEN — releases, ADRs, project window"]
     E["📦 Epic\nWHAT — scoped feature"]
     S["📝 Story\nHOW — spec, tests, impl guide"]
-    D["📅 Delivery Plan\nEXECUTION — sprints, states"]
     RR["⚠️ Risk Registry\nCROSS-CUTTING — all levels feed in"]
 
-    C --> R --> E --> S --> D
+    C --> R --> E --> S
     C & R & E -.-> RR
 ```
 
-All documents live in `product_plans/`. Each delivery (release) gets a folder. Epics are subfolders. Stories live inside their Epic folder. Completed deliveries archive to `product_plans/archive/`.
+All documents live in `product_plans/`. Epics are subfolders of the backlog. Stories live inside their Epic folder. Completed sprints archive to `product_plans/archive/`.
 
 ---
 
@@ -161,24 +160,24 @@ flowchart TB
     S2 -->|"bounce\nback"| S2
 ```
 
-After all sprints in a delivery complete, the Team Lead archives the delivery folder and adds a Delivery Log entry to the Roadmap.
+After all sprints in a release complete, the Team Lead archives the sprint folders and adds a Delivery Log entry to the Roadmap.
 
 ---
 
-## Delivery Lifecycle
+## Release Lifecycle
 
 ```mermaid
 flowchart LR
     Plan["📋 Plan\nCharter → Roadmap\n→ Epics → Stories"]
     Sprint["🔄 Sprint(s)\nBounce stories\nthrough gates"]
     Release["🚀 Release\nMerge to main\nTag version"]
-    Archive["📦 Archive\nMove delivery folder\nLog in Roadmap §7"]
+    Archive["📦 Archive\nArchive sprint folders\nLog in Roadmap §7"]
 
     Plan --> Sprint --> Release --> Archive
     Sprint -->|"next sprint"| Sprint
 ```
 
-A **delivery = a Roadmap release**. It contains one or more sprints. When all sprints are done, the whole delivery folder moves to `product_plans/archive/` and gets a Delivery Log entry with release notes and metrics.
+A **release = a Roadmap release**. It contains one or more sprints. When all sprints are done, sprint folders move to `product_plans/archive/` and the release gets a Delivery Log entry with release notes and metrics.
 
 ---
 

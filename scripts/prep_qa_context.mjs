@@ -83,9 +83,9 @@ const storyContent = fs.readFileSync(storySpecFile, 'utf8');
 const criteriaMatch = storyContent.match(/##\s*(2\.|§2|The Truth|Acceptance)[^\n]*\n([\s\S]*?)(?=\n##|\n---|\Z)/i);
 const criteriaSection = criteriaMatch ? criteriaMatch[2].trim().split('\n').slice(0, 30).join('\n') : '_Could not extract §2 — read story spec directly_';
 
-// 3. Read LESSONS.md
-const lessonsFile = path.join(ROOT, 'LESSONS.md');
-let lessonsExcerpt = '_No LESSONS.md found_';
+// 3. Read FLASHCARDS.md
+const lessonsFile = path.join(ROOT, 'FLASHCARDS.md');
+let lessonsExcerpt = '_No FLASHCARDS.md found_';
 if (fs.existsSync(lessonsFile)) {
   const lines = fs.readFileSync(lessonsFile, 'utf8').split('\n');
   lessonsExcerpt = lines.slice(0, 30).join('\n');

@@ -76,8 +76,6 @@ function deriveId(filename, frontmatter, docType) {
   if (frontmatter.spike_id) return frontmatter.spike_id;
   if (frontmatter.sprint_id) return frontmatter.sprint_id;
   if (frontmatter.hotfix_id) return frontmatter.hotfix_id;
-  if (frontmatter.delivery_id) return frontmatter.delivery_id;
-
   // Derive from filename
   const base = path.basename(filename, '.md');
 
@@ -188,11 +186,13 @@ function extractEdges(docId, fm, docType, filePath) {
     }
   }
 
-  // release → feeds edge (e.g., release: "D-02")
+  // release → feeds edge (e.g., release: "Foundation" or legacy "D-02")
   if (fm.release) {
-    const releaseId = fm.release.match(/(D-\d+)/i);
-    if (releaseId) {
-      edges.push({ from: docId, to: releaseId[1].toUpperCase(), type: 'feeds' });
+    const legacyMatch = fm.release.match(/(D-\d+)/i);
+    if (legacyMatch) {
+      edges.push({ from: docId, to: legacyMatch[1].toUpperCase(), type: 'feeds' });
+    } else if (typeof fm.release === 'string' && fm.release.trim()) {
+      edges.push({ from: docId, to: fm.release.trim(), type: 'feeds' });
     }
   }
 

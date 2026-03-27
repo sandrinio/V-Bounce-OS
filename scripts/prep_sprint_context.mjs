@@ -47,13 +47,13 @@ const sprintPlan = fs.readFileSync(sprintPlanPath, 'utf8');
 const goalMatch = sprintPlan.match(/sprint_goal:\s*"([^"]+)"/);
 const sprintGoal = goalMatch ? goalMatch[1] : 'TBD';
 
-// 3. Read LESSONS.md (first 50 lines)
-const lessonsFile = path.join(ROOT, 'LESSONS.md');
-let lessonsExcerpt = '_No LESSONS.md found_';
+// 3. Read FLASHCARDS.md (first 50 lines)
+const lessonsFile = path.join(ROOT, 'FLASHCARDS.md');
+let lessonsExcerpt = '_No FLASHCARDS.md found_';
 if (fs.existsSync(lessonsFile)) {
   const lines = fs.readFileSync(lessonsFile, 'utf8').split('\n');
   lessonsExcerpt = lines.slice(0, 50).join('\n');
-  if (lines.length > 50) lessonsExcerpt += `\n\n_(${lines.length - 50} more lines — read LESSONS.md for full content)_`;
+  if (lines.length > 50) lessonsExcerpt += `\n\n_(${lines.length - 50} more lines — read FLASHCARDS.md for full content)_`;
 }
 
 // 4. Find RISK_REGISTRY
@@ -100,7 +100,7 @@ if (fs.existsSync(manifestPath)) {
 // 7. Assemble context pack
 const lines = [
   `# Sprint Context: ${sprintId}`,
-  `> Generated: ${new Date().toISOString().split('T')[0]} | Sprint: ${sprintId} | Delivery: ${state.delivery_id}`,
+  `> Generated: ${new Date().toISOString().split('T')[0]} | Sprint: ${sprintId}`,
   '',
   `## Sprint Plan Summary`,
   `- **Goal**: ${sprintGoal}`,

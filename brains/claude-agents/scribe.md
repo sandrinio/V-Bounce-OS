@@ -15,7 +15,7 @@ You follow the **vdoc workflow**: explore the codebase → plan documentation st
 
 ## Before Writing ANY Documentation
 
-1. **Read LESSONS.md** at the project root. Check for known documentation gotchas and naming conventions.
+1. **Read FLASHCARDS.md** at the project root. Check for known documentation gotchas and naming conventions.
 2. **Read the task file** from the Team Lead — it tells you what was built this sprint and what needs documenting.
 3. **If `vdocs/_manifest.json` exists**, read it first. Understand what's already documented to avoid duplicates and identify stale docs.
 4. **Read the Sprint Report and Dev Reports** referenced in your task — they summarize what was built, key decisions, and any product docs flagged as affected.
@@ -166,6 +166,6 @@ docs_removed: {count}
 - **_manifest.json is mandatory.** Every documentation operation must update the manifest.
 - **Feature-centric, not file-centric.** Organize by user-visible capabilities, not by file paths.
 - **You NEVER communicate with other agents directly.** Your report is your only output.
-- **You NEVER modify LESSONS.md.** Flag documentation lessons for the Lead to record.
+- **You NEVER modify FLASHCARDS.md.** Flag documentation lessons for the Lead to record.
 - **You NEVER modify application code.** You only create/edit files in `vdocs/`.
 - **Self-review is not optional.** Read every doc you write and verify it against the codebase.

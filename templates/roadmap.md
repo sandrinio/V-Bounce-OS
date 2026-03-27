@@ -14,14 +14,13 @@ FOLLOW THIS EXACT STRUCTURE. Output sections in order 1-7.
 Output location: `product_plans/strategy/{project}_roadmap.md`
 
 Role of this document:
-- This is the STRATEGIC layer between Charter (why) and Delivery Plan (operational execution).
+- This is the STRATEGIC AND OPERATIONAL layer between Charter (why) and Sprint Plan (execution).
 - It answers: "What are we shipping, in what order, and what architectural bets are we making?"
-- It does NOT track sprint-level progress — that belongs in the Delivery Plan.
-- It does NOT track individual story status — that belongs in the Delivery Plan.
 - It DOES define release milestones, architectural decisions, and strategic constraints.
+- It DOES track the project window, sprint cadence, and delivery history.
 
 Document Hierarchy Position: LEVEL 2 — STRATEGIC
-Charter (why) → **Roadmap** (strategic what/when) → Epic (detailed what) → Story (how) → Delivery Plan (execution) → Risk Registry (risks)
+Charter (why) → **Roadmap** (strategic what/when) → Epic (detailed what) → Story (how)
 
 Do NOT output these instructions.
 </instructions>
@@ -44,6 +43,15 @@ risk_registry_ref: "product_plans/RISK_REGISTRY.md"
 | **Tech Stack** | {e.g., Next.js, FastAPI, Supabase} |
 | **Target Users** | {Primary user persona from Charter} |
 
+### Project Window
+| Key | Value |
+|-----|-------|
+| **Start Date** | {YYYY-MM-DD} |
+| **End Date** | {YYYY-MM-DD} |
+| **Total Sprints** | {N} |
+| **Team** | {CE name(s) / Agent config} |
+| **Sprint Cadence** | {e.g., "1-week sprints"} |
+
 ### Success Metrics
 > Pulled from Charter §1.3. These define when the project is "done."
 
@@ -56,7 +64,6 @@ risk_registry_ref: "product_plans/RISK_REGISTRY.md"
 
 > Group epics into named releases with clear exit criteria. Each release is a shippable milestone.
 > Releases are NOT sprints — a release may span multiple sprints.
-> Sprint-level tracking belongs in the Delivery Plan.
 
 ### Release 1: {Release Name} (e.g., "Foundation")
 **Target**: {YYYY-MM-DD or Quarter}
@@ -132,7 +139,7 @@ risk_registry_ref: "product_plans/RISK_REGISTRY.md"
 
 ## 6. Open Questions
 
-> Unresolved items that affect strategic direction. Operational questions go in the Delivery Plan.
+> Unresolved items that affect strategic direction.
 
 | Question | Options | Impact | Owner | Status |
 |----------|---------|--------|-------|--------|
@@ -146,10 +153,10 @@ risk_registry_ref: "product_plans/RISK_REGISTRY.md"
 > Appended by Team Lead when a delivery (release) is archived.
 > Each entry is the release notes — a summary of sprint reports from that delivery.
 
-### D-{NN}: {Release Name}
+### {Release Name}
 **Delivered**: {YYYY-MM-DD}
 **Release Tag**: v{VERSION}
-**Delivery Folder**: `product_plans/archive/D-{NN}_{release_name}/`
+**Archive Folder**: `product_plans/archive/sprints/`
 
 **Release Notes**:
 > {Summary of what was shipped — compiled from sprint reports. Key features, important fixes, architectural changes.}

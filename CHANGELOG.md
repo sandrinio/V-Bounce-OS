@@ -5,6 +5,28 @@ All notable changes to the V-Bounce Engine framework and its CLI installer will 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.0] - 2026-03-27
+
+### Added
+- **Architect Sprint Design Review** — Architect now participates in Phase 2 sprint planning. Reviews candidate stories' §3 Implementation Guides against ADRs, identifies shared file surfaces, and writes Sprint Plan §2 Execution Strategy directly.
+- **TDD Multi-Pass Enforcement** — Team Lead mechanically enforces Red-Green-Refactor by spawning Developer twice: Red phase (tests only) → verify failure → Green phase (implementation). Stories declare TDD applicability in §2.
+- **Report Frontmatter Pre-Fill** — New `prefill_report.mjs` script pre-generates YAML frontmatter for agent reports with known fields from state.json. Agents only fill judgment fields.
+- **Explorer integration** — Architect Sprint Design Review consumes Explorer `sprint-design-review` context pack (EPIC-001 soft dependency, with direct codebase read as fallback).
+
+### Removed
+- **Delivery Plan template** — `templates/delivery_plan.md` deleted. The Delivery Plan duplicated content already in the Roadmap (§2 Release Plan, §7 Delivery Log) and Sprint Plan (§1 Active Scope), adding a tracking layer without unique decision-making value.
+
+### Changed
+- **`delivery_id` removed** — Release context derived from Roadmap via sprint plan. `init_sprint.mjs` simplified to `S-XX --stories`.
+- **`LESSONS.md` → `FLASHCARDS.md`** — Renamed across all brains, skills, templates, scripts, and tests. `doctor.mjs` detects legacy name and suggests rename command.
+- **Story template** — Added "TDD Red Phase: Yes/No" declaration field. Updated Definition of Done.
+- **Sprint template §2** — Restructured with Architect-writable subsections (Merge Ordering, Shared Surfaces, Execution Mode, ADR Compliance, Risk Flags).
+- **Roadmap template absorbs Delivery Plan fields** — Added "Project Window" table to §1 Strategic Context (Start Date, End Date, Total Sprints, Team, Sprint Cadence). Updated role description to "STRATEGIC AND OPERATIONAL layer between Charter and Sprint Plan." Removed all Delivery Plan references from instructions. Updated §7 Delivery Log to use release names instead of `D-{NN}` identifiers.
+- **Document hierarchy simplified** — New hierarchy: Charter → Roadmap → Epic → Story (+ Risk Registry cross-cutting). Removed "LEVEL 5: Delivery Plan" from `doc-manager` skill, `VBOUNCE_MANIFEST.md`, `OVERVIEW.md`, and `README.md`.
+- **Diagram updated** — `diagrams/04-delivery-lifecycle.mermaid` renamed to "Release Lifecycle", removed Delivery Plan node, replaced `D-NN` folder structure with backlog-based layout, updated archive to use sprint folders.
+- **DevOps agent reads Roadmap** instead of Delivery Plan (subagent config table in MANIFEST).
+- **Hotfix path** now described as bypassing into Sprint Plan execution (was Delivery Plan execution).
+
 ## [2.5.3] - 2026-03-26
 ### Added
 - **Script Execution Protocol** — `run_script.sh` wrapper that all agents must use for script invocations. Captures exit codes, runs pre-flight checks (state.json existence, valid JSON), prints structured diagnostic blocks on failure with root cause and fix commands.

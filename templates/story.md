@@ -90,6 +90,10 @@ complexity_label: "L1 / L2 / L3 / L4 (default: L2)"
 - {What this story explicitly does NOT do}
 - {Deferred to STORY-XXX or future work}
 
+### TDD Red Phase: Yes / No
+> "Yes" = Team Lead enforces Red-Green multi-pass. "No" = single-pass Developer spawn.
+> Default: Yes for stories with Gherkin scenarios in §2. No for pure config/doc/template changes.
+
 ---
 
 ## 2. The Truth (Executable Tests)
@@ -177,9 +181,9 @@ Feature: {Story Name}
 > If "N/A" for a test type, write "0 — N/A (no {type} in scope)".
 
 ### 4.2 Definition of Done (The Gate)
-- [ ] Tests written FIRST (Red → Green → Refactor). All Gherkin scenarios from §2.1 covered.
+- [ ] TDD enforced per story declaration. If "Yes": Red phase tests written and verified failing before Green phase. All Gherkin scenarios from §2.1 covered.
 - [ ] Minimum test expectations (§4.1) met.
-- [ ] LESSONS.md + Sprint Context consulted before implementation.
+- [ ] FLASHCARDS.md + Sprint Context consulted before implementation.
 - [ ] No violations of Roadmap ADRs.
 - [ ] Environment prerequisites (§3.0) verified before starting.
 - [ ] **Framework Integrity**: If `.claude/agents/`, `.vbounce/skills/`, `.vbounce/templates/`, or `.vbounce/scripts/` were modified, log to `.vbounce/CHANGELOG.md`.

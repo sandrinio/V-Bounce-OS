@@ -3,9 +3,9 @@ name: lesson
 description: Use when recording project-specific mistakes, gotchas, or hard-won knowledge. Also activates proactively when a mistake pattern is detected during work.
 ---
 
-# Lessons Learned
+# Flashcards
 
-Captures project-specific mistakes and rules into `LESSONS.md` so they are never repeated. YOU MUST read `LESSONS.md` before modifying code in any session.
+Captures project-specific mistakes and rules into `FLASHCARDS.md` so they are never repeated. YOU MUST read `FLASHCARDS.md` before modifying code in any session.
 
 **Core principle:** Every mistake is an investment — but only if you record it.
 
@@ -21,7 +21,7 @@ When using this skill, state: "Recording a lesson learned."
 
 This is NOT just a command — it is a standing directive:
 
-1. **Before modifying code**, read `LESSONS.md` at the project root. Treat recorded rules as hard constraints.
+1. **Before modifying code**, read `FLASHCARDS.md` at the project root. Treat recorded rules as hard constraints.
 2. **During work**, if you encounter any of these signals, offer to record a lesson:
    - A bug caused by a non-obvious platform behavior (Supabase, Vercel, Next.js, etc.)
    - A fix that took multiple attempts to get right
@@ -40,7 +40,7 @@ This is NOT just a command — it is a standing directive:
 2. After DevOps merges a story (Phase 3, Step 9), the Team Lead immediately:
    - Reads `lessons_flagged` from Dev and QA reports
    - Presents each lesson to the human for approval
-   - Records approved lessons to LESSONS.md right away
+   - Records approved lessons to FLASHCARDS.md right away
 3. At sprint close (Sprint Report §4), the lesson table serves as a **review of what was already recorded** — not a first-time approval step. This is a confirmation, not a gate.
 
 **Why this matters:** A lesson recorded 5 minutes after the problem is specific and actionable. A lesson recorded 3 days later at sprint close is vague and often forgotten.
@@ -71,19 +71,19 @@ Rules for formatting:
 - "What happened" is factual — what you tried and what went wrong
 - "Rule" is a direct command — "Always...", "Never...", "Use X instead of Y"
 
-### Step 3: Append to LESSONS.md
+### Step 3: Append to FLASHCARDS.md
 
-1. Read `LESSONS.md` at the project root
-2. If the file does not exist, create it with the header `# Lessons Learned`
+1. Read `FLASHCARDS.md` at the project root
+2. If the file does not exist, create it with the header `# Flashcards`
 3. Append the new entry at the bottom of the file
 4. Confirm to the user: *"Recorded. This lesson is now active for all future sessions."*
 
 ## File Format
 
-`LESSONS.md` lives at the project root. Flat, chronological, no categories.
+`FLASHCARDS.md` lives at the project root. Flat, chronological, no categories.
 
 ```markdown
-# Lessons Learned
+# Flashcards
 
 ### [2026-02-18] RLS policies break cascade deletes
 **What happened:** Tried cascade delete on projects table, silently failed due to RLS.
@@ -96,7 +96,7 @@ Rules for formatting:
 
 ## Critical Rules
 
-- **Read before write.** ALWAYS read `LESSONS.md` before modifying project code. No exceptions.
+- **Read before write.** ALWAYS read `FLASHCARDS.md` before modifying project code. No exceptions.
 - **Ask before recording.** Never append a lesson without user approval.
 - **One lesson per entry.** Do not combine multiple learnings into one entry.
 - **Rules are imperatives.** Write rules as direct commands, not suggestions.
@@ -128,9 +128,9 @@ Accelerated candidates are flagged by `suggest_improvements.mjs` with impact lev
 1. `.vbounce/scripts/suggest_improvements.mjs` flags graduation candidates in improvement suggestions
 2. Human approves graduation
 3. Lead adds the rule to the relevant agent config (`.claude/agents/developer.md`, etc.)
-4. Lead removes or archives the lesson from `LESSONS.md` with a note: `[Graduated to {agent} config on {date}]`
+4. Lead removes or archives the lesson from `FLASHCARDS.md` with a note: `[Graduated to {agent} config on {date}]`
 5. Record in `.vbounce/improvement-log.md` under "Applied"
 
 ### Why Graduation Matters
 
-`LESSONS.md` is a staging area, not a permanent rule store. Lessons that graduate become enforced constraints in the agent's core instructions — they can't be forgotten or overlooked. Lessons that stay in `LESSONS.md` are read on every session but are softer guidance. Keep `LESSONS.md` lean — stale lessons dilute the signal.
+`FLASHCARDS.md` is a staging area, not a permanent rule store. Lessons that graduate become enforced constraints in the agent's core instructions — they can't be forgotten or overlooked. Lessons that stay in `FLASHCARDS.md` are read on every session but are softer guidance. Keep `FLASHCARDS.md` lean — stale lessons dilute the signal.

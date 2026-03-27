@@ -23,6 +23,9 @@ vdocs/
 .vbounce/
 /temporary/
 
+# Test reports (generated output, not source)
+vbounce-tests/reports/
+
 # Development session files
 LAST_SESSION.md
 IMPROVEMENT_PLAN.md

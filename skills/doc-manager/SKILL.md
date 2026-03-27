@@ -1,6 +1,6 @@
 ---
 name: doc-manager
-description: "Use when creating, modifying, or navigating V-Bounce Engine planning documents. Trigger on any request to create a charter, roadmap, epic, story, delivery plan, sprint plan, or risk registry — or when the user asks to update, refine, decompose, or transition documents between phases. Also trigger when the user asks about work status, backlog, what's next, what's blocked, or wants to plan/start a sprint. This skill manages the full document lifecycle from Charter through Sprint Planning and execution."
+description: "Use when creating, modifying, or navigating V-Bounce Engine planning documents. Trigger on any request to create a charter, roadmap, epic, story, sprint plan, or risk registry — or when the user asks to update, refine, decompose, or transition documents between phases. Also trigger when the user asks about work status, backlog, what's next, what's blocked, or wants to plan/start a sprint. This skill manages the full document lifecycle from Charter through Sprint Planning and execution."
 ---
 
 # Document Hierarchy Manager
@@ -23,14 +23,13 @@ When using this skill, state: "Using doc-manager to handle document operations."
 
 ```
 LEVEL 1: Charter          — WHY are we building this?
-LEVEL 2: Roadmap          — WHAT are we shipping strategically and WHAT bets are we making?
+LEVEL 2: Roadmap          — WHAT are we shipping strategically, WHAT bets, and WHEN do stories execute?
 LEVEL 3: Epic             — WHAT exactly is each feature?
 LEVEL 4: Story            — HOW does each piece get built?
-LEVEL 5: Delivery Plan    — WHEN and in what ORDER do stories execute?
-LEVEL 6: Risk Registry    — WHAT could go wrong? (cross-cutting, fed by all levels)
+LEVEL 5: Risk Registry    — WHAT could go wrong? (cross-cutting, fed by all levels)
 
 ***HOTFIX PATH (L1 Trivial Tasks Only)***
-Hotfixes bypass LEVELS 3 and 4 directly into the Delivery Plan execution.
+Hotfixes bypass Levels 3 and 4 into Sprint Plan execution.
 ```
 
 ### Information Flow
@@ -45,23 +44,22 @@ Charter §6 (Constraints) ──→ Roadmap §5 (Strategic Constraints)
 Roadmap §2 (Release Plan) ──→ Epic Metadata (Release field)
 Roadmap §3 (ADRs) ──→ Story §3.1 (ADR References)
 Roadmap §4 (Dependencies) ──→ Risk Registry §1 (Active Risks)
-Roadmap §5 (Constraints) ──→ Delivery Plan (sprint capacity)
+Roadmap §5 (Constraints) ──→ Sprint Plan (sprint capacity)
 
 Epic §2 (Scope Boundaries) ──→ Story §1 (The Spec)
 Epic §4 (Technical Context) ──→ Story §3 (Implementation Guide)
 Epic §5 (Decomposition) ──→ Codebase research scope + Story creation sequence
 Epic §6 (Risks) ──→ Risk Registry §1 (Active Risks)
 Epic §7 (Acceptance Criteria) ──→ Story §2 (The Truth)
-Epic §9 (Artifact Links) ──→ Delivery Plan §3 (Backlog)
+Epic §9 (Artifact Links) ──→ Sprint Plan §1 (Active Scope)
 
 Story §1 (The Spec) ──→ Developer Agent
 Story §2 (The Truth) ──→ QA Agent
 Story §3 (Implementation Guide) ──→ Developer Agent
-Story status ──→ Sprint Plan §1 (V-Bounce State) [NOT Delivery Plan — see delivery-sync.md]
+Story status ──→ Sprint Plan §1 (V-Bounce State)
 
 Sprint Plan §1 (Active Scope) ──→ Team Lead Agent (source of truth during sprint)
 Sprint Plan §1 (Context Pack Readiness) ──→ Ready to Bounce gate
-Delivery Plan ──→ Updated at sprint boundaries ONLY (never mid-sprint)
 
 Risk Registry ←── ALL levels (cross-cutting input)
 
@@ -79,7 +77,6 @@ Spike §6 (Residual Risk) ──→ Risk Registry §1 (Active Risks)
 | Charter | `.vbounce/templates/charter.md` | `product_plans/strategy/{project}_charter.md` |
 | Roadmap | `.vbounce/templates/roadmap.md` | `product_plans/strategy/{project}_roadmap.md` |
 | Risk Registry | `.vbounce/templates/risk_registry.md` | `product_plans/strategy/RISK_REGISTRY.md` |
-| Delivery Plan | `.vbounce/templates/delivery_plan.md` | `product_plans/strategy/{delivery}_delivery_plan.md` |
 | Sprint Plan | `.vbounce/templates/sprint.md` | `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` |
 | Epic | `.vbounce/templates/epic.md` | `product_plans/backlog/EPIC-{NNN}_{name}/EPIC-{NNN}_{name}.md` |
 | Story | `.vbounce/templates/story.md` | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{StoryName}.md` |
@@ -96,7 +93,6 @@ product_plans/
 ├── strategy/                      ← high-level, frozen during sprints
 │   ├── charter.md
 │   ├── roadmap.md
-│   ├── delivery_plan.md           ← release timelines
 │   └── risk_registry.md
 │
 ├── backlog/                       ← planned but NOT active
@@ -230,7 +226,6 @@ If the human resolves questions during discussion, update the epic document imme
 | Story | Parent Epic (full document) + Roadmap §3 (ADRs) + Codebase (affected files) |
 | Spike | Parent Epic (full document) + Roadmap §3 (ADRs) + Risk Registry |
 | Sprint Plan | All candidate stories + Risk Registry + Archive (completed work) + Backlog state |
-| Delivery Plan | Roadmap §2 (Release Plan) + All Stories in scope |
 | Risk Registry | Charter §6 + Roadmap §4, §5 + All Epic §6 sections |
 
 ### MODIFY — Updating an Existing Document
@@ -252,11 +247,11 @@ When modifying a document:
 | Charter §1 (Identity) | Roadmap §1 (Strategic Context) |
 | Charter §2 (Design Principles) | Nothing — but notify all agents |
 | Charter §3 (Tech Stack) | Roadmap §3 (ADRs) |
-| Roadmap §2 (Release Plan) | Delivery Plan sprint goals |
+| Roadmap §2 (Release Plan) | Sprint Plan goals |
 | Roadmap §3 (ADR) | All Stories referencing that ADR in §3.1 |
 | Epic §2 (Scope) | All child Stories §1 (The Spec) |
 | Epic §4 (Technical Context) | All child Stories §3 (Implementation Guide) |
-| Story status (V-Bounce State) | Delivery Plan §3 (Active Sprint table) |
+| Story status (V-Bounce State) | Sprint Plan §1 (Active Scope) |
 | Story — new risk discovered | Risk Registry §1 (new row) |
 | Spike §4/§5 (Findings/Decision) | Epic §4 Technical Context, Epic §8 Open Questions, Risk Registry §1 |
 | Spike §5 (Decision — architectural) | Roadmap §3 ADRs (new row) |
@@ -307,7 +302,7 @@ For each story, use what you learned from codebase research:
 #### Phase 4: Link & Update
 
 1. Link all created Stories back in Epic §9 Artifact Links
-2. Update Delivery Plan §3 High-Level Backlog with new stories
+2. Update backlog status in Epic §9 Artifact Links
 
 ### SPRINT PLANNING — Preparing a Sprint
 
@@ -408,11 +403,11 @@ Bouncing → Done: Dev implements + Human manually verifies + DevOps runs `hotfi
 
 | Agent | Documents Owned | Documents Read |
 |-------|----------------|----------------|
-| **Team Lead** | Delivery Plan, Sprint Report, Delivery archive | Charter, Roadmap, ALL Stories (for context packs) |
-| **Developer** | Story §3 updates (during implementation), Spike §4 Findings (during investigation) | Story §1 + §3, Spike §1 + §2 + §3, LESSONS.md |
+| **Team Lead** | Sprint Report, Delivery archive | Charter, Roadmap, ALL Stories (for context packs) |
+| **Developer** | Story §3 updates (during implementation), Spike §4 Findings (during investigation) | Story §1 + §3, Spike §1 + §2 + §3, FLASHCARDS.md |
 | **QA** | QA Validation Report | Story §2, Dev Implementation Report |
 | **Architect** | Architectural Audit Report, Risk flags (in report — Lead writes to Registry), Spike validation (Findings Ready → Validated) | Full Story, Spike §4 + §5, Roadmap §3 ADRs, Risk Registry |
-| **DevOps** | DevOps Reports (merge + release) | Delivery Plan, LESSONS.md, gate reports |
+| **DevOps** | DevOps Reports (merge + release) | Roadmap, FLASHCARDS.md, gate reports |
 | **Scribe** | Product documentation, _manifest.json | Sprint Report, Dev Reports, codebase |
 | **PM/BA (Human)** | Charter, Roadmap, Epic, Story §1 + §2 | Everything |
 
@@ -441,4 +436,4 @@ When a sprint is complete:
 
 ## Keywords
 
-charter, roadmap, epic, story, delivery plan, risk registry, sprint plan, sprint planning, document hierarchy, template, create document, update document, decompose epic, story breakdown, ambiguity score, context pack, V-Bounce state, phase transition, cascade update, planning documents, backlog, what's next, what's blocked, start sprint
+charter, roadmap, epic, story, risk registry, sprint plan, sprint planning, document hierarchy, template, create document, update document, decompose epic, story breakdown, ambiguity score, context pack, V-Bounce state, phase transition, cascade update, planning documents, backlog, what's next, what's blocked, start sprint

@@ -1,5 +1,5 @@
 ---
-title: "Delivery Lifecycle & Folder Structure"
+title: "Release Lifecycle & Folder Structure"
 ---
 flowchart TB
     subgraph planning["Phase 1 — Verification (Planning)"]
@@ -10,7 +10,6 @@ flowchart TB
         E1 --> S1[["📝 Story 1-01"]]
         E1 --> S2[["📝 Story 1-02"]]
         E2 --> S3[["📝 Story 2-01"]]
-        R --> DP[["📅 Delivery Plan"]]
         C --> RR[["⚠️ Risk Registry"]]
     end
 
@@ -20,15 +19,14 @@ flowchart TB
         root --> charter["charter.md"]
         root --> roadmap["roadmap.md"]
         root --> risk["RISK_REGISTRY.md"]
-        root --> d1["D-01_foundation/"]
-        d1 --> dplan["DELIVERY_PLAN.md"]
-        d1 --> ep1["EPIC-001_auth/"]
+        root --> backlog["backlog/"]
+        backlog --> ep1["EPIC-001_auth/"]
         ep1 --> epic1doc["EPIC-001.md"]
         ep1 --> story1["STORY-001-01.md"]
         ep1 --> story2["STORY-001-02.md"]
-        d1 --> ep2["EPIC-002_ui/"]
+        backlog --> ep2["EPIC-002_ui/"]
         root --> archive["archive/"]
-        archive --> d_old["D-00_mvp/ (completed)"]
+        archive --> s_old["sprints/S-01/ (completed)"]
     end
 
     subgraph bounce["Phase 2 — The Bounce"]
@@ -54,10 +52,10 @@ flowchart TB
         release --> archiveSprint["Archive to\n.bounce/archive/S-01/"]
     end
 
-    subgraph delivery_complete["Delivery Complete"]
+    subgraph delivery_complete["Release Complete"]
         direction TB
         verify["✅ All sprints done"]
-        verify --> move["mv D-01_foundation/\n→ archive/D-01_foundation/"]
+        verify --> move["mv sprints/S-XX/\n→ archive/sprints/S-XX/"]
         move --> log["Add Delivery Log\nto Roadmap §7"]
         log --> status["Update Release Plan\nstatus → Delivered"]
     end
