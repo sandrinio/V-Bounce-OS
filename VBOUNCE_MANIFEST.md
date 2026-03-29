@@ -4,8 +4,8 @@
 > Any modification to `.claude/agents/`, `.vbounce/skills/`, `.vbounce/templates/`, or `.vbounce/scripts/` MUST also update this file.
 > Run `vbounce doctor` to validate file existence against this manifest.
 
-**Version:** 2.6.1
-**Last updated:** 2026-03-27
+**Version:** 2.7.0
+**Last updated:** 2026-03-29
 
 ---
 
@@ -410,10 +410,10 @@ Reports output to `vbounce-tests/reports/report-{timestamp}.{json,md}`.
 | Brain files | 16 |
 | Templates | 12 |
 | Skills (SKILL.md + references) | 26 |
-| React rules | 57 |
-| Scripts | 29 |
+| React rules | 59 |
+| Scripts | 31 |
 | Test suite | 16 |
 | Diagrams | 6 |
 | Docs + Visual Assets | 6 + ~15 icons/images |
 | CLI | 1 |
-| **Total** | **~192** |
+| **Total** | **~196** |

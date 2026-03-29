@@ -12,9 +12,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Green Phase Circuit Breaker** — Developer MUST stop after ~50 tool calls with no progress during Green Phase and write a Blockers Report (`*-dev-blockers.md`) instead of continuing to spin. Report categorizes the blocker (test pattern issue, spec gap, or environment issue) so the Team Lead can diagnose and fix. Three circuit breaker triggers on the same story → Escalation.
 - **Blockers Report template** — New report type in developer agent config with YAML frontmatter (`status: "blocked"`, `blocker_category`), structured sections for attempted approaches, root cause diagnosis, and suggested fixes.
 
+### Added
+- **State transition enforcement** — Every state transition in agent-team SKILL.md now includes an explicit `run_script.sh update_state.mjs` or `complete_story.mjs` command. Sprint Plan Sync table expanded to 3 columns showing script command + markdown update for each transition.
+- **Git clean check in `init_sprint.mjs`** — Sprint init now verifies the git working tree is clean before proceeding. Exits with actionable error if uncommitted changes exist.
+- **Git clean check in `validate_bounce_readiness.mjs`** — Bounce readiness gate now verifies no uncommitted changes before worktree creation. Prevents silent loss of uncommitted work in new worktrees.
+- **Pre-bounce gate in Step 1** — `validate_bounce_readiness.mjs` is now a mandatory step before worktree creation, wired directly into the orchestration flow.
+- **Pre-sprint git check in Step 0** — Explicit git clean verification before cutting sprint branch.
+- **7 new lifecycle tests** — Git clean checks for both `init_sprint.mjs` and `validate_bounce_readiness.mjs` (clean tree passes, dirty tree fails, error messages are actionable). Test count: 944 → 951.
+
 ### Changed
 - **Developer agent Green Phase rules** — Test file modification now absolutely prohibited (was "unless there's a genuine bug in the test"). Framework incompatibilities are the Team Lead's responsibility to fix between Red and Green phases.
 - **Agent-team orchestration steps renumbered** — Step 2c (was Green Phase) → Step 2d. Step 2d (was Single-Pass) → Step 2e. New Step 2c (Test Pattern Validation) and Step 2f (Circuit Breaker Handling) added.
+- **Sprint Plan Sync rule** — New rule: "run the script FIRST — if the script fails, do not update the markdown." state.json and Sprint Plan must stay in sync.
+- **Escalated Stories edge case** — Now includes explicit `update_state.mjs` calls for Escalated, Refinement (on return), and Parking Lot (on kill) transitions.
 
 ## [2.6.1] - 2026-03-27
 ### Added
