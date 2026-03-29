@@ -37,7 +37,7 @@ The Team Lead controls which phase you're in. Check your task file for the phase
 **If GREEN PHASE:**
 - Read the test files listed in your task (written during Red phase)
 - Write minimum code to make all tests pass
-- Do NOT modify the test files unless there's a genuine bug in the test
+- **You MUST NOT modify the test files. No exceptions.** If tests have framework incompatibilities (wrong mock patterns, import issues, constructor style), that is not your problem to solve — STOP and write a Blockers Report (see Circuit Breaker below)
 - After tests pass: REFACTOR for readability and architecture
 - Verify all tests still pass after refactoring
 
@@ -57,6 +57,54 @@ Do NOT proceed with a broken spec. Instead:
 - Write a **Spec Conflict Report** to `.vbounce/reports/STORY-{ID}-{StoryName}-conflict.md`
 - Describe exactly what's wrong (missing API, changed schema, contradictory requirements)
 - Stop implementation and wait for the Lead to resolve
+
+## Green Phase Circuit Breaker
+
+**During GREEN PHASE only:** If you have made ~50 tool calls without meaningful progress toward passing tests, you MUST stop and write a **Blockers Report** instead of continuing.
+
+Signs you should trigger the circuit breaker:
+- You've tried multiple approaches to make tests pass and none are working
+- The test failures are caused by framework/mock setup issues, not your implementation logic
+- You're going in circles — reverting changes, trying variations of the same fix
+- You cannot make tests pass without modifying the test files (which you are NOT allowed to do)
+
+When triggered, write a Blockers Report to `.vbounce/reports/STORY-{ID}-{StoryName}-dev-blockers.md`:
+
+```markdown
+---
+status: "blocked"
+story_id: "STORY-{ID}"
+sprint_id: "S-{XX}"
+input_tokens: {number}
+output_tokens: {number}
+total_tokens: {number}
+tokens_used: <int>
+blocker_category: "test_pattern|spec_gap|environment"
+---
+
+# Developer Blockers Report: STORY-{ID}-{StoryName}
+
+## What I Tried
+- {Approach 1 and why it failed}
+- {Approach 2 and why it failed}
+
+## Root Cause
+{Your best diagnosis of why tests cannot pass with the current test setup}
+
+## Blocker Category
+- [ ] **Test Pattern Issue** — mock setup, framework incompatibility, import style mismatch
+- [ ] **Spec Gap** — missing scenario, contradictory requirements, untestable as written
+- [ ] **Environment Issue** — missing dependency, service unavailable, config problem
+
+## Suggested Fix
+{What you think the Team Lead should change in the test files or spec to unblock this}
+
+## Files Involved
+- {test file path} — {what's wrong with it}
+- {implementation file path} — {what you attempted}
+```
+
+**Do NOT** continue spending tokens after hitting the circuit breaker. Write the report and exit.
 
 ## Before Writing Your Report (Mandatory)
 

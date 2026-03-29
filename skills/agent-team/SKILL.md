@@ -209,6 +209,12 @@ After doc-manager refines all stories (§1, §2, §3 complete) and BEFORE human 
 **Prerequisite:** Sprint Planning (Phase 2) must be complete. The Sprint Plan must be in "Confirmed" status with human approval before proceeding.
 
 ```
+0. Pre-sprint check (MANDATORY):
+   Verify git working tree is clean before starting:
+     git status --porcelain
+   If there are uncommitted changes, commit or stash them FIRST.
+   Sprint init will fail if the tree is dirty.
+
 1. Cut sprint branch from main:
    git checkout -b sprint/S-01 main
    mkdir -p .vbounce/archive
@@ -276,8 +282,15 @@ Before moving any story to Ready to Bounce:
 
 ### Step 1: Story Initialization
 For each story with V-Bounce State "Ready to Bounce":
+
+**1a. Pre-bounce gate (MANDATORY):**
 ```bash
-# Create isolated worktree
+./.vbounce/scripts/run_script.sh validate_bounce_readiness.mjs STORY-{ID}
+```
+This checks: state.json exists and story is "Ready to Bounce", story spec has §1/§2/§3, and **git working tree is clean** (no uncommitted changes). If it fails, fix the errors before proceeding. Do NOT skip this step — uncommitted changes will not appear in the worktree.
+
+**1b. Create worktree:**
+```bash
 git worktree add .worktrees/STORY-{ID}-{StoryName} -b story/STORY-{ID}-{StoryName} sprint/S-01
 mkdir -p .worktrees/STORY-{ID}-{StoryName}/.vbounce/{tasks,reports}
 ```
@@ -288,13 +301,17 @@ mkdir -p .worktrees/STORY-{ID}-{StoryName}/.vbounce/{tasks,reports}
 - **Adjacent implementation check:** For stories that modify or extend modules touched by earlier stories in this sprint, identify existing implementations the Developer should reuse. Add to the task file: `"Reuse these existing modules: {list with file paths and brief description of what each provides}"`. This prevents agents from independently re-implementing logic that already exists — a common source of duplication when stories run in parallel.
 - **Include Sprint Context:** Copy `.vbounce/sprint-context-S-{XX}.md` into the task file or reference it. Every agent must read the sprint context before starting work.
 - Create task file in `.worktrees/STORY-{ID}-{StoryName}/.vbounce/tasks/`
-- Update sprint-{XX}.md: V-Bounce State → "Bouncing"
+- Update state:
+  ```bash
+  ./.vbounce/scripts/run_script.sh update_state.mjs STORY-{ID} "Bouncing"
+  ```
+  Then update sprint-{XX}.md §1: V-Bounce State → "Bouncing"
 
 ### Step 2: Developer Pass
 
 #### 2a. Check TDD Applicability
 Read the story's TDD Red Phase declaration (below §1.3 Out of Scope).
-- If "TDD Red Phase: No" → skip to Step 2d (single-pass implementation)
+- If "TDD Red Phase: No" → skip to Step 2e (single-pass implementation)
 - If "TDD Red Phase: Yes" → proceed to Step 2b
 
 #### 2b. Red Phase (Tests Only)
@@ -314,7 +331,27 @@ Read the story's TDD Red Phase declaration (below §1.3 Out of Scope).
    - If tests PASS: note as concern in Green phase task (tests may be testing existing behavior)
 ```
 
-#### 2c. Green Phase (Implementation)
+#### 2c. Test Pattern Validation (Team Lead Gate)
+
+Before spawning the Green Phase Developer, the Team Lead validates the Red Phase test output:
+
+```
+1. Read every test file written during Red Phase
+2. Validate test patterns:
+   - Mock setup is correct for the project's test framework (e.g., vi.hoisted vs require, arrow vs function constructors)
+   - Import patterns match the project's module system (ESM vs CJS)
+   - Test file locations follow project conventions
+   - Assertions test meaningful behavior, not implementation details
+3. If test patterns have framework incompatibilities:
+   - Team Lead fixes the test patterns directly (mock setup, imports, constructors)
+   - Document what was changed and why in the Green Phase task file
+   - Re-run the test suite to confirm tests still fail (expected) and are discoverable
+4. If tests are structurally sound → proceed to 2d
+```
+
+**Critical rule:** The Developer NEVER modifies Red Phase tests. Only the Team Lead may fix test patterns between Red and Green phases. This prevents the Green Phase Developer from weakening tests to make implementation easier.
+
+#### 2d. Green Phase (Implementation)
 ```
 1. Spawn developer subagent in .worktrees/STORY-{ID}-{StoryName}/ with:
    - Story §1 The Spec + §3 Implementation Guide
@@ -326,12 +363,18 @@ Read the story's TDD Red Phase declaration (below §1.3 Out of Scope).
      - {file paths from 2b}
      Test run result: {N} tests, 0 passed, {N} failed (as expected)
      Read the test files from disk. Write minimum code to make them pass.
-     Then REFACTOR for readability/architecture without breaking tests."
+     Then REFACTOR for readability/architecture without breaking tests.
+     You MUST NOT modify the test files. If you hit a framework incompatibility
+     that prevents tests from passing without changing the test setup, STOP
+     and write a blockers report (see circuit breaker rule below)."
+   - If Team Lead fixed test patterns in Step 2c, include:
+     "Test patterns fixed by Team Lead before this phase:
+     - {description of each fix and why it was needed}"
 2. Developer writes code and Implementation Report to .vbounce/reports/
 3. Lead reads report, verifies completeness
 ```
 
-#### 2d. Single-Pass (Non-TDD Stories)
+#### 2e. Single-Pass (Non-TDD Stories)
 For stories declaring "TDD Red Phase: No":
 ```
 1. Spawn developer subagent in .worktrees/STORY-{ID}-{StoryName}/ with:
@@ -341,6 +384,30 @@ For stories declaring "TDD Red Phase: No":
    - Adjacent module references (if any)
 2. Developer writes code and Implementation Report to .vbounce/reports/
 3. Lead reads report, verifies completeness
+```
+
+#### 2f. Green Phase Circuit Breaker (Blockers Report Handling)
+
+If the Developer writes a **Blockers Report** instead of an Implementation Report (triggered by the circuit breaker — ~50 tool calls with no progress):
+
+```
+1. Team Lead reads .vbounce/reports/STORY-{ID}-{StoryName}-dev-blockers.md
+2. Diagnose the blocker category:
+   a) TEST PATTERN ISSUE (mock setup, framework compat, import style):
+      - Team Lead fixes the test files directly
+      - Document fixes in a new Green Phase task file
+      - Re-launch Developer at Step 2d with fixed tests + blocker context
+   b) SPEC GAP (missing scenario, contradictory requirements, untestable as written):
+      - Return story to Refinement (reset bounce counters)
+      - Present spec gap to human for resolution
+   c) ENVIRONMENT ISSUE (missing dependency, service unavailable, config problem):
+      - Present to human with fix options
+      - Re-launch Developer after environment is fixed
+3. If the same story triggers the circuit breaker 3+ times → Escalate to human
+   ```bash
+   ./.vbounce/scripts/run_script.sh update_state.mjs STORY-{ID} "Escalated"
+   ```
+   Update sprint-{XX}.md §1 accordingly. Present all blockers reports as evidence.
 ```
 
 ### Step 3: QA Pass
@@ -361,12 +428,23 @@ For stories declaring "TDD Red Phase: No":
    (skipping checks already covered by pre-qa-scan.txt)
 3. If FAIL:
    - QA writes Bug Report (STORY-{ID}-{StoryName}-qa-bounce{N}.md)
-   - Increment bounce counter
-   - If QA bounce count >= 3 → V-Bounce State → "Escalated", STOP
+   - Increment bounce counter:
+     ```bash
+     ./.vbounce/scripts/run_script.sh update_state.mjs STORY-{ID} --qa-bounce
+     ```
+   - If QA bounce count >= 3:
+     ```bash
+     ./.vbounce/scripts/run_script.sh update_state.mjs STORY-{ID} "Escalated"
+     ```
+     Update sprint-{XX}.md §1 accordingly. STOP.
    - Else → Return to Step 2 with Bug Report as input
 4. If PASS:
    - QA writes Validation Report
-   - V-Bounce State → "QA Passed"
+   - Update state:
+     ```bash
+     ./.vbounce/scripts/run_script.sh update_state.mjs STORY-{ID} "QA Passed"
+     ```
+     Then update sprint-{XX}.md §1: V-Bounce State → "QA Passed"
 ```
 
 ### Step 4: Architect Pass
@@ -383,11 +461,22 @@ For stories declaring "TDD Red Phase: No":
    - Full Story spec + Roadmap §3 ADRs
    - FLASHCARDS.md
 2. If FAIL:
-   - Increment Architect bounce counter
-   - If Architect bounce count >= 3 → V-Bounce State → "Escalated", STOP
+   - Increment Architect bounce counter:
+     ```bash
+     ./.vbounce/scripts/run_script.sh update_state.mjs STORY-{ID} --arch-bounce
+     ```
+   - If Architect bounce count >= 3:
+     ```bash
+     ./.vbounce/scripts/run_script.sh update_state.mjs STORY-{ID} "Escalated"
+     ```
+     Update sprint-{XX}.md §1 accordingly. STOP.
    - Else → Return to Step 2 with Architect feedback as input
 3. If PASS:
-   - V-Bounce State → "Architect Passed"
+   - Update state:
+     ```bash
+     ./.vbounce/scripts/run_script.sh update_state.mjs STORY-{ID} "Architect Passed"
+     ```
+     Then update sprint-{XX}.md §1: V-Bounce State → "Architect Passed"
 
 *(Note: If the Team Lead assigned this story to the "Fast Track" execution mode, skip Steps 3 and 4 entirely. The Developer passes directly to Step 5: DevOps Story Merge.)*
 ```
@@ -422,7 +511,11 @@ For stories declaring "TDD Red Phase: No":
    - Story re-enters the bounce at Step 2 (Dev pass). QA/Arch bounce counts are NOT reset — this is a merge issue, not a gate failure.
    - If post-merge fails 3+ times → Escalate to human
 ```
-Update sprint-{XX}.md: V-Bounce State → "Done"
+Update state and sprint plan atomically:
+```bash
+./.vbounce/scripts/run_script.sh complete_story.mjs STORY-{ID} --qa-bounces {N} --arch-bounces {N} --correction-tax {N} --notes "{summary}"
+```
+This updates both state.json and sprint-{XX}.md §1 + §4 in one step.
 
 ### Step 5.5: Immediate Lesson Recording
 After each story merge, before proceeding to the next story:
@@ -578,19 +671,21 @@ When ALL sprints in a release are done:
 
 ## Sprint Plan Sync
 
-The Team Lead MUST update the active `sprint-{XX}.md` at every state transition. This is the source of truth for execution.
+The Team Lead MUST update **both** `state.json` and `sprint-{XX}.md` at every state transition. Run the script first, then update the markdown.
 
-| Action | Sprint Plan Update |
-|--------|-------------------|
-| Worktree created | §1: V-Bounce State → "Bouncing" |
-| Dev report written | No update (still "Bouncing") |
-| QA passes | §1: V-Bounce State → "QA Passed" |
-| Architect passes | §1: V-Bounce State → "Architect Passed" |
-| DevOps merges story | §1: V-Bounce State → "Done". §4: Add Execution Log row (via `vbounce story complete`) |
-| Escalated | §1: Move story to Escalated section |
-| Sprint CLOSES | Status → "Completed" in frontmatter. Roadmap §7: add Delivery Log entry. |
+| Action | Script Command | Sprint Plan Update |
+|--------|---------------|-------------------|
+| Worktree created | `run_script.sh update_state.mjs STORY-{ID} "Bouncing"` | §1: V-Bounce State → "Bouncing" |
+| Dev report written | — | No update (still "Bouncing") |
+| QA bounce | `run_script.sh update_state.mjs STORY-{ID} --qa-bounce` | §1: Bounce count incremented |
+| QA passes | `run_script.sh update_state.mjs STORY-{ID} "QA Passed"` | §1: V-Bounce State → "QA Passed" |
+| Architect bounce | `run_script.sh update_state.mjs STORY-{ID} --arch-bounce` | §1: Bounce count incremented |
+| Architect passes | `run_script.sh update_state.mjs STORY-{ID} "Architect Passed"` | §1: V-Bounce State → "Architect Passed" |
+| DevOps merges story | `run_script.sh complete_story.mjs STORY-{ID} --qa-bounces N --arch-bounces N --correction-tax N` | §1 + §4 updated atomically by script |
+| Escalated | `run_script.sh update_state.mjs STORY-{ID} "Escalated"` | §1: Move story to Escalated section |
+| Sprint CLOSES | — | Status → "Completed" in frontmatter. Roadmap §7: add Delivery Log entry. |
 
-> **Key rule**: The Sprint Plan is the source of truth during active bouncing. The Roadmap Delivery Log is updated at sprint close only.
+> **Key rule**: `state.json` and the Sprint Plan must stay in sync. Always run the script command FIRST — if the script fails, do not update the markdown. The Sprint Plan is the human-readable source of truth; `state.json` is the machine-readable source of truth.
 
 ---
 
@@ -604,11 +699,12 @@ Developer writes a Spec Conflict Report. Lead pauses the bounce:
 
 ### Escalated Stories
 When QA bounce count >= 3 OR Architect bounce count >= 3:
+- Run `run_script.sh update_state.mjs STORY-{ID} "Escalated"` (if not already done at the transition point)
 - Worktree is kept but frozen (no new work)
 - Lead writes Escalation Report to `.vbounce/archive/S-{XX}/STORY-{ID}-{StoryName}/escalation.md`
 - Human decides: rewrite spec → Refinement, descope → split, kill → Parking Lot
-- **If returned to Refinement:** The spec has been rewritten. You MUST reset the QA and Architect bounce counters to 0 for this story.
-- If killed: `git worktree remove`, branch preserved unmerged
+- **If returned to Refinement:** The spec has been rewritten. You MUST reset the QA and Architect bounce counters to 0 for this story. Run `run_script.sh update_state.mjs STORY-{ID} "Refinement"`.
+- If killed: Run `run_script.sh update_state.mjs STORY-{ID} "Parking Lot"`. `git worktree remove`, branch preserved unmerged
 
 ### Mid-Sprint Change Requests
 When the user provides input mid-bounce that isn't a direct answer to an agent question (e.g., "this is broken", "change the approach", "I meant X not Y"), the Team Lead MUST triage it before acting.

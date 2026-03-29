@@ -9,6 +9,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 import { suite, record, assertScriptRuns, PASS, FAIL, WARN, SKIP } from '../harness.mjs';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -841,6 +842,146 @@ None encountered.
     'S-01', 'lifecycle',
     { cwd: installDir, expectExit: 1, note: 'mismatched sprint ID should fail' }
   );
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PHASE 10 — Git Clean Checks (init_sprint + validate_bounce_readiness)
+  // ═══════════════════════════════════════════════════════════════════════════
+  suite('Lifecycle — Git Clean Checks');
+
+  // These tests need a real git repo to verify dirty-tree detection.
+  // We init a temp git repo, install the scripts, and test both clean and dirty states.
+  const gitTestDir = path.join(installDir, '_git_clean_test');
+  let gitTestsRan = false;
+  try {
+    // Set up a mini git repo with .vbounce scripts copied in
+    fs.mkdirSync(gitTestDir, { recursive: true });
+    execSync('git init', { cwd: gitTestDir, stdio: 'pipe' });
+    execSync('git config user.email "test@test.com"', { cwd: gitTestDir, stdio: 'pipe' });
+    execSync('git config user.name "Test"', { cwd: gitTestDir, stdio: 'pipe' });
+
+    // Copy .vbounce/scripts into the git test dir
+    const gitVbounceDir = path.join(gitTestDir, '.vbounce');
+    const gitScriptsDir = path.join(gitVbounceDir, 'scripts');
+    fs.mkdirSync(gitScriptsDir, { recursive: true });
+    const srcScriptsDir = path.join(installDir, '.vbounce', 'scripts');
+    for (const f of fs.readdirSync(srcScriptsDir)) {
+      fs.copyFileSync(path.join(srcScriptsDir, f), path.join(gitScriptsDir, f));
+    }
+
+    // Create initial commit so git status works
+    execSync('git add -A', { cwd: gitTestDir, stdio: 'pipe' });
+    execSync('git commit -m "initial"', { cwd: gitTestDir, stdio: 'pipe' });
+
+    // --- Test 1: init_sprint on CLEAN tree should succeed ---
+    const initCleanResult = assertScriptRuns(
+      path.join(gitScriptsDir, 'init_sprint.mjs'),
+      'S-50 --stories STORY-050-01', 'lifecycle',
+      { cwd: gitTestDir, expectExit: 0, note: 'init_sprint on clean git tree should pass' }
+    );
+
+    // --- Test 2: Create a dirty file, init_sprint should fail ---
+    fs.writeFileSync(path.join(gitTestDir, 'dirty.txt'), 'uncommitted change');
+    const initDirtyResult = assertScriptRuns(
+      path.join(gitScriptsDir, 'init_sprint.mjs'),
+      'S-51 --stories STORY-051-01', 'lifecycle',
+      { cwd: gitTestDir, expectExit: 1, note: 'init_sprint on dirty git tree should fail' }
+    );
+
+    // Verify the error message mentions uncommitted changes
+    const initDirtyStderr = initDirtyResult.stderr || initDirtyResult.stdout || '';
+    record({
+      name: 'init_sprint dirty tree error is actionable',
+      component: 'lifecycle',
+      input: 'init_sprint.mjs stderr on dirty tree',
+      output: initDirtyStderr.includes('uncommitted') ? 'mentions uncommitted' : initDirtyStderr.slice(0, 200),
+      expected: 'mentions uncommitted',
+      verdict: initDirtyStderr.includes('uncommitted') ? PASS : FAIL,
+      note: 'error should tell user to commit or stash',
+    });
+
+    // --- Test 3: validate_bounce_readiness on dirty tree should fail ---
+    // First set up state.json so readiness check can run the git check
+    const gitStatePath = path.join(gitVbounceDir, 'state.json');
+    fs.writeFileSync(gitStatePath, JSON.stringify({
+      sprint_id: 'S-50',
+      sprint_plan: 'product_plans/sprints/sprint-50/sprint-50.md',
+      stories: { 'STORY-050-01': { state: 'Ready to Bounce', qa_bounces: 0, arch_bounces: 0, worktree: null } },
+      phase: 'Phase 3',
+      last_action: 'test',
+      updated_at: new Date().toISOString()
+    }, null, 2));
+
+    // Create story spec so readiness check passes the spec validation
+    const gitStoryDir = path.join(gitTestDir, 'product_plans', 'backlog');
+    fs.mkdirSync(gitStoryDir, { recursive: true });
+    fs.writeFileSync(path.join(gitStoryDir, 'STORY-050-01.md'), `---
+story_id: "STORY-050-01"
+---
+# STORY-050-01
+## 1. The Spec
+Test spec content for git clean check validation.
+## 2. Acceptance Criteria
+- [ ] Git clean check works
+## 3. Implementation Guide
+Standard implementation approach.
+`);
+
+    // dirty.txt is still there — validate should fail on git check
+    const readinessDirtyResult = assertScriptRuns(
+      path.join(gitScriptsDir, 'validate_bounce_readiness.mjs'),
+      'STORY-050-01', 'lifecycle',
+      { cwd: gitTestDir, expectExit: 1, note: 'bounce readiness on dirty git tree should fail' }
+    );
+
+    const readinessDirtyOutput = (readinessDirtyResult.stderr || '') + (readinessDirtyResult.stdout || '');
+    record({
+      name: 'validate_bounce_readiness dirty tree error is actionable',
+      component: 'lifecycle',
+      input: 'validate_bounce_readiness output on dirty tree',
+      output: readinessDirtyOutput.includes('uncommitted') ? 'mentions uncommitted' : readinessDirtyOutput.slice(0, 200),
+      expected: 'mentions uncommitted',
+      verdict: readinessDirtyOutput.includes('uncommitted') ? PASS : FAIL,
+      note: 'error should tell user to commit or stash',
+    });
+
+    // --- Test 4: Commit the dirty file, readiness should pass ---
+    execSync('git add -A', { cwd: gitTestDir, stdio: 'pipe' });
+    execSync('git commit -m "add dirty.txt"', { cwd: gitTestDir, stdio: 'pipe' });
+
+    const readinessCleanResult = assertScriptRuns(
+      path.join(gitScriptsDir, 'validate_bounce_readiness.mjs'),
+      'STORY-050-01', 'lifecycle',
+      { cwd: gitTestDir, expectExit: 0, note: 'bounce readiness on clean git tree should pass' }
+    );
+
+    gitTestsRan = true;
+  } catch (e) {
+    record({
+      name: 'Git clean check tests',
+      component: 'lifecycle',
+      input: 'git init + dirty tree tests',
+      output: `error: ${e.message}`,
+      expected: 'tests complete',
+      verdict: WARN,
+      note: 'git may not be available in test environment',
+    });
+  }
+
+  // Clean up git test dir
+  try {
+    if (fs.existsSync(gitTestDir)) fs.rmSync(gitTestDir, { recursive: true });
+  } catch { /* best effort */ }
+
+  if (gitTestsRan) {
+    record({
+      name: 'Git clean check tests completed',
+      component: 'lifecycle',
+      input: 'init_sprint + validate_bounce_readiness git checks',
+      output: 'all tests ran',
+      expected: 'all tests ran',
+      verdict: PASS,
+    });
+  }
 
   // ═══════════════════════════════════════════════════════════════════════════
   // CLEANUP

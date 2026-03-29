@@ -96,13 +96,24 @@ if (!storyFile) {
   }
 }
 
-// 4. Check worktree
+// 4. Check git working tree is clean (uncommitted changes won't be in the worktree)
+try {
+  const gitStatus = execSync('git status --porcelain', { cwd: ROOT, encoding: 'utf8' }).trim();
+  if (gitStatus.length > 0) {
+    const changedFiles = gitStatus.split('\n').length;
+    errors.push(`Git working tree has ${changedFiles} uncommitted change(s). Commit or stash before creating a worktree — uncommitted changes will NOT appear in the new worktree.\n    Fix: git add -A && git commit -m "WIP: pre-bounce commit" OR git stash`);
+  }
+} catch (e) {
+  warnings.push(`Could not check git status: ${e.message}`);
+}
+
+// 5. Check worktree
 const worktreeDir = path.join(ROOT, '.worktrees', storyId);
 if (!fs.existsSync(worktreeDir)) {
   warnings.push(`.worktrees/${storyId}/ not found — create with: git worktree add .worktrees/${storyId} -b story/${storyId} sprint/S-XX`);
 }
 
-// 5. vdoc impact check (warning only — never blocks bounce)
+// 6. vdoc impact check (warning only — never blocks bounce)
 const manifestPath = path.join(ROOT, 'vdocs', '_manifest.json');
 if (fs.existsSync(manifestPath) && storyFile) {
   try {

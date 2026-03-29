@@ -11,7 +11,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { spawnSync } from 'child_process';
+import { spawnSync, execSync } from 'child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
@@ -32,6 +32,20 @@ if (!/^S-\d{2}$/.test(sprintId)) {
 
 const storiesArg = args.indexOf('--stories');
 const storyIds = storiesArg !== -1 ? args[storiesArg + 1].split(',') : [];
+
+// 0. Check git working tree is clean
+try {
+  const gitStatus = execSync('git status --porcelain', { cwd: ROOT, encoding: 'utf8' }).trim();
+  if (gitStatus.length > 0) {
+    const changedFiles = gitStatus.split('\n').length;
+    console.error(`ERROR: Git working tree has ${changedFiles} uncommitted change(s).`);
+    console.error('Commit or stash all changes before initializing a sprint.');
+    console.error('  Fix: git add -A && git commit -m "pre-sprint commit" OR git stash');
+    process.exit(1);
+  }
+} catch (e) {
+  console.warn(`⚠  Could not check git status: ${e.message}`);
+}
 
 // 1. Create .vbounce/ directory
 const bounceDir = path.join(ROOT, '.vbounce');

@@ -5,6 +5,17 @@ All notable changes to the V-Bounce Engine framework and its CLI installer will 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.0] - 2026-03-28
+
+### Added
+- **Test Pattern Validation Gate (Step 2c)** — Team Lead now validates Red Phase test output before spawning the Green Phase Developer. Checks mock setup, import patterns, framework compatibility, and assertion quality. Team Lead fixes test pattern issues directly — the Developer is never allowed to modify Red Phase tests. Prevents the Green Phase Developer from subtly weakening tests to ease implementation.
+- **Green Phase Circuit Breaker** — Developer MUST stop after ~50 tool calls with no progress during Green Phase and write a Blockers Report (`*-dev-blockers.md`) instead of continuing to spin. Report categorizes the blocker (test pattern issue, spec gap, or environment issue) so the Team Lead can diagnose and fix. Three circuit breaker triggers on the same story → Escalation.
+- **Blockers Report template** — New report type in developer agent config with YAML frontmatter (`status: "blocked"`, `blocker_category`), structured sections for attempted approaches, root cause diagnosis, and suggested fixes.
+
+### Changed
+- **Developer agent Green Phase rules** — Test file modification now absolutely prohibited (was "unless there's a genuine bug in the test"). Framework incompatibilities are the Team Lead's responsibility to fix between Red and Green phases.
+- **Agent-team orchestration steps renumbered** — Step 2c (was Green Phase) → Step 2d. Step 2d (was Single-Pass) → Step 2e. New Step 2c (Test Pattern Validation) and Step 2f (Circuit Breaker Handling) added.
+
 ## [2.6.1] - 2026-03-27
 ### Added
 - **`vbounce update`** — New CLI command that checks installed version against npm latest and shows upgrade instructions.
