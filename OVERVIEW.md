@@ -151,13 +151,16 @@ flowchart TB
     S1["Step 1: Init Stories\nCreate worktrees,\nbuild task files"]
     S2["Steps 2-4: Bounce\nDev → QA → Architect\n(loop until pass)"]
     S5["Step 5: Story Merge\nDevOps merges each story\ninto sprint branch"]
+    S55["Step 5.5: Flashcard Gate\nRecord flashcards before\nnext story starts"]
+    S57["Step 5.7: Walkthrough\nUser tests on sprint branch\nbefore release"]
     S6["Step 6: Integration Audit\nHotfix Audit script +\nArchitect Deep Audit"]
-    S7["Step 7: Consolidation\nSprint Report → Human review\n→ Release → Lessons → Scribe"]
+    S7["Step 7: Consolidation\nSprint Report first →\nHuman review → Release → Scribe"]
 
     S0 -->|"Standard"| S1
     S0 -->|"Hotfix\n(Dev + Human verify)"| S7
-    S1 --> S2 --> S5 --> S6 --> S7
+    S1 --> S2 --> S5 --> S55 --> S57 --> S6 --> S7
     S2 -->|"bounce\nback"| S2
+    S55 -->|"next story"| S1
 ```
 
 After all sprints in a release complete, the Team Lead archives the sprint folders and adds a Delivery Log entry to the Roadmap.

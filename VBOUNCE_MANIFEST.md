@@ -4,8 +4,8 @@
 > Any modification to `.claude/agents/`, `.vbounce/skills/`, `.vbounce/templates/`, or `.vbounce/scripts/` MUST also update this file.
 > Run `vbounce doctor` to validate file existence against this manifest.
 
-**Version:** 2.7.0
-**Last updated:** 2026-03-29
+**Version:** 2.8.0
+**Last updated:** 2026-03-30
 
 ---
 
@@ -34,8 +34,8 @@ Phase 3: THE BOUNCE (Subagent orchestration)
   ├─ Step 3: QA Pass (pre-gate scan + validation)
   ├─ Step 4: Architect Pass (pre-gate scan + audit)
   ├─ Step 5: DevOps Merge
-  ├─ Step 5.5: Immediate Lesson Recording
-  ├─ Step 5.7: User Walkthrough (Post-Delivery Review)
+  ├─ Step 5.5: Immediate Flashcard Recording *(Hard Gate — must complete before next worktree)*
+  ├─ Step 5.7: User Walkthrough *(on sprint branch, before Step 6)*
   ├─ Step 6: Sprint Integration Audit
   ├─ Step 7: Sprint Consolidation
   ├─ Escalation Recovery: 3+ bounces → present options → human decides
@@ -111,7 +111,7 @@ Templates are **immutable during execution**. Located in `.vbounce/templates/`.
 | `charter.md` | 1 | `product_plans/strategy/{project}_charter.md` | §1 Identity, §2 Design Principles, §3 Architecture, §4 Tech Stack, §5 Key Workflows, §6 Constraints |
 | `roadmap.md` | 2 | `product_plans/strategy/{project}_roadmap.md` | §1 Strategic Context, §2 Release Plan, §3 ADRs, §4 Dependencies, §5 Strategic Constraints |
 | `epic.md` | 3 | `product_plans/backlog/EPIC-{NNN}_{name}/EPIC-{NNN}_{name}.md` | §1 Problem & Value, §2 Scope Boundaries, §3 Context, §4 Technical Context (codebase research required), §5 Decomposition Guidance, §6 Risks, §7 Acceptance Criteria, §8 Open Questions, §9 Artifact Links |
-| `story.md` | 4 | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{Name}.md` | §1 The Spec (§1.1 User Story, §1.2 Detailed Requirements, §1.3 Out of Scope), §2 The Truth (Gherkin + Verification), §3 Implementation Guide (§3.0 Env Prerequisites, §3.1 Tests, §3.2 Context, §3.3 Logic, §3.4 API Contract), §4 Quality Gates (§4.1 Min Test Expectations, §4.2 Definition of Done) |
+| `story.md` | 4 | `product_plans/backlog/EPIC-{NNN}_{name}/STORY-{EpicID}-{StoryID}-{Name}.md` | §1 The Spec (§1.1 User Story, §1.2 Detailed Requirements, §1.3 Out of Scope), §2 The Truth (Gherkin + Verification), §3 Implementation Guide (§3.0 Env Prerequisites, §3.1 Tests, §3.2 Context + First-Use Pattern, §3.3 Logic, §3.4 API Contract), §4 Quality Gates (§4.1 Min Test Expectations, §4.2 Definition of Done) |
 | `spike.md` | 3.5 | `product_plans/backlog/EPIC-{NNN}_{name}/SPIKE-{EpicID}-{NNN}-{topic}.md` | §1 Question, §2 Context, §3 Approach, §4 Findings, §5 Decision, §6 Residual Risk, §7 Affected Documents |
 | `sprint.md` | 4.5 | `product_plans/sprints/sprint-{XX}/sprint-{XX}.md` | §0 Sprint Readiness Gate (mandatory confirmation), §1 Active Scope + Context Pack, §2 Execution Strategy (Shared File Map, Dependency Chain, Execution Mode, Risk Flags), §3 Open Questions, §4 Execution Log (with test counts) |
 | `sprint_report.md` | Output | `.vbounce/sprint-report-S-{XX}.md` | §1 What Was Delivered, §2 Story Results (with Tax Type), §3 Execution Metrics (Bug Fix Tax / Enhancement Tax split), §4 Lessons Learned (review, not gate), §5 Retrospective + Framework Self-Assessment |
@@ -132,7 +132,7 @@ Skills are modular instructions loaded by agents. Located in `.vbounce/skills/`.
 | **product-graph** | `.vbounce/skills/product-graph/SKILL.md` | Phase 1-2 (Planning) | Auto-loads during planning | Team Lead |
 | **agent-team** | `.vbounce/skills/agent-team/SKILL.md` | Phase 3 (Execution) | Auto-loads during execution | Team Lead |
 | **doc-manager** | `.vbounce/skills/doc-manager/SKILL.md` | Phase 1-2 (Planning) | Auto-loads during planning; also `/doc` | AI (planning partner) |
-| **lesson** | `.vbounce/skills/lesson/SKILL.md` | All phases | Always loaded in brain; also `/lesson` | All agents |
+| **flashcard** | `.vbounce/skills/flashcard/SKILL.md` | All phases | Always loaded in brain; also `/flashcard` | All agents |
 | **vibe-code-review** | `.vbounce/skills/vibe-code-review/SKILL.md` | Phase 3 (Execution) | `/review`; auto by QA/Architect | QA, Architect |
 | **improve** | `.vbounce/skills/improve/SKILL.md` | Phase 4 (Review) | `/improve`; auto on sprint close | Team Lead |
 | **write-skill** | `.vbounce/skills/write-skill/SKILL.md` | Any | `/write-skill` | Team Lead |
@@ -296,7 +296,7 @@ Pre-Architect Gate Scan → Architect reads all reports + Story + Roadmap §3
     ↓ (if PASS)
 DevOps reads all reports → merges → archives
     ↓
-Team Lead records lessons (Step 5.5) → consolidates Sprint Report (Step 7)
+Team Lead records flashcards (Step 5.5 — Hard Gate) → consolidates Sprint Report (Step 7)
     ↓
 Human reviews → Scribe updates docs → Improvement pipeline runs
 ```

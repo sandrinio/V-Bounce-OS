@@ -1,5 +1,5 @@
 ---
-name: lesson
+name: flashcard
 description: Use when recording project-specific mistakes, gotchas, or hard-won knowledge. Also activates proactively when a mistake pattern is detected during work.
 ---
 
@@ -11,11 +11,11 @@ Captures project-specific mistakes and rules into `FLASHCARDS.md` so they are ne
 
 ## Trigger
 
-`/lesson` OR `/lesson [description]` OR proactively when a mistake or gotcha is detected during work.
+`/flashcard` OR `/flashcard [description]` OR proactively when a mistake or gotcha is detected during work.
 
 ## Announcement
 
-When using this skill, state: "Recording a lesson learned."
+When using this skill, state: "Recording a flashcard."
 
 ## Awareness: Always-On Behavior
 

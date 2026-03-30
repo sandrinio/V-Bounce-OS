@@ -3,6 +3,30 @@
 This log tracks modifications to the core agentic framework (e.g., `brains/`, `skills/`). 
 Per **Rule 13: Framework Integrity**, anytime an entry is made here, all tool-specific brain files must be reviewed for consistency.
 
+## [2026-03-30] — lesson→flashcard Rename + Process Gate Hardening (v2.8.0)
+
+### lesson → flashcard (Renamed)
+- **Renamed**: `skills/lesson/` → `skills/flashcard/`. Trigger `/lesson` → `/flashcard`. Announcement updated.
+- **Modified**: `brains/claude-agents/developer.md` — `lessons_flagged` → `flashcards_flagged` in report YAML; `## Lessons Flagged` → `## Flashcards Flagged`; critical rule updated.
+- **Modified**: `brains/claude-agents/scribe.md` — `## Lessons Flagged` → `## Flashcards Flagged`; critical rule updated.
+- **Modified**: `brains/claude-agents/architect.md` — `## Lessons for Future Prompts` → `## Flashcards for Future Prompts`.
+- **Modified**: `brains/claude-agents/explorer.md` — Context Pack §5 heading updated; "No matching lessons" → "No matching flashcards".
+- **Modified**: `skills/agent-team/SKILL.md` — Agent Roster Skills column, Step 5.5 heading and body, Step 7 review section all updated to flashcard terminology.
+
+### Process Gate Hardening (7 improvements from S-06→S-10 sprint analysis)
+- **Modified**: `skills/agent-team/SKILL.md` Step 1a — Added `validate_state.mjs` as first pre-bounce gate to detect stale `sprintId` in state.json before any worktree is created.
+- **Modified**: `skills/agent-team/SKILL.md` Step 5 — Dev report marked "← ALWAYS required" with explicit prose: Fast Track skips QA/Arch, but Dev report is never optional.
+- **Modified**: `skills/agent-team/SKILL.md` Step 5.5 — Promoted to **Hard Gate**. Added "HARD GATE: Do not create the next story's worktree until flashcards are confirmed processed." Heading now reads "*(Hard Gate)*".
+- **Modified**: `skills/agent-team/SKILL.md` Step 5.7 — Added timing callout blockquote: run on sprint branch before Step 6, before release to main — not after sprint close.
+- **Modified**: `skills/agent-team/SKILL.md` Step 7 — Added Pre-Step 7 Gate blockquote: Sprint Report must be written and presented before `state.json` status is set to "Completed".
+- **Modified**: `brains/claude-agents/architect.md` — Added **Component Tree Integrity** mandatory subsection to Deep Audit: (1) dead code check (component never rendered), (2) shared state not lifted (hook called independently in multiple consumers). Both Blocker-severity.
+- **Modified**: `.vbounce/templates/story.md` §3.2 — Added `First-Use Pattern` row (Yes/No + pattern name). Triggers pre-implementation discovery research by Developer when set to Yes.
+
+### Manifest & Changelog
+- **Modified**: `VBOUNCE_MANIFEST.md` — version 2.7.0→2.8.0, Step 5.5 label, skill registry lesson→flashcard, story.md §3.2 section list, agent report flow.
+- **Modified**: `CHANGELOG.md` — added v2.8.0 entry.
+- **Modified**: `OVERVIEW.md` — Sprint Lifecycle diagram now shows Step 5.5 Flashcard Gate and Step 5.7 Walkthrough as distinct nodes with correct ordering.
+
 ## [2026-03-25] — .vbounce/ Directory Consolidation (v2.5.0)
 
 ### Directory Consolidation (EPIC-002)

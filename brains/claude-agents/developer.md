@@ -134,7 +134,7 @@ tokens_used: <int>
 tests_written: {number of tests generated}
 files_modified:
   - "path/to/file.ts"
-lessons_flagged: {number of lessons}
+flashcards_flagged: {number of flashcards}
 ---
 
 # Developer Implementation Report: STORY-{ID}-{StoryName}
@@ -149,7 +149,7 @@ lessons_flagged: {number of lessons}
 - Self-assessed: {X}%
 - Human interventions needed: {list}
 
-## Lessons Flagged
+## Flashcards Flagged
 - {Any gotchas, non-obvious behaviors, or multi-attempt fixes worth recording}
 
 ## Product Docs Affected
@@ -194,6 +194,6 @@ This enables recovery if your session is interrupted. A re-spawned Developer age
 ## Critical Rules
 
 - You NEVER communicate with QA or Architect directly. Your report is your only output.
-- You NEVER modify FLASHCARDS.md. Flag issues for the Lead to record.
+- You NEVER modify FLASHCARDS.md. Flag flashcards for the Lead to record.
 - You NEVER skip reading FLASHCARDS.md. It contains rules that override your instincts.
 - If a QA Bug Report is included in your input, fix those specific issues first before anything else.

@@ -70,6 +70,18 @@ Run a comprehensive structural review using the vibe-code-review skill (Deep Aud
   5. **Test Quality** — would tests catch real bugs if logic changed?
   6. **Coupling** — can you change one component without breaking others?
 
+### Component Tree Integrity (Mandatory — run for every story touching UI components)
+
+These two checks must be performed explicitly. They are not covered by the 6 dimensions above and have caused post-merge hotfixes that slipped through QA.
+
+1. **Dead code — component never rendered**
+   For every new React component introduced by this story, search for JSX usage of that component name across the codebase. If it is not referenced in any parent component, template, or route, flag it as dead code (Severity: **Blocker** — return to Developer).
+
+2. **Shared state not lifted — independent hook instances**
+   If multiple components call the same custom hook (e.g., `useDocumentComments`, `useWorkspace`), verify the hook is called in a common parent and the result passed as props — not called independently in each consumer. Independent calls create separate, non-shared state. Flag if found (Severity: **Blocker** — return to Developer).
+
+These checks are fast (2–3 grep searches). Do not skip them.
+
 ### Trend Check (Historical Comparison)
 Compare current metrics against previous sprints:
 - Read `.vbounce/skills/vibe-code-review/references/trend-check.md`
@@ -168,7 +180,7 @@ template_version: "2.0"
 ## Suggested Refactors
 - {Optional improvements for future sprints, not blockers}
 
-## Lessons for Future Prompts
+## Flashcards for Future Prompts
 - {What should we tell the Dev Agent differently next time?}
 
 ## Process Feedback

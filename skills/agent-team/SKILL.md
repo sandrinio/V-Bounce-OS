@@ -24,11 +24,11 @@ This skill defines how the Team Lead delegates work to specialized agents during
 
 | Agent | Config File | Role | Tools | Skills |
 |-------|------------|------|-------|--------|
-| Developer | `.claude/agents/developer.md` | Feature implementation and debugging | Read, Edit, Write, Bash, Glob, Grep | react-best-practices, lesson |
-| QA | `.claude/agents/qa.md` | Adversarial testing and validation | Read, Bash, Glob, Grep | vibe-code-review (Quick Scan, PR Review), lesson |
-| Architect | `.claude/agents/architect.md` | Structural integrity and standards | Read, Glob, Grep, Bash | vibe-code-review (Deep Audit, Trend Check), lesson |
-| DevOps | `.claude/agents/devops.md` | Git operations, merges, deploys, infra | Read, Edit, Write, Bash, Glob, Grep | lesson |
-| Scribe | `.claude/agents/scribe.md` | Product documentation generation | Read, Write, Bash, Glob, Grep | lesson |
+| Developer | `.claude/agents/developer.md` | Feature implementation and debugging | Read, Edit, Write, Bash, Glob, Grep | react-best-practices, flashcard |
+| QA | `.claude/agents/qa.md` | Adversarial testing and validation | Read, Bash, Glob, Grep | vibe-code-review (Quick Scan, PR Review), flashcard |
+| Architect | `.claude/agents/architect.md` | Structural integrity and standards | Read, Glob, Grep, Bash | vibe-code-review (Deep Audit, Trend Check), flashcard |
+| DevOps | `.claude/agents/devops.md` | Git operations, merges, deploys, infra | Read, Edit, Write, Bash, Glob, Grep | flashcard |
+| Scribe | `.claude/agents/scribe.md` | Product documentation generation | Read, Write, Bash, Glob, Grep | flashcard |
 
 ---
 
@@ -285,9 +285,12 @@ For each story with V-Bounce State "Ready to Bounce":
 
 **1a. Pre-bounce gate (MANDATORY):**
 ```bash
+./.vbounce/scripts/run_script.sh validate_state.mjs
 ./.vbounce/scripts/run_script.sh validate_bounce_readiness.mjs STORY-{ID}
 ```
-This checks: state.json exists and story is "Ready to Bounce", story spec has §1/§2/§3, and **git working tree is clean** (no uncommitted changes). If it fails, fix the errors before proceeding. Do NOT skip this step — uncommitted changes will not appear in the worktree.
+First, verify `state.json` sprint ID matches the active sprint (`sprintId` field must equal `S-{XX}`). If there is a mismatch, run `init_sprint.mjs S-{XX} --stories {IDS}` to re-sync before proceeding — **do not create any worktree with a stale state.json**.
+
+`validate_bounce_readiness.mjs` then checks: story is "Ready to Bounce", story spec has §1/§2/§3, and **git working tree is clean** (no uncommitted changes). If it fails, fix the errors before proceeding. Do NOT skip either step.
 
 **1b. Create worktree:**
 ```bash
@@ -484,12 +487,12 @@ If the Developer writes a **Blockers Report** instead of an Implementation Repor
 ### Step 5: Story Merge (DevOps)
 ```
 0. Verify gate reports exist (MANDATORY before merge):
-   - Dev report:  .worktrees/STORY-{ID}-{StoryName}/.vbounce/reports/STORY-{ID}-{StoryName}-dev*.md
+   - Dev report:  .worktrees/STORY-{ID}-{StoryName}/.vbounce/reports/STORY-{ID}-{StoryName}-dev*.md  ← ALWAYS required
    - QA report:   .worktrees/STORY-{ID}-{StoryName}/.vbounce/reports/STORY-{ID}-{StoryName}-qa*.md
    - Arch report: .worktrees/STORY-{ID}-{StoryName}/.vbounce/reports/STORY-{ID}-{StoryName}-arch*.md
    If ANY report is missing, DO NOT proceed with merge.
    Return to Lead with: which reports are missing and which agents need to re-run.
-   (Fast Track stories skip QA/Arch — only Dev report required.)
+   Dev report is ALWAYS required regardless of execution mode. Fast Track stories skip QA/Arch — but the Dev report is never optional.
 1. Spawn devops subagent with:
    - Story ID and sprint branch name
    - All gate reports (QA PASS + Architect PASS)
@@ -517,20 +520,24 @@ Update state and sprint plan atomically:
 ```
 This updates both state.json and sprint-{XX}.md §1 + §4 in one step.
 
-### Step 5.5: Immediate Lesson Recording
-After each story merge, before proceeding to the next story:
+### Step 5.5: Immediate Flashcard Recording *(Hard Gate)*
+After each story merge, **before delegating the next story**:
 ```
-1. Read Dev report — check `lessons_flagged` field
-2. Read QA report — check for lessons flagged during validation
-3. For each flagged lesson:
+1. Read Dev report — check `flashcards_flagged` field
+2. Read QA report — check for flashcards flagged during validation
+3. For each flagged flashcard:
    - Present to the human for approval
-   - If approved → record to FLASHCARDS.md immediately (follow lesson skill format)
+   - If approved → record to FLASHCARDS.md immediately (follow flashcard skill format)
    - If rejected → note as "No" in Sprint Report §4
-4. Do NOT defer this to Step 7 — context decays fast
+4. Verbally confirm: "Flashcards from STORY-{ID} processed."
 ```
+**HARD GATE: Do not create the next story's worktree until this confirmation is complete.** Context decays fast — a flashcard recorded 5 minutes after the problem is actionable; a flashcard deferred to sprint close is vague and often forgotten.
 
 ### Step 5.7: User Walkthrough (Post-Delivery Review)
-After all stories are merged but BEFORE Sprint Integration Audit:
+After all stories are merged but BEFORE Step 6 (Sprint Integration Audit):
+
+> **Timing is critical:** Run this on the **sprint branch**, while it is still open and mutable. Do NOT wait for main to receive the merge — issues caught here are fixed on the sprint branch before release. Walkthroughs that happen after sprint close become post-merge hotfixes and inflate correction tax.
+
 ```
 1. Present the user with a summary of what was built (from Dev reports)
 2. Ask the user to test the running app and provide feedback
@@ -548,7 +555,7 @@ After all stories are merged but BEFORE Sprint Integration Audit:
 7. When user confirms "looks good" or no more feedback → proceed to Step 6
 ```
 
-This phase gives ad-hoc post-delivery feedback a proper home. Without it, users give feedback after sprint close, which gets tracked as correction tax and skews metrics.
+This phase gives ad-hoc post-delivery feedback a proper home. Without it, users give feedback after sprint close which gets tracked as correction tax and skews metrics.
 
 ### Step 6: Sprint Integration Audit
 After ALL stories are merged into `sprint/S-01`:
@@ -565,6 +572,9 @@ After ALL stories are merged into `sprint/S-01`:
 ```
 
 ### Step 7: Sprint Consolidation
+
+> **Pre-Step 7 Gate:** The Sprint Report must be written and presented to the human **before** `state.json` sprint status is set to "Completed". Write the report immediately after Step 6 (Integration Audit) while agent report context is fresh. Do NOT mark the sprint Closed first and write the report later.
+
 ```
 1. Read all archived reports in .vbounce/archive/S-{XX}/
 2. **Aggregate token usage** from every agent report:
@@ -582,11 +592,16 @@ After ALL stories are merged into `sprint/S-01`:
      ---
      ```
 4. V-Bounce State → "Sprint Review" for all stories
-4. Present Sprint Report to human
-5. **Lesson Review (non-blocking):**
-   Most lessons should already be recorded to FLASHCARDS.md during Step 5.5.
-   Review §4 of the Sprint Report — confirm all flagged lessons have a status.
-   If any lessons were missed during Step 5.5, present them now and record approved ones.
+4. Present Sprint Report to human — **lead with Key Takeaways**:
+   - **Delivery snapshot**: what shipped (count of stories delivered vs planned), anything not completed
+   - **Quality signal**: first-pass success rate, bounce ratio, correction tax (flag if 🟡/🔴)
+   - **Cost**: total tokens used and estimated cost
+   - **Top risks or surprises**: escalated stories, threshold alerts, notable flashcards
+   - Keep it to 5–8 bullet points. The full report follows for detail — the takeaways are the TL;DR.
+5. **Flashcard Review (non-blocking):**
+   Most flashcards should already be recorded to FLASHCARDS.md during Step 5.5.
+   Review §4 of the Sprint Report — confirm all flagged flashcards have a status.
+   If any flashcards were missed during Step 5.5, present them now and record approved ones.
    This is a review step, not a first-time approval gate.
 6. After review → Spawn devops subagent for Sprint Release:
    - Merge sprint/S-01 → main (--no-ff)
@@ -597,7 +612,7 @@ After ALL stories are merged into `sprint/S-01`:
    - DevOps writes Sprint Release Report to .vbounce/archive/S-{XX}/sprint-S-{XX}-devops.md
 6. Lead finalizes:
    - Move sprint-report-S-{XX}.md to .vbounce/archive/S-{XX}/
-   - Record lessons (with user approval)
+   - Record flashcards (with user approval)
    - Update Roadmap §7 Delivery Log to reflect the completed sprint.
 7. **Framework Self-Assessment** (aggregated from agent reports):
    - Collect all `## Process Feedback` sections from agent reports in `.vbounce/archive/S-{XX}/`

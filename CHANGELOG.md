@@ -5,6 +5,18 @@ All notable changes to the V-Bounce Engine framework and its CLI installer will 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.8.0] - 2026-03-30
+
+### Changed
+- **`lesson` skill → `flashcard` skill** — Renamed throughout the entire framework. `skills/lesson/` directory → `skills/flashcard/`. Trigger `/lesson` → `/flashcard`. Report field `lessons_flagged` → `flashcards_flagged`. Report sections `## Lessons Flagged` → `## Flashcards Flagged` across developer, scribe, architect, and explorer agent configs. Step 5.5 heading and body text updated. Agent Roster Skills column updated for all 5 agents. Explorer Context Pack §5 heading updated.
+- **Step 5.5 promoted to Hard Gate** — "Immediate Flashcard Recording" is now an explicit hard gate. Team Lead must verbally confirm flashcards from the just-merged story are processed (approved → FLASHCARDS.md, rejected → noted in §4) before creating the next story's worktree. Was previously a soft instruction ("Do NOT defer this to Step 7").
+- **Step 5.7 User Walkthrough — timing clarified** — Added callout that walkthroughs must run on the sprint branch while it is still open and mutable, before Step 6 (Integration Audit) and before release to main. Walkthroughs that happen after sprint close become post-merge hotfixes and inflate correction tax.
+- **Step 7 Sprint Consolidation — sprint report gate added** — Sprint Report must be written and presented to the human before `state.json` sprint status is set to "Completed". Prevents context loss from deferred reporting (root cause of partial S-06 retrospective).
+- **Step 1a Pre-bounce gate — sprint ID validation added** — `validate_state.mjs` now runs before `validate_bounce_readiness.mjs`. Verifies `sprintId` in `state.json` matches the active sprint. If stale, Team Lead must re-run `init_sprint.mjs` before creating any worktree. Prevents executing a sprint against mismatched state (root cause of S-09 state.json drift).
+- **Step 5 DevOps merge gate — Dev report explicitly required** — Dev report marked "← ALWAYS required regardless of execution mode." Fast Track stories skip QA/Arch — but the Dev report is never optional. Clarifies an ambiguity that allowed stories to merge without Dev reports in S-09.
+- **Architect Deep Audit — Component Tree Integrity checks added** — New mandatory subsection for every story touching UI components: (1) verify every new component is rendered in the component tree (dead code check via grep), (2) verify shared custom hooks are called in a common parent, not independently in multiple consumers (shared state check). Both are Blocker-severity. Root cause of 8 post-merge hotfixes in S-10.
+- **Story template §3.2 — `First-Use Pattern` field added** — Optional table row. Team Lead sets to `Yes` when a story introduces a library, architectural pattern, or integration type with no prior codebase example. When `Yes`, Developer must search FLASHCARDS.md and codebase before writing implementation code. Root cause of S-06 ARQ cron 20% correction tax (first-use of unfamiliar pattern with no reference).
+
 ## [2.7.0] - 2026-03-28
 
 ### Added

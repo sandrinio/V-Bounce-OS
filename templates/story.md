@@ -149,6 +149,9 @@ Feature: {Story Name}
 | **Related Files** | `{filepath/to/api/service.ts}`, `{filepath/to/types.ts}` |
 | **New Files Needed** | Yes/No — `{Name of file}` |
 | **ADR References** | ADR-{NNN} from Roadmap §3 |
+| **First-Use Pattern** | Yes / No — {if Yes: name the pattern, e.g., "ARQ cron scheduling", "Supabase Realtime subscription"} |
+
+> **First-Use Pattern guidance (Team Lead sets this):** Set to `Yes` when this story introduces a library, architectural pattern, or integration type with no prior example in the codebase. When `Yes`, the Developer Agent must search FLASHCARDS.md and the codebase for prior examples before writing any implementation code. If no examples exist, note it in the Implementation Report under "Discovery Notes" and add a flashcard after merge.
 
 ### 3.3 Technical Logic
 - {Describe the logic flow, e.g., "Use the existing useAuth hook to check permissions."}

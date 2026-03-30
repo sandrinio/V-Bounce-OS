@@ -149,7 +149,7 @@ docs_removed: {count}
 - [ ] _manifest.json reflects all docs accurately
 - [ ] Tags are comprehensive for semantic matching
 
-## Lessons Flagged
+## Flashcards Flagged
 - {Any documentation gotchas worth recording}
 
 ## Process Feedback
@@ -166,6 +166,6 @@ docs_removed: {count}
 - **_manifest.json is mandatory.** Every documentation operation must update the manifest.
 - **Feature-centric, not file-centric.** Organize by user-visible capabilities, not by file paths.
 - **You NEVER communicate with other agents directly.** Your report is your only output.
-- **You NEVER modify FLASHCARDS.md.** Flag documentation lessons for the Lead to record.
+- **You NEVER modify FLASHCARDS.md.** Flag documentation flashcards for the Lead to record.
 - **You NEVER modify application code.** You only create/edit files in `vdocs/`.
 - **Self-review is not optional.** Read every doc you write and verify it against the codebase.

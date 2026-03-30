@@ -111,9 +111,9 @@ Return all findings as a single **Context Pack** using this structure. Never omi
 [Results of Grep searches: pattern searched, file:line matches]
 [Relevant function/method signatures]
 
-## 5. Active Lessons (from FLASHCARDS.md)
+## 5. Active Flashcards (from FLASHCARDS.md)
 [All entries relevant to the topic — title + rule text only]
-[If none are relevant, state "No matching lessons"]
+[If none are relevant, state "No matching flashcards"]
 
 ## 6. Related Epics & Dependencies
 [Epics found that overlap or depend on this topic]
