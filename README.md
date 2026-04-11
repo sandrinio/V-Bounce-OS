@@ -45,17 +45,24 @@ AI coding tools are incredibly fast, but without guardrails, they create **expen
 
 ---
 
-## <img src="docs/icons/shield.svg" width="24" height="24" style="vertical-align: text-bottom;" /> Why V-Bounce Engine?
+## <img src="docs/icons/shield.svg" width="24" height="24" style="vertical-align: text-bottom;" /> How It Works For You
 
-V-Bounce wraps your AI agents in the same discipline that makes human engineering teams reliable:
+V-Bounce Engine shifts you from babysitting prompts to directing an engineering team. Here is your flow:
 
-| Guardrail | What It Solves |
-|-------------|-------------------|
-| **Isolated Worktrees** | **Contamination.** Every story is a sandbox. One bad story won't break your app. |
-| **QA Quality Gates** | **Missed Requirements.** Code is validated against Acceptance Criteria *before* merge. |
-| **Architect Audits** | **Drift.** Blocks the AI from hallucinating new dependencies or breaking patterns. |
-| **3-Bounce Escalation** | **Infinite Loops.** After 3 failed attempts, the AI surfaces the root cause to you. |
-| **Persistent Lessons** | **Goldfish Memory.** The AI logs mistakes in `FLASHCARDS.md` and reads them next sprint. |
+```mermaid
+flowchart LR
+    A["👤 You\nSet the Vision\n(Roadmap)"] --> B["🤖 AI\nDrafts Scope\n(Codebase Research)"]
+    B --> C{"🔍 AI & You\nResolve Edge Cases\n(Open Questions)"}
+    C --> D["✅ You\nApprove Sprint\n(The Hard Gate)"]
+    D --> E["🚀 AI Team\nExecutes & Tests\n(The Bounce)"]
+```
+
+**Your Role (The Planning Phase):**
+1. **Set the Vision:** Drop your broad requirements into a Roadmap.
+2. **Review AI Research:** The AI explores your codebase to find *actual* dependencies, returning fully scoped, bite-sized Stories. 
+3. **Provide Guardrails:** The AI flags missing logic as "Open Questions" and writes test scenarios (Gherkin) directly covering edge cases. 
+4. **Approve the Plan:** A sprint **cannot** begin until you manually confirm it. You act as the ultimate gatekeeper against hallucinations.
+5. **Watch it Build:** Once approved, the AI executes the "Bounce"—autonomously writing, QA testing, and auditing the code before bringing you the end result.
 
 ---
 
